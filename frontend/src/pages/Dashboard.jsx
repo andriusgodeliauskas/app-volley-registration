@@ -423,23 +423,19 @@ function Dashboard() {
                                                                     <>Cancel Registration</>
                                                                 )}
                                                             </button>
-                                                        ) : isFull ? (
-                                                            <button className="btn btn-secondary btn-sm" disabled>
-                                                                Event Full
-                                                            </button>
                                                         ) : (
                                                             <button
-                                                                className="btn btn-primary btn-sm"
+                                                                className={`btn ${isFull ? 'btn-warning' : 'btn-primary'} btn-sm`}
                                                                 onClick={() => handleRegister(event)}
                                                                 disabled={isProcessing}
                                                             >
                                                                 {isProcessing ? (
                                                                     <>
                                                                         <span className="spinner-border spinner-border-sm me-1"></span>
-                                                                        Registering...
+                                                                        {isFull ? 'Joining...' : 'Registering...'}
                                                                     </>
                                                                 ) : (
-                                                                    <>Register Now</>
+                                                                    <>{isFull ? 'Join Waitlist' : 'Register Now'}</>
                                                                 )}
                                                             </button>
                                                         )}

@@ -269,17 +269,13 @@ function EventDetails() {
                                         >
                                             {processing ? 'Processing...' : 'Cancel Registration'}
                                         </button>
-                                    ) : isFull ? (
-                                        <button className="btn btn-secondary btn-lg" disabled>
-                                            Event Full
-                                        </button>
                                     ) : (
                                         <button
-                                            className="btn btn-primary btn-lg shadow-sm"
+                                            className={`btn btn-lg shadow-sm ${isFull ? 'btn-warning' : 'btn-primary'}`}
                                             onClick={openRegisterModal}
                                             disabled={processing}
                                         >
-                                            {processing ? 'Processing...' : 'Register Now'}
+                                            {processing ? 'Processing...' : (isFull ? 'Join Waitlist' : 'Register Now')}
                                         </button>
                                     )}
                                 </div>
@@ -306,29 +302,64 @@ function EventDetails() {
                                         <p className="mt-2">No players registered yet.</p>
                                     </div>
                                 ) : (
-                                    <div className="list-group list-group-flush">
-                                        {attendees.map((attendee) => (
-                                            <div key={attendee.id} className="list-group-item px-4 py-3 d-flex align-items-center">
-                                                <div
-                                                    className="me-3 rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
-                                                    style={{ width: '32px', height: '32px' }}
-                                                >
-                                                    {attendee.index}
-                                                </div>
-                                                <div className="d-flex align-items-center">
-                                                    <div className="avatar me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
-                                                        <i className="bi bi-person-fill"></i>
+                                    <>
+                                        {/* Main List */}
+                                        <div className="list-group list-group-flush">
+                                            {attendees.filter(a => a.index <= event.max_players).map((attendee) => (
+                                                <div key={attendee.id} className="list-group-item px-4 py-3 d-flex align-items-center">
+                                                    <div
+                                                        className="me-3 rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
+                                                        style={{ width: '32px', height: '32px' }}
+                                                    >
+                                                        {attendee.index}
                                                     </div>
-                                                    <div>
-                                                        <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
-                                                        <small className="text-muted">
-                                                            Registered: {new Date(attendee.registered_at).toLocaleDateString()}
-                                                        </small>
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="avatar me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
+                                                            <i className="bi bi-person-fill"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
+                                                            <small className="text-muted">
+                                                                Registered: {new Date(attendee.registered_at).toLocaleDateString()}
+                                                            </small>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Waitlist */}
+                                        {attendees.some(a => a.index > event.max_players) && (
+                                            <>
+                                                <div className="bg-light px-4 py-2 border-top border-bottom">
+                                                    <small className="fw-bold text-uppercase text-warning">Waitlist / Queue</small>
+                                                </div>
+                                                <div className="list-group list-group-flush bg-light bg-opacity-25">
+                                                    {attendees.filter(a => a.index > event.max_players).map((attendee) => (
+                                                        <div key={attendee.id} className="list-group-item px-4 py-3 d-flex align-items-center bg-transparent">
+                                                            <div
+                                                                className="me-3 rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center fw-bold text-dark"
+                                                                style={{ width: '32px', height: '32px' }}
+                                                            >
+                                                                {attendee.index}
+                                                            </div>
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar me-3 bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
+                                                                    <i className="bi bi-clock"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
+                                                                    <small className="text-muted">
+                                                                        Waiting since: {new Date(attendee.registered_at).toLocaleDateString()}
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>

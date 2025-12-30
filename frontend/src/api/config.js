@@ -9,6 +9,8 @@ export const API_ENDPOINTS = {
   // Admin Endpoints
   ADMIN_USER_DETAILS: `${API_BASE_URL}/admin_user_details.php`,
   ADMIN_USER_UPDATE: `${API_BASE_URL}/admin_user_update.php`,
+  ADMIN_EVENT_DETAILS: `${API_BASE_URL}/admin_event_details.php`,
+  ADMIN_EVENT_UPDATE: `${API_BASE_URL}/admin_event_update.php`,
 
   // User Profile
   USER: `${API_BASE_URL}/user.php`,

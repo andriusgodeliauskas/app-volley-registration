@@ -91,11 +91,11 @@ function handleRegister(array $currentUser): void
             sendError('Cannot register for past events', 400);
         }
         
-        // Check if spots are available
-        if ((int)$event['registered_count'] >= (int)$event['max_players']) {
-            $pdo->rollBack();
-            sendError('Event is full. No spots available.', 400);
-        }
+        // Check if spots are available - REMOVED for waitlist feature
+        // if ((int)$event['registered_count'] >= (int)$event['max_players']) {
+        //     $pdo->rollBack();
+        //     sendError('Event is full. No spots available.', 400);
+        // }
         
         // Fetch current user's balance (the person paying)
         $stmt = $pdo->prepare("SELECT balance FROM users WHERE id = ? FOR UPDATE");

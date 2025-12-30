@@ -13,6 +13,7 @@ import Children from './pages/Children';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminGroups from './pages/AdminGroups';
 import AdminEvents from './pages/AdminEvents';
+import AdminEventEdit from './pages/AdminEventEdit';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserEdit from './pages/AdminUserEdit';
 
@@ -89,6 +90,14 @@ function App() {
             element={
               <ProtectedRoute roles={['super_admin', 'group_admin']}>
                 <AdminEvents />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events/edit/:id"
+            element={
+              <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                <AdminEventEdit />
               </ProtectedRoute>
             }
           />

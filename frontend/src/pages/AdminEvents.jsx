@@ -183,6 +183,7 @@ function AdminEvents() {
                                             <th>Spots</th>
                                             <th>Price</th>
                                             <th>Status</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -205,11 +206,16 @@ function AdminEvents() {
                                                 <td>€{parseFloat(event.price_per_person).toFixed(2)}</td>
                                                 <td>
                                                     <span className={`badge ${event.status === 'open' ? 'bg-success' :
-                                                            event.status === 'closed' ? 'bg-secondary' :
-                                                                event.status === 'canceled' ? 'bg-danger' : 'bg-info'
+                                                        event.status === 'closed' ? 'bg-secondary' :
+                                                            event.status === 'canceled' ? 'bg-danger' : 'bg-info'
                                                         }`}>
                                                         {event.status}
                                                     </span>
+                                                </td>
+                                                <td>
+                                                    <Link to={`/admin/events/edit/${event.id}`} className="btn btn-sm btn-outline-light">
+                                                        Edit
+                                                    </Link>
                                                 </td>
                                             </tr>
                                         ))}
