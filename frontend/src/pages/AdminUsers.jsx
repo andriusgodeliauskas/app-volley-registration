@@ -110,7 +110,7 @@ function AdminUsers() {
                                                 <td>{u.email}</td>
                                                 <td>
                                                     <span className={`badge ${u.role === 'super_admin' ? 'bg-danger' :
-                                                            u.role === 'group_admin' ? 'bg-info' : 'bg-secondary'
+                                                        u.role === 'group_admin' ? 'bg-info' : 'bg-secondary'
                                                         }`}>
                                                         {u.role.replace('_', ' ').toUpperCase()}
                                                     </span>
@@ -126,7 +126,7 @@ function AdminUsers() {
                                                 </td>
                                                 <td>{new Date(u.created_at).toLocaleDateString()}</td>
                                                 <td>
-                                                    <button className="btn btn-sm btn-outline-light me-2">Edit</button>
+                                                    <Link to={`/admin/users/edit/${u.id}`} className="btn btn-sm btn-outline-light me-2">Edit</Link>
                                                 </td>
                                             </tr>
                                         ))}

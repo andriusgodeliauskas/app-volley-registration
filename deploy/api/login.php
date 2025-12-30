@@ -72,7 +72,7 @@ try {
     
     // Check if account is active
     if (!$user['is_active']) {
-        sendError('Account is deactivated. Please contact support.', 403);
+        sendError('Account pending approval. Please wait for administrator confirmation.', 403);
     }
     
     // Verify password

@@ -82,7 +82,7 @@ try {
     // Insert new user
     $stmt = $pdo->prepare("
         INSERT INTO users (name, email, password_hash, role, balance, is_active, created_at)
-        VALUES (?, ?, ?, 'user', 0.00, 1, NOW())
+        VALUES (?, ?, ?, 'user', 0.00, 0, NOW())
     ");
     
     $stmt->execute([$name, $email, $passwordHash]);

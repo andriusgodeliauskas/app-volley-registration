@@ -6,6 +6,10 @@ export const API_ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/register.php`,
   LOGOUT: `${API_BASE_URL}/logout.php`,
 
+  // Admin Endpoints
+  ADMIN_USER_DETAILS: `${API_BASE_URL}/admin_user_details.php`,
+  ADMIN_USER_UPDATE: `${API_BASE_URL}/admin_user_update.php`,
+
   // User Profile
   USER: `${API_BASE_URL}/user.php`,
   USERS: `${API_BASE_URL}/users.php`,

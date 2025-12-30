@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminGroups from './pages/AdminGroups';
 import AdminEvents from './pages/AdminEvents';
 import AdminUsers from './pages/AdminUsers';
+import AdminUserEdit from './pages/AdminUserEdit';
 
 function App() {
   return (
@@ -64,6 +65,14 @@ function App() {
             element={
               <ProtectedRoute roles={['super_admin', 'group_admin']}>
                 <AdminUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users/edit/:id"
+            element={
+              <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                <AdminUserEdit />
               </ProtectedRoute>
             }
           />
