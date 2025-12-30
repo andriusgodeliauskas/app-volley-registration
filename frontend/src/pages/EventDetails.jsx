@@ -139,7 +139,7 @@ function EventDetails() {
 
     // Dates
     const eventDate = new Date(event.date_time);
-    const dateStr = eventDate.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const dateStr = eventDate.toISOString().split('T')[0];
     const timeStr = eventDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
     return (
@@ -320,7 +320,10 @@ function EventDetails() {
                                                         <div>
                                                             <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
                                                             <small className="text-muted">
-                                                                Registered: {new Date(attendee.registered_at).toLocaleDateString()}
+                                                                Registered: {(() => {
+                                                                    const d = new Date(attendee.registered_at);
+                                                                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                                                                })()}
                                                             </small>
                                                         </div>
                                                     </div>
@@ -350,7 +353,10 @@ function EventDetails() {
                                                                 <div>
                                                                     <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
                                                                     <small className="text-muted">
-                                                                        Waiting since: {new Date(attendee.registered_at).toLocaleDateString()}
+                                                                        Waiting since: {(() => {
+                                                                            const d = new Date(attendee.registered_at);
+                                                                            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                                                                        })()}
                                                                     </small>
                                                                 </div>
                                                             </div>

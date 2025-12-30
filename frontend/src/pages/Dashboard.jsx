@@ -184,12 +184,7 @@ function Dashboard() {
      */
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-GB', {
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        });
+        return date.toISOString().split('T')[0];
     };
 
     /**
@@ -302,16 +297,7 @@ function Dashboard() {
                     </div>
                 )}
 
-                {/* Low Balance Warning */}
-                {balance < 5 && (
-                    <div className="alert alert-warning d-flex align-items-center" role="alert">
-                        <i className="bi bi-wallet2 me-2 fs-5"></i>
-                        <div className="flex-grow-1">
-                            <strong>Low balance!</strong> You have €{balance.toFixed(2)} remaining.
-                            <Link to="/wallet" className="alert-link ms-1">Top up now</Link> to ensure you can register for events.
-                        </div>
-                    </div>
-                )}
+
 
                 {/* Upcoming Events Section */}
                 <div className="card border-0 shadow-sm mb-4">
@@ -369,7 +355,7 @@ function Dashboard() {
                                                 </div>
 
                                                 {/* Event Details Column */}
-                                                <div className="col-md-5 mb-3 mb-md-0">
+                                                <div className="col-md-7 mb-3 mb-md-0">
                                                     <h6 className="mb-1 fw-semibold">
                                                         {event.title}
                                                         {isRegistered && (
@@ -388,16 +374,13 @@ function Dashboard() {
                                                         </span>
                                                         <span className="mx-2">•</span>
                                                         {event.group_name}
+                                                        <span className="mx-2">•</span>
+                                                        <i className="bi bi-tag me-1"></i>
+                                                        €{parseFloat(event.price_per_person).toFixed(2)}
                                                     </p>
                                                 </div>
 
-                                                {/* Price Column */}
-                                                <div className="col-md-2 text-center mb-3 mb-md-0">
-                                                    <div className="h5 mb-0 text-success fw-bold">
-                                                        €{parseFloat(event.price_per_person).toFixed(2)}
-                                                    </div>
-                                                    <small className="text-muted">per person</small>
-                                                </div>
+
 
                                                 {/* Action Column */}
                                                 <div className="col-md-3 text-end">
@@ -527,6 +510,17 @@ function Dashboard() {
                         </div>
                     </div>
                 </div>
+
+                {/* Low Balance Warning */}
+                {balance < 5 && (
+                    <div className="alert alert-warning d-flex align-items-center mt-4" role="alert">
+                        <i className="bi bi-wallet2 me-2 fs-5"></i>
+                        <div className="flex-grow-1">
+                            <strong>Low balance!</strong> You have €{balance.toFixed(2)} remaining.
+                            <Link to="/wallet" className="alert-link ms-1">Top up now</Link>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Footer */}
