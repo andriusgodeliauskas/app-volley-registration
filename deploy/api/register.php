@@ -30,7 +30,7 @@ requirePost();
 $input = getJsonInput();
 
 // Validate required fields
-$missing = validateRequired($input, ['name', 'email', 'password']);
+$missing = validateRequired($input, ['first_name', 'last_name', 'email', 'password']);
 if (!empty($missing)) {
     sendError('Missing required fields: ' . implode(', ', $missing), 400, [
         'missing_fields' => $missing
@@ -38,13 +38,21 @@ if (!empty($missing)) {
 }
 
 // Sanitize inputs
-$name = trim($input['name']);
+$first_name = trim($input['first_name']);
+$last_name = trim($input['last_name']);
 $email = trim(strtolower($input['email']));
 $password = $input['password'];
 
 // Validate name length
-if (strlen($name) < 2 || strlen($name) > 100) {
-    sendError('Name must be between 2 and 100 characters', 400);
+if (strlen($first_name) < 2 || strlen($last_name) < 2) {
+    sendError('Name and Surname must be at least 2 characters', 400);
+}
+
+// Combine for database storage (backward compatibility)
+$name = $first_name . ' ' . $last_name;
+
+if (strlen($name) > 100) {
+    sendError('Full name exceeds maximum length', 400);
 }
 
 // Validate email format

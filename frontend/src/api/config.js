@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   USER: `${API_BASE_URL}/user.php`,
   USERS: `${API_BASE_URL}/users.php`,
   ADMIN_STATS: `${API_BASE_URL}/admin_stats.php`,
+  EVENT_DETAILS: `${API_BASE_URL}/event_details.php`,
 
   // Events
   EVENTS: `${API_BASE_URL}/events.php`,

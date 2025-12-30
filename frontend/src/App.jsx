@@ -6,6 +6,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import EventDetails from './pages/EventDetails';
+import AllEvents from './pages/AllEvents';
+import Wallet from './pages/Wallet';
+import Children from './pages/Children';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminGroups from './pages/AdminGroups';
 import AdminEvents from './pages/AdminEvents';
@@ -26,6 +30,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events"
+            element={
+              <ProtectedRoute>
+                <AllEvents />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/event/:id"
+            element={
+              <ProtectedRoute>
+                <EventDetails />
               </ProtectedRoute>
             }
           />

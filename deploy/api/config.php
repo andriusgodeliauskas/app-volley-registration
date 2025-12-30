@@ -12,11 +12,18 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
 }
 
 // Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'goskajss_volley');
-define('DB_USER', 'goskajss_volley');
-define('DB_PASS', 'hPbd5YsARQ9f32E7g4bQ');
-define('DB_CHARSET', 'utf8mb4');
+if (file_exists(__DIR__ . '/secrets.php')) {
+    require_once __DIR__ . '/secrets.php';
+} else {
+    // Fallback or Error if secrets are missing
+    // For development, you might want to stop specific execution or use defaults only if safe
+    // Ideally, force the use of secrets.php
+    die('Database configuration missing. Please rename api/secrets.example.php to api/secrets.php and configure it.');
+}
+
+if (!defined('DB_CHARSET')) {
+    define('DB_CHARSET', 'utf8mb4');
+}
 
 // Application Settings
 define('APP_NAME', 'Volley Registration App');

@@ -97,42 +97,45 @@ function handleRegister(array $currentUser): void
             sendError('Event is full. No spots available.', 400);
         }
         
-        // Check if already registered
-        $stmt = $pdo->prepare("
-            SELECT id FROM registrations 
-            WHERE user_id = ? AND event_id = ? AND status = 'registered'
-        ");
-        $stmt->execute([$registerUserId, $eventId]);
-        
-        if ($stmt->fetch()) {
-            $pdo->rollBack();
-            sendError('Already registered for this event', 400);
-        }
-        
         // Fetch current user's balance (the person paying)
         $stmt = $pdo->prepare("SELECT balance FROM users WHERE id = ? FOR UPDATE");
         $stmt->execute([$currentUser['id']]);
         $userData = $stmt->fetch();
         $currentBalance = (float)$userData['balance'];
         $eventPrice = (float)$event['price_per_person'];
-        
-        // Check sufficient balance - DISABLED to allow negative balance
-        // if ($currentBalance < $eventPrice) {
-        //     $pdo->rollBack();
-        //     sendError('Insufficient balance. Please top up your wallet.', 400, [
-        //         'current_balance' => $currentBalance,
-        //         'required_amount' => $eventPrice,
-        //         'shortfall' => $eventPrice - $currentBalance
-        //     ]);
-        // }
-        
-        // Create registration
+
+        // Check if already registered (or canceled)
         $stmt = $pdo->prepare("
-            INSERT INTO registrations (user_id, event_id, registered_by, status)
-            VALUES (?, ?, ?, 'registered')
+            SELECT id, status FROM registrations 
+            WHERE user_id = ? AND event_id = ?
         ");
-        $stmt->execute([$registerUserId, $eventId, $currentUser['id']]);
-        $registrationId = $pdo->lastInsertId();
+        $stmt->execute([$registerUserId, $eventId]);
+        $existingRegistration = $stmt->fetch();
+        
+        if ($existingRegistration) {
+            if ($existingRegistration['status'] === 'registered') {
+                $pdo->rollBack();
+                sendError('Already registered for this event', 400);
+            }
+            
+            // Re-register: Update status to registered
+            $stmt = $pdo->prepare("
+                UPDATE registrations 
+                SET status = 'registered', registered_by = ?, created_at = CURRENT_TIMESTAMP 
+                WHERE id = ?
+            ");
+            $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
+            $registrationId = $existingRegistration['id'];
+
+        } else {
+            // New registration: Insert
+            $stmt = $pdo->prepare("
+                INSERT INTO registrations (user_id, event_id, registered_by, status)
+                VALUES (?, ?, ?, 'registered')
+            ");
+            $stmt->execute([$registerUserId, $eventId, $currentUser['id']]);
+            $registrationId = $pdo->lastInsertId();
+        }
         
         // Deduct balance
         if ($eventPrice > 0) {

@@ -72,90 +72,108 @@ function Dashboard() {
     /**
      * Handle event registration
      */
-    const handleRegister = async (eventId, eventTitle) => {
-        setRegistering(prev => ({ ...prev, [eventId]: true }));
-        setError(null);
-        setSuccessMessage('');
+    /**
+     * Handle event registration
+     */
+    const [confirmModal, setConfirmModal] = useState({ show: false, type: null, eventId: null, eventTitle: null, price: null });
 
-        try {
-            const response = await post(API_ENDPOINTS.REGISTER_EVENT, { event_id: eventId });
-
-            if (response.success) {
-                // Update balance from response
-                if (response.data?.new_balance !== undefined) {
-                    setBalance(parseFloat(response.data.new_balance));
-                    updateUser({
-                        ...user,
-                        balance: parseFloat(response.data.new_balance)
-                    });
-                }
-
-                // Update event as registered
-                setEvents(prev => prev.map(event =>
-                    event.id === eventId
-                        ? {
-                            ...event,
-                            user_registered: true,
-                            registered_count: event.registered_count + 1,
-                            spots_available: event.spots_available - 1
-                        }
-                        : event
-                ));
-
-                setSuccessMessage(`Successfully registered for "${eventTitle}"!`);
-
-                // Clear success message after 5 seconds
-                setTimeout(() => setSuccessMessage(''), 5000);
-            }
-        } catch (err) {
-            setError(err.message || 'Failed to register. Please try again.');
-        } finally {
-            setRegistering(prev => ({ ...prev, [eventId]: false }));
-        }
+    /**
+     * Initiate event registration (opens confirmation modal)
+     */
+    const handleRegister = (event) => {
+        setConfirmModal({
+            show: true,
+            type: 'register',
+            eventId: event.id,
+            eventTitle: event.title,
+            price: event.price_per_person
+        });
     };
 
     /**
-     * Handle registration cancellation
+     * Initiate event cancellation (opens confirmation modal)
      */
-    const handleCancelRegistration = async (eventId, eventTitle) => {
-        if (!confirm(`Are you sure you want to cancel your registration for "${eventTitle}"?`)) {
-            return;
-        }
+    const handleCancelClick = (event) => {
+        setConfirmModal({
+            show: true,
+            type: 'cancel',
+            eventId: event.id,
+            eventTitle: event.title,
+            price: event.price_per_person
+        });
+    };
+
+    /**
+     * Process the action (register or cancel) after confirmation
+     */
+    const handleConfirmAction = async () => {
+        const { type, eventId, eventTitle } = confirmModal;
+        setConfirmModal({ show: false, type: null, eventId: null, eventTitle: null, price: null });
 
         setRegistering(prev => ({ ...prev, [eventId]: true }));
         setError(null);
         setSuccessMessage('');
 
         try {
-            const response = await del(`${API_ENDPOINTS.REGISTER_EVENT}?event_id=${eventId}`);
+            if (type === 'register') {
+                const response = await post(API_ENDPOINTS.REGISTER_EVENT, { event_id: eventId });
 
-            if (response.success) {
-                // Update balance from response
-                if (response.data?.new_balance !== undefined) {
-                    setBalance(parseFloat(response.data.new_balance));
-                    updateUser({
-                        ...user,
-                        balance: parseFloat(response.data.new_balance)
-                    });
+                if (response.success) {
+                    // Update balance from response
+                    if (response.data?.new_balance !== undefined) {
+                        setBalance(parseFloat(response.data.new_balance));
+                        updateUser({
+                            ...user,
+                            balance: parseFloat(response.data.new_balance)
+                        });
+                    }
+
+                    // Update event as registered
+                    setEvents(prev => prev.map(event =>
+                        event.id === eventId
+                            ? {
+                                ...event,
+                                user_registered: true,
+                                registered_count: event.registered_count + 1,
+                                spots_available: event.spots_available - 1
+                            }
+                            : event
+                    ));
+
+                    setSuccessMessage(`Successfully registered for "${eventTitle}"!`);
+                    setTimeout(() => setSuccessMessage(''), 5000);
                 }
+            } else if (type === 'cancel') {
+                const response = await del(`${API_ENDPOINTS.REGISTER_EVENT}?event_id=${eventId}`);
 
-                // Update event as not registered
-                setEvents(prev => prev.map(event =>
-                    event.id === eventId
-                        ? {
-                            ...event,
-                            user_registered: false,
-                            registered_count: event.registered_count - 1,
-                            spots_available: event.spots_available + 1
-                        }
-                        : event
-                ));
+                if (response.success) {
+                    // Update balance from response
+                    if (response.data?.new_balance !== undefined) {
+                        setBalance(parseFloat(response.data.new_balance));
+                        updateUser({
+                            ...user,
+                            balance: parseFloat(response.data.new_balance)
+                        });
+                    }
 
-                setSuccessMessage(`Registration cancelled. Refund of €${response.data?.refunded_amount?.toFixed(2) || '0.00'} processed.`);
-                setTimeout(() => setSuccessMessage(''), 5000);
+                    // Update event as not registered
+                    setEvents(prev => prev.map(event =>
+                        event.id === eventId
+                            ? {
+                                ...event,
+                                user_registered: false,
+                                registered_count: event.registered_count - 1,
+                                spots_available: event.spots_available + 1
+                            }
+                            : event
+                    ));
+
+                    setSuccessMessage(`Registration cancelled. Refund of €${response.data?.refunded_amount?.toFixed(2) || '0.00'} processed.`);
+                    setTimeout(() => setSuccessMessage(''), 5000);
+                }
             }
         } catch (err) {
-            setError(err.message || 'Failed to cancel registration. Please try again.');
+            setError(err.message || `Failed to ${type}. Please try again.`);
         } finally {
             setRegistering(prev => ({ ...prev, [eventId]: false }));
         }
@@ -234,6 +252,29 @@ function Dashboard() {
                 </div>
             </nav>
 
+            {/* Confirmation Modal */}
+            {confirmModal.show && (
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content shadow">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title fw-bold">
+                                    {confirmModal.type === 'register' ? 'Confirm Registration' : 'Confirm Cancellation'}
+                                </h5>
+                                <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
+                            </div>
+                            <div className="modal-body">
+                                <p className="mb-0">Are you sure you want to {confirmModal.type === 'register' ? 'register for' : 'cancel your registration for'} <br /><strong>{confirmModal.eventTitle}</strong>?</p>
+                            </div>
+                            <div className="modal-footer border-0 pt-0">
+                                <button type="button" className="btn btn-light" onClick={() => setConfirmModal({ show: false })}>No</button>
+                                <button type="button" className={`btn ${confirmModal.type === 'register' ? 'btn-primary' : 'btn-danger'} px-4`} onClick={handleConfirmAction}>Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Main Content */}
             <div className="container py-4">
                 {/* Welcome Section */}
@@ -272,60 +313,8 @@ function Dashboard() {
                     </div>
                 )}
 
-                {/* Stats Cards */}
-                <div className="row g-3 mb-4">
-                    <div className="col-md-4">
-                        <div className="card border-0 shadow-sm h-100 bg-gradient" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                            <div className="card-body text-white">
-                                <div className="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 className="opacity-75 mb-1 text-uppercase small">Wallet Balance</h6>
-                                        <h2 className="mb-0 fw-bold">€{balance.toFixed(2)}</h2>
-                                    </div>
-                                    <div className="bg-white bg-opacity-25 rounded-circle p-2">
-                                        <span className="fs-4">💰</span>
-                                    </div>
-                                </div>
-                                <Link to="/wallet" className="btn btn-light btn-sm mt-3">Top Up</Link>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-4">
-                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' }}>
-                            <div className="card-body text-white">
-                                <div className="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 className="opacity-75 mb-1 text-uppercase small">My Registrations</h6>
-                                        <h2 className="mb-0 fw-bold">{events.filter(e => e.user_registered).length}</h2>
-                                    </div>
-                                    <div className="bg-white bg-opacity-25 rounded-circle p-2">
-                                        <span className="fs-4">✅</span>
-                                    </div>
-                                </div>
-                                <small className="opacity-75">Upcoming events you're registered for</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-4">
-                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
-                            <div className="card-body text-white">
-                                <div className="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 className="opacity-75 mb-1 text-uppercase small">Available Events</h6>
-                                        <h2 className="mb-0 fw-bold">{events.filter(e => !e.user_registered && e.spots_available > 0).length}</h2>
-                                    </div>
-                                    <div className="bg-white bg-opacity-25 rounded-circle p-2">
-                                        <span className="fs-4">🏐</span>
-                                    </div>
-                                </div>
-                                <small className="opacity-75">Events with open spots</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Upcoming Events Section */}
-                <div className="card border-0 shadow-sm">
+                <div className="card border-0 shadow-sm mb-4">
                     <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h5 className="mb-0">📅 Upcoming Events</h5>
@@ -412,41 +401,49 @@ function Dashboard() {
 
                                                 {/* Action Column */}
                                                 <div className="col-md-3 text-end">
-                                                    {isRegistered ? (
-                                                        <button
-                                                            className="btn btn-outline-danger"
-                                                            onClick={() => handleCancelRegistration(event.id, event.title)}
-                                                            disabled={isProcessing}
+                                                    <div className="d-flex flex-column gap-2 alig-items-end">
+                                                        <Link
+                                                            to={`/event/${event.id}`}
+                                                            className="btn btn-outline-secondary btn-sm"
                                                         >
-                                                            {isProcessing ? (
-                                                                <>
-                                                                    <span className="spinner-border spinner-border-sm me-1"></span>
-                                                                    Cancelling...
-                                                                </>
-                                                            ) : (
-                                                                <>Cancel Registration</>
-                                                            )}
-                                                        </button>
-                                                    ) : isFull ? (
-                                                        <button className="btn btn-secondary" disabled>
-                                                            Event Full
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className="btn btn-primary"
-                                                            onClick={() => handleRegister(event.id, event.title)}
-                                                            disabled={isProcessing}
-                                                        >
-                                                            {isProcessing ? (
-                                                                <>
-                                                                    <span className="spinner-border spinner-border-sm me-1"></span>
-                                                                    Registering...
-                                                                </>
-                                                            ) : (
-                                                                <>Register Now</>
-                                                            )}
-                                                        </button>
-                                                    )}
+                                                            More info
+                                                        </Link>
+                                                        {isRegistered ? (
+                                                            <button
+                                                                className="btn btn-outline-danger btn-sm"
+                                                                onClick={() => handleCancelClick(event)}
+                                                                disabled={isProcessing}
+                                                            >
+                                                                {isProcessing ? (
+                                                                    <>
+                                                                        <span className="spinner-border spinner-border-sm me-1"></span>
+                                                                        Cancelling...
+                                                                    </>
+                                                                ) : (
+                                                                    <>Cancel Registration</>
+                                                                )}
+                                                            </button>
+                                                        ) : isFull ? (
+                                                            <button className="btn btn-secondary btn-sm" disabled>
+                                                                Event Full
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="btn btn-primary btn-sm"
+                                                                onClick={() => handleRegister(event)}
+                                                                disabled={isProcessing}
+                                                            >
+                                                                {isProcessing ? (
+                                                                    <>
+                                                                        <span className="spinner-border spinner-border-sm me-1"></span>
+                                                                        Registering...
+                                                                    </>
+                                                                ) : (
+                                                                    <>Register Now</>
+                                                                )}
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -454,6 +451,64 @@ function Dashboard() {
                                 })}
                             </div>
                         )}
+                    </div>
+                </div>
+
+                {/* Stats Cards */}
+                <div className="row g-3 mb-4">
+                    <div className="col-md-4">
+                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+                            <div className="card-body text-white">
+                                <div className="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 className="opacity-75 mb-1 text-uppercase small">Wallet Balance</h6>
+                                        <h2 className="mb-0 fw-bold">€{balance.toFixed(2)}</h2>
+                                    </div>
+                                    <div className="bg-white bg-opacity-25 rounded-circle p-2">
+                                        <span className="fs-4">💰</span>
+                                    </div>
+                                </div>
+                                <Link to="/wallet" className="btn btn-light btn-sm mt-3">Top Up</Link>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-4">
+                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' }}>
+                            <div className="card-body text-white">
+                                <div className="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 className="opacity-75 mb-1 text-uppercase small">My Registrations</h6>
+                                        <h2 className="mb-0 fw-bold">{events.filter(e => e.user_registered).length}</h2>
+                                    </div>
+                                    <div className="bg-white bg-opacity-25 rounded-circle p-2">
+                                        <span className="fs-4">✅</span>
+                                    </div>
+                                </div>
+                                <small className="opacity-75 d-block mb-3">Upcoming events you're registered for</small>
+                                {events.filter(e => e.user_registered).length > 0 ? (
+                                    <Link to={`/event/${events.find(e => e.user_registered).id}`} className="btn btn-light btn-sm">More</Link>
+                                ) : (
+                                    <button className="btn btn-light btn-sm" disabled>More</button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-4">
+                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+                            <div className="card-body text-white">
+                                <div className="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 className="opacity-75 mb-1 text-uppercase small">Available Events</h6>
+                                        <h2 className="mb-0 fw-bold">{events.filter(e => !e.user_registered && e.spots_available > 0).length}</h2>
+                                    </div>
+                                    <div className="bg-white bg-opacity-25 rounded-circle p-2">
+                                        <span className="fs-4">🏐</span>
+                                    </div>
+                                </div>
+                                <small className="opacity-75 d-block mb-3">Events with open spots</small>
+                                <Link to="/events" className="btn btn-light btn-sm">More</Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

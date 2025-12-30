@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Register() {
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,8 +18,12 @@ function Register() {
     const validateForm = () => {
         const errors = {};
 
-        if (name.trim().length < 2) {
-            errors.name = 'Name must be at least 2 characters';
+        if (firstName.trim().length < 2) {
+            errors.firstName = 'Name must be at least 2 characters';
+        }
+
+        if (lastName.trim().length < 2) {
+            errors.lastName = 'Surname must be at least 2 characters';
         }
 
         if (!email.includes('@')) {
@@ -48,7 +53,8 @@ function Register() {
         setIsSubmitting(true);
 
         try {
-            await register(name, email, password);
+            // Pass firstName and lastName separately
+            await register(firstName, lastName, email, password);
 
             // Show success and redirect to login
             navigate('/login', {
@@ -99,7 +105,7 @@ function Register() {
 
                                     {/* Name Field */}
                                     <div className="mb-3">
-                                        <label htmlFor="name" className="form-label fw-medium">Full Name</label>
+                                        <label htmlFor="firstName" className="form-label fw-medium">Name</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -108,17 +114,42 @@ function Register() {
                                             </span>
                                             <input
                                                 type="text"
-                                                className={`form-control border-start-0 ps-0 ${validationErrors.name ? 'is-invalid' : ''}`}
-                                                id="name"
-                                                placeholder="John Doe"
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
+                                                className={`form-control border-start-0 ps-0 ${validationErrors.firstName ? 'is-invalid' : ''}`}
+                                                id="firstName"
+                                                placeholder="John"
+                                                value={firstName}
+                                                onChange={(e) => setFirstName(e.target.value)}
                                                 required
-                                                autoComplete="name"
+                                                autoComplete="given-name"
                                             />
                                         </div>
-                                        {validationErrors.name && (
-                                            <div className="text-danger small mt-1">{validationErrors.name}</div>
+                                        {validationErrors.firstName && (
+                                            <div className="text-danger small mt-1">{validationErrors.firstName}</div>
+                                        )}
+                                    </div>
+
+                                    {/* Surname Field */}
+                                    <div className="mb-3">
+                                        <label htmlFor="lastName" className="form-label fw-medium">Surname</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text bg-light border-end-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
+                                                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                                                </svg>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                className={`form-control border-start-0 ps-0 ${validationErrors.lastName ? 'is-invalid' : ''}`}
+                                                id="lastName"
+                                                placeholder="Doe"
+                                                value={lastName}
+                                                onChange={(e) => setLastName(e.target.value)}
+                                                required
+                                                autoComplete="family-name"
+                                            />
+                                        </div>
+                                        {validationErrors.lastName && (
+                                            <div className="text-danger small mt-1">{validationErrors.lastName}</div>
                                         )}
                                     </div>
 

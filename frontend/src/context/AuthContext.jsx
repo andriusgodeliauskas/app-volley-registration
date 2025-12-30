@@ -71,17 +71,18 @@ export function AuthProvider({ children }) {
 
     /**
      * Register a new user
-     * @param {string} name 
+     * @param {string} firstName 
+     * @param {string} lastName
      * @param {string} email 
      * @param {string} password 
      * @returns {Promise<object>} User data
      */
-    const register = async (name, email, password) => {
+    const register = async (firstName, lastName, email, password) => {
         setError(null);
         setLoading(true);
 
         try {
-            const response = await post(API_ENDPOINTS.REGISTER, { name, email, password });
+            const response = await post(API_ENDPOINTS.REGISTER, { first_name: firstName, last_name: lastName, email, password });
 
             if (response.success) {
                 return response.data.user;
