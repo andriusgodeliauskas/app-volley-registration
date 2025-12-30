@@ -1,0 +1,21 @@
+# Credentials & Security
+api/secrets.php
+.env
+.env.local
+.DS_Store
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.swp
