@@ -26,6 +26,8 @@ function AdminEventEdit() {
         status: 'open'
     });
 
+    const [finalizeLoading, setFinalizeLoading] = useState(false);
+
     useEffect(() => {
         const fetchInitialData = async () => {
             setLoading(true);
@@ -62,6 +64,37 @@ function AdminEventEdit() {
             ...prev,
             [name]: value
         }));
+    };
+
+    const handleFinalize = async () => {
+        if (!window.confirm('Are you sure you want to finalize this event? This will charge all registered users and close the event.')) {
+            return;
+        }
+
+        setFinalizeLoading(true);
+        setError(null);
+        setSuccessMessage('');
+
+        try {
+            const response = await post(API_ENDPOINTS.ADMIN_EVENT_FINALIZE, { event_id: id });
+
+            if (response.success) {
+                setSuccessMessage(
+                    `Event finalized! Charged ${response.data.charged_count} users. Total: €${parseFloat(response.data.total_amount).toFixed(2)}`
+                );
+                // Refresh data
+                const eventRes = await get(`${API_ENDPOINTS.ADMIN_EVENT_DETAILS}?event_id=${id}`);
+                if (eventRes.success && eventRes.data?.event) {
+                    setFormData(eventRes.data.event);
+                }
+            } else {
+                setError(response.message || 'Failed to finalize event');
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred during finalization.');
+        } finally {
+            setFinalizeLoading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -144,7 +177,7 @@ function AdminEventEdit() {
                     </Link>
                 </div>
 
-                <div className="row justify-content-center">
+                <div className="row g-4">
                     <div className="col-lg-8">
                         <div className="card bg-secondary bg-opacity-25 border-secondary">
                             <div className="card-body p-4">
@@ -283,6 +316,48 @@ function AdminEventEdit() {
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Event Actions Card */}
+                    <div className="col-lg-4">
+                        <div className="card bg-secondary bg-opacity-25 border-secondary h-100">
+                            <div className="card-header bg-transparent border-secondary text-white fw-bold">
+                                <i className="bi bi-gear me-2"></i> Event Actions
+                            </div>
+                            <div className="card-body p-4">
+                                <div className="mb-4 text-center p-3 bg-dark rounded border border-secondary">
+                                    <small className="text-muted text-uppercase d-block mb-1">Current Status</small>
+                                    <h3 className={`mb-0 text-uppercase ${formData.status === 'open' ? 'text-success' : (formData.status === 'closed' ? 'text-danger' : 'text-warning')}`}>
+                                        {formData.status}
+                                    </h3>
+                                </div>
+
+                                <div className="alert alert-info small border-0 bg-opacity-10 bg-info text-info">
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Finalizing the event will:
+                                    <ul className="mb-0 ps-3 mt-1">
+                                        <li>Charge all registered players €{parseFloat(formData.price_per_person).toFixed(2)}</li>
+                                        <li>Close the event for new registrations</li>
+                                        <li>Add transactions to user wallets</li>
+                                    </ul>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="btn btn-danger w-100 py-2"
+                                    onClick={handleFinalize}
+                                    disabled={finalizeLoading || formData.status === 'closed' || formData.status === 'canceled'}
+                                >
+                                    {finalizeLoading ? 'Processing...' : (formData.status === 'closed' ? 'Event Finalized' : 'Finalize Event & Charge')}
+                                </button>
+                                {formData.status === 'closed' && (
+                                    <div className="text-center mt-2 text-muted small">
+                                        <i className="bi bi-check-circle-fill text-success me-1"></i>
+                                        Payments have been processed.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

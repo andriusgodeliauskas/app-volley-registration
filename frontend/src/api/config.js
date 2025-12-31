@@ -11,6 +11,11 @@ export const API_ENDPOINTS = {
   ADMIN_USER_UPDATE: `${API_BASE_URL}/admin_user_update.php`,
   ADMIN_EVENT_DETAILS: `${API_BASE_URL}/admin_event_details.php`,
   ADMIN_EVENT_UPDATE: `${API_BASE_URL}/admin_event_update.php`,
+  ADMIN_TOPUP: `${API_BASE_URL}/admin_topup.php`,
+  ADMIN_EVENT_FINALIZE: `${API_BASE_URL}/admin_event_finalize.php`,
+
+  // User Actions
+  TRANSACTIONS: `${API_BASE_URL}/transactions.php`,
 
   // User Profile
   USER: `${API_BASE_URL}/user.php`,
@@ -27,7 +32,6 @@ export const API_ENDPOINTS = {
 
   // Wallet
   WALLET: `${API_BASE_URL}/wallet.php`,
-  TRANSACTIONS: `${API_BASE_URL}/transactions.php`,
 
   // Groups
   GROUPS: `${API_BASE_URL}/groups.php`,

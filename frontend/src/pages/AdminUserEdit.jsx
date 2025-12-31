@@ -21,6 +21,9 @@ function AdminUserEdit() {
         is_active: true
     });
 
+    const [topUpData, setTopUpData] = useState({ amount: '', description: '' });
+    const [topUpLoading, setTopUpLoading] = useState(false);
+
     useEffect(() => {
         if (id) {
             fetchUserDetails();
@@ -85,6 +88,36 @@ function AdminUserEdit() {
         }
     };
 
+    const handleTopUp = async (e) => {
+        e.preventDefault();
+        setTopUpLoading(true);
+        setError(null);
+        setSuccessMessage('');
+
+        try {
+            const payload = {
+                user_id: id,
+                amount: parseFloat(topUpData.amount),
+                description: topUpData.description
+            };
+
+            const response = await post(API_ENDPOINTS.ADMIN_TOPUP, payload);
+
+            if (response.success) {
+                setSuccessMessage(`Successfully topped up wallet by €${payload.amount}`);
+                setTopUpData({ amount: '', description: '' });
+                fetchUserDetails(); // Refresh balance
+            } else {
+                setError(response.message || 'Failed to top up wallet');
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred during top up.');
+        } finally {
+            setTopUpLoading(false);
+        }
+    };
+
+
     if (loading) {
         return (
             <div className="min-vh-100 bg-dark d-flex align-items-center justify-content-center">
@@ -135,7 +168,7 @@ function AdminUserEdit() {
                     </Link>
                 </div>
 
-                <div className="row justify-content-center">
+                <div className="row g-4">
                     <div className="col-lg-8">
                         <div className="card bg-secondary bg-opacity-25 border-secondary">
                             <div className="card-body p-4">
@@ -236,6 +269,59 @@ function AdminUserEdit() {
                                             {submitting ? 'Saving...' : 'Save Changes'}
                                         </button>
                                     </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Wallet Management Card */}
+                    <div className="col-lg-4">
+                        <div className="card bg-secondary bg-opacity-25 border-secondary h-100">
+                            <div className="card-header bg-transparent border-secondary text-white fw-bold">
+                                <i className="bi bi-wallet2 me-2"></i> Wallet Management
+                            </div>
+                            <div className="card-body p-4">
+                                <div className="mb-4 text-center p-3 bg-dark rounded border border-secondary">
+                                    <small className="text-muted text-uppercase d-block mb-1">Current Balance</small>
+                                    <h2 className={`mb-0 ${formData.balance < 0 ? 'text-danger' : 'text-success'}`}>
+                                        €{parseFloat(formData.balance).toFixed(2)}
+                                    </h2>
+                                </div>
+
+                                <form onSubmit={handleTopUp}>
+                                    <div className="mb-3">
+                                        <label className="form-label text-light small">Top Up Amount (€)</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text bg-dark text-white border-secondary">€</span>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0.01"
+                                                className="form-control bg-dark text-white border-secondary"
+                                                value={topUpData.amount}
+                                                onChange={(e) => setTopUpData({ ...topUpData, amount: e.target.value })}
+                                                placeholder="0.00"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-light small">Description</label>
+                                        <input
+                                            type="text"
+                                            className="form-control bg-dark text-white border-secondary"
+                                            value={topUpData.description}
+                                            onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
+                                            placeholder="Manual Top-up"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success w-100"
+                                        disabled={topUpLoading}
+                                    >
+                                        {topUpLoading ? 'Processing...' : 'Add Funds'}
+                                    </button>
                                 </form>
                             </div>
                         </div>

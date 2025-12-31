@@ -97,13 +97,6 @@ function handleRegister(array $currentUser): void
         //     sendError('Event is full. No spots available.', 400);
         // }
         
-        // Fetch current user's balance (the person paying)
-        $stmt = $pdo->prepare("SELECT balance FROM users WHERE id = ? FOR UPDATE");
-        $stmt->execute([$currentUser['id']]);
-        $userData = $stmt->fetch();
-        $currentBalance = (float)$userData['balance'];
-        $eventPrice = (float)$event['price_per_person'];
-
         // Check if already registered (or canceled)
         $stmt = $pdo->prepare("
             SELECT id, status FROM registrations 
@@ -137,32 +130,12 @@ function handleRegister(array $currentUser): void
             $registrationId = $pdo->lastInsertId();
         }
         
-        // Deduct balance
-        if ($eventPrice > 0) {
-            $newBalance = $currentBalance - $eventPrice;
-            
-            $stmt = $pdo->prepare("UPDATE users SET balance = ? WHERE id = ?");
-            $stmt->execute([$newBalance, $currentUser['id']]);
-            
-            // Record transaction
-            $stmt = $pdo->prepare("
-                INSERT INTO transactions (user_id, amount, type, description, reference_id)
-                VALUES (?, ?, 'payment', ?, ?)
-            ");
-            $stmt->execute([
-                $currentUser['id'],
-                -$eventPrice,
-                "Registration for: {$event['title']}",
-                $registrationId
-            ]);
-        }
+        // No immediate balance deduction
         
         $pdo->commit();
         
         sendSuccess([
-            'registration_id' => (int)$registrationId,
-            'new_balance' => $newBalance ?? $currentBalance,
-            'amount_paid' => $eventPrice
+            'registration_id' => (int)$registrationId
         ], 'Successfully registered for event', 201);
         
     } catch (PDOException $e) {
@@ -211,7 +184,7 @@ function handleCancelRegistration(array $currentUser): void
         
         // Fetch registration with event details
         $stmt = $pdo->prepare("
-            SELECT r.id as registration_id, r.registered_by, e.title, e.price_per_person, e.date_time
+            SELECT r.id as registration_id, r.registered_by, e.title, e.date_time
             FROM registrations r
             JOIN events e ON r.event_id = e.id
             WHERE r.user_id = ? AND r.event_id = ? AND r.status = 'registered'
@@ -225,50 +198,30 @@ function handleCancelRegistration(array $currentUser): void
             sendError('Registration not found', 404);
         }
         
-        // Check if event is in the future (allow cancellation up until event time)
-        if (strtotime($registration['date_time']) <= time()) {
+        $eventTime = strtotime($registration['date_time']);
+        $now = time();
+
+        // Check if event is in the past
+        if ($eventTime <= $now) {
             $pdo->rollBack();
             sendError('Cannot cancel registration for past events', 400);
+        }
+        
+        // Check if less than 1 hour before event
+        if (($eventTime - $now) < 3600) {
+            $pdo->rollBack();
+            sendError('Cannot cancel registration less than 1 hour before the event', 400);
         }
         
         // Update registration status
         $stmt = $pdo->prepare("UPDATE registrations SET status = 'canceled' WHERE id = ?");
         $stmt->execute([$registration['registration_id']]);
         
-        // Refund balance to the person who paid
-        $payerId = (int)$registration['registered_by'];
-        $refundAmount = (float)$registration['price_per_person'];
-        
-        if ($refundAmount > 0) {
-            $stmt = $pdo->prepare("UPDATE users SET balance = balance + ? WHERE id = ?");
-            $stmt->execute([$refundAmount, $payerId]);
-            
-            // Record refund transaction
-            $stmt = $pdo->prepare("
-                INSERT INTO transactions (user_id, amount, type, description, reference_id)
-                VALUES (?, ?, 'refund', ?, ?)
-            ");
-            $stmt->execute([
-                $payerId,
-                $refundAmount,
-                "Cancellation refund: {$registration['title']}",
-                $registration['registration_id']
-            ]);
-            
-            // Fetch updated balance if refund is for current user
-            if ($payerId === $currentUser['id']) {
-                $stmt = $pdo->prepare("SELECT balance FROM users WHERE id = ?");
-                $stmt->execute([$currentUser['id']]);
-                $newBalance = (float)$stmt->fetchColumn();
-            }
-        }
-        
+        // No refund logic needed as no payment was taken upfront
+
         $pdo->commit();
         
-        sendSuccess([
-            'refunded_amount' => $refundAmount,
-            'new_balance' => $newBalance ?? null
-        ], 'Registration cancelled successfully');
+        sendSuccess([], 'Registration cancelled successfully');
         
     } catch (PDOException $e) {
         $pdo->rollBack();
