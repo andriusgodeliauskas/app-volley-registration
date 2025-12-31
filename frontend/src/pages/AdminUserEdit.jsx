@@ -21,7 +21,7 @@ function AdminUserEdit() {
         is_active: true
     });
 
-    const [topUpData, setTopUpData] = useState({ amount: '', description: '' });
+    const [topUpData, setTopUpData] = useState({ amount: '', description: '', created_at: '' });
     const [topUpLoading, setTopUpLoading] = useState(false);
 
     useEffect(() => {
@@ -98,14 +98,15 @@ function AdminUserEdit() {
             const payload = {
                 user_id: id,
                 amount: parseFloat(topUpData.amount),
-                description: topUpData.description
+                description: topUpData.description,
+                created_at: topUpData.created_at
             };
 
             const response = await post(API_ENDPOINTS.ADMIN_TOPUP, payload);
 
             if (response.success) {
                 setSuccessMessage(`Successfully topped up wallet by €${payload.amount}`);
-                setTopUpData({ amount: '', description: '' });
+                setTopUpData({ amount: '', description: '', created_at: '' });
                 fetchUserDetails(); // Refresh balance
             } else {
                 setError(response.message || 'Failed to top up wallet');
@@ -305,30 +306,41 @@ function AdminUserEdit() {
                                             />
                                         </div>
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label text-light small">Description</label>
-                                        <input
-                                            type="text"
-                                            className="form-control bg-dark text-white border-secondary"
-                                            value={topUpData.description}
-                                            onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
-                                            placeholder="Manual Top-up"
-                                        />
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="btn btn-success w-100"
-                                        disabled={topUpLoading}
-                                    >
-                                        {topUpLoading ? 'Processing...' : 'Add Funds'}
-                                    </button>
-                                </form>
                             </div>
-                        </div>
+                            <div className="mb-3">
+                                <label className="form-label text-light small">Date (Optional)</label>
+                                <input
+                                    type="datetime-local"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    value={topUpData.created_at}
+                                    onChange={(e) => setTopUpData({ ...topUpData, created_at: e.target.value })}
+                                />
+                                <div className="form-text text-muted small">Leave empty for current time</div>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label text-light small">Description</label>
+                                <input
+                                    type="text"
+                                    className="form-control bg-dark text-white border-secondary"
+                                    value={topUpData.description}
+                                    onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
+                                    placeholder="Manual Top-up"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="btn btn-success w-100"
+                                disabled={topUpLoading}
+                            >
+                                {topUpLoading ? 'Processing...' : 'Add Funds'}
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+            </div >
+        </div >
     );
 }
 
