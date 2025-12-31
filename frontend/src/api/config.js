@@ -13,6 +13,8 @@ export const API_ENDPOINTS = {
   ADMIN_EVENT_UPDATE: `${API_BASE_URL}/admin_event_update.php`,
   ADMIN_TOPUP: `${API_BASE_URL}/admin_topup.php`,
   ADMIN_EVENT_FINALIZE: `${API_BASE_URL}/admin_event_finalize.php`,
+  ADMIN_USER_TRANSACTIONS: `${API_BASE_URL}/admin_user_transactions.php`,
+  ADMIN_TRANSACTION_UPDATE: `${API_BASE_URL}/admin_transaction_update.php`,
 
   // User Actions
   TRANSACTIONS: `${API_BASE_URL}/transactions.php`,

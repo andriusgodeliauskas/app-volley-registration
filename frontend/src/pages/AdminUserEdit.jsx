@@ -24,9 +24,14 @@ function AdminUserEdit() {
     const [topUpData, setTopUpData] = useState({ amount: '', description: '', created_at: '' });
     const [topUpLoading, setTopUpLoading] = useState(false);
 
+    const [userTransactions, setUserTransactions] = useState([]);
+    const [editingTx, setEditingTx] = useState(null);
+    const [editTxData, setEditTxData] = useState({ amount: '', description: '', created_at: '' });
+
     useEffect(() => {
         if (id) {
             fetchUserDetails();
+            fetchTransactions();
         }
     }, [id]);
 
@@ -115,6 +120,56 @@ function AdminUserEdit() {
             setError(err.message || 'An error occurred during top up.');
         } finally {
             setTopUpLoading(false);
+        }
+    };
+
+    const fetchTransactions = async () => {
+        try {
+            const response = await get(`${API_ENDPOINTS.ADMIN_USER_TRANSACTIONS}?user_id=${id}`);
+            if (response.success && response.data?.transactions) {
+                setUserTransactions(response.data.transactions);
+            }
+        } catch (error) {
+            console.error('Failed to fetch transactions:', error);
+        }
+    };
+
+    const startEditingTx = (tx) => {
+        setEditingTx(tx.id);
+        setEditTxData({
+            amount: tx.amount,
+            description: tx.description,
+            created_at: tx.created_at
+        });
+    };
+
+    const cancelEditTx = () => {
+        setEditingTx(null);
+        setEditTxData({ amount: '', description: '', created_at: '' });
+    };
+
+    const handleUpdateTransaction = async (txId) => {
+        if (!window.confirm('Updating this transaction will modify the user balance accordingly. Continue?')) {
+            return;
+        }
+
+        try {
+            const payload = {
+                transaction_id: txId,
+                ...editTxData
+            };
+            const response = await post(API_ENDPOINTS.ADMIN_TRANSACTION_UPDATE, payload);
+
+            if (response.success) {
+                setSuccessMessage('Transaction updated successfully');
+                setEditingTx(null);
+                fetchTransactions();
+                fetchUserDetails(); // Update balance display
+            } else {
+                setError(response.message || 'Failed to update transaction');
+            }
+        } catch (err) {
+            setError(err.message || 'Error updating transaction');
         }
     };
 
@@ -334,6 +389,107 @@ function AdminUserEdit() {
                                         {topUpLoading ? 'Processing...' : 'Add Funds'}
                                     </button>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Transaction History Row */}
+                <div className="row mt-4">
+                    <div className="col-12">
+                        <div className="card bg-secondary bg-opacity-25 border-secondary">
+                            <div className="card-header bg-transparent border-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+                                <span><i className="bi bi-clock-history me-2"></i> Transaction History</span>
+                                <button className="btn btn-sm btn-outline-light" onClick={fetchTransactions}>
+                                    <i className="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div className="card-body p-0">
+                                <div className="table-responsive">
+                                    <table className="table table-dark table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                                <th>Created By</th>
+                                                <th className="text-end">Amount</th>
+                                                <th className="text-end">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {userTransactions.map(tx => (
+                                                <tr key={tx.id}>
+                                                    {editingTx === tx.id ? (
+                                                        <>
+                                                            <td>
+                                                                <input
+                                                                    type="datetime-local"
+                                                                    className="form-control form-control-sm bg-dark text-white border-secondary"
+                                                                    value={editTxData.created_at}
+                                                                    onChange={e => setEditTxData({ ...editTxData, created_at: e.target.value })}
+                                                                />
+                                                            </td>
+                                                            <td className="text-capitalize">{tx.type}</td>
+                                                            <td>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control form-control-sm bg-dark text-white border-secondary"
+                                                                    value={editTxData.description}
+                                                                    onChange={e => setEditTxData({ ...editTxData, description: e.target.value })}
+                                                                />
+                                                            </td>
+                                                            <td className="text-muted small">{tx.created_by_name || '-'}</td>
+                                                            <td>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    className="form-control form-control-sm bg-dark text-white border-secondary text-end"
+                                                                    value={editTxData.amount}
+                                                                    onChange={e => setEditTxData({ ...editTxData, amount: e.target.value })}
+                                                                />
+                                                            </td>
+                                                            <td className="text-end">
+                                                                <button className="btn btn-sm btn-success me-1" onClick={() => handleUpdateTransaction(tx.id)}>
+                                                                    <i className="bi bi-check"></i>
+                                                                </button>
+                                                                <button className="btn btn-sm btn-outline-secondary" onClick={cancelEditTx}>
+                                                                    <i className="bi bi-x"></i>
+                                                                </button>
+                                                            </td>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <td>{new Date(tx.created_at).toLocaleString('en-GB')}</td>
+                                                            <td>
+                                                                <span className={`badge ${tx.type === 'topup' ? 'bg-success' : 'bg-primary'}`}>
+                                                                    {tx.type}
+                                                                </span>
+                                                            </td>
+                                                            <td>{tx.description}</td>
+                                                            <td className="text-muted small">{tx.created_by_name || '-'}</td>
+                                                            <td className={`text-end fw-bold ${parseFloat(tx.amount) >= 0 ? 'text-success' : 'text-danger'}`}>
+                                                                €{parseFloat(tx.amount).toFixed(2)}
+                                                            </td>
+                                                            <td className="text-end">
+                                                                {user?.role === 'super_admin' && (
+                                                                    <button className="btn btn-sm btn-outline-warning" onClick={() => startEditingTx(tx)}>
+                                                                        <i className="bi bi-pencil"></i>
+                                                                    </button>
+                                                                )}
+                                                            </td>
+                                                        </>
+                                                    )}
+                                                </tr>
+                                            ))}
+                                            {userTransactions.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="6" className="text-center py-4 text-muted">No transactions found</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
