@@ -306,39 +306,38 @@ function AdminUserEdit() {
                                             />
                                         </div>
                                     </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-light small">Date (Optional)</label>
+                                        <input
+                                            type="datetime-local"
+                                            className="form-control bg-dark text-white border-secondary"
+                                            value={topUpData.created_at}
+                                            onChange={(e) => setTopUpData({ ...topUpData, created_at: e.target.value })}
+                                        />
+                                        <div className="form-text text-muted small">Leave empty for current time</div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-light small">Description</label>
+                                        <input
+                                            type="text"
+                                            className="form-control bg-dark text-white border-secondary"
+                                            value={topUpData.description}
+                                            onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
+                                            placeholder="Manual Top-up"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success w-100"
+                                        disabled={topUpLoading}
+                                    >
+                                        {topUpLoading ? 'Processing...' : 'Add Funds'}
+                                    </button>
+                                </form>
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label text-light small">Date (Optional)</label>
-                                <input
-                                    type="datetime-local"
-                                    className="form-control bg-dark text-white border-secondary"
-                                    value={topUpData.created_at}
-                                    onChange={(e) => setTopUpData({ ...topUpData, created_at: e.target.value })}
-                                />
-                                <div className="form-text text-muted small">Leave empty for current time</div>
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label text-light small">Description</label>
-                                <input
-                                    type="text"
-                                    className="form-control bg-dark text-white border-secondary"
-                                    value={topUpData.description}
-                                    onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
-                                    placeholder="Manual Top-up"
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="btn btn-success w-100"
-                                disabled={topUpLoading}
-                            >
-                                {topUpLoading ? 'Processing...' : 'Add Funds'}
-                            </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
             </div >
         </div >
     );

@@ -60,12 +60,14 @@ function handleTopUp(array $adminUser): void
         $stmt = $pdo->prepare("UPDATE users SET balance = ? WHERE id = ?");
         $stmt->execute([$newBalance, $userId]);
         
+    $createdAt = !empty($input['created_at']) ? $input['created_at'] : date('Y-m-d H:i:s');
+        
         // Record transaction
         $stmt = $pdo->prepare("
-            INSERT INTO transactions (user_id, amount, type, description, created_by)
-            VALUES (?, ?, 'topup', ?, ?)
+            INSERT INTO transactions (user_id, amount, type, description, created_by, created_at)
+            VALUES (?, ?, 'topup', ?, ?, ?)
         ");
-        $stmt->execute([$userId, $amount, $description, $adminUser['id']]);
+        $stmt->execute([$userId, $amount, $description, $adminUser['id'], $createdAt]);
         
         $pdo->commit();
         
