@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { get, API_ENDPOINTS } from '../api/config';
 import Navbar from '../components/Navbar';
 
 export default function Wallet() {
+    const { t } = useLanguage();
 
     const CopyValue = ({ value, label }) => {
         const [copied, setCopied] = useState(false);
@@ -23,7 +25,7 @@ export default function Wallet() {
                     <button
                         className="btn btn-link text-decoration-none p-0 text-muted"
                         onClick={handleCopy}
-                        title="Copy to clipboard"
+                        title={t('wallet.copy_tooltip')}
                         style={{ minWidth: '24px' }}
                     >
                         <i className={`bi ${copied ? 'bi-check-lg text-success' : 'bi-copy'}`}></i>
@@ -83,7 +85,7 @@ export default function Wallet() {
         return (
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">{t('common.loading')}</span>
                 </div>
             </div>
         );
@@ -100,11 +102,11 @@ export default function Wallet() {
                         {/* Balance Card */}
                         <div className="dash-card card-wallet mb-4">
                             <div className="dash-card-header">
-                                <div className="dash-card-title">Current Balance</div>
+                                <div className="dash-card-title">{t('wallet.balance')}</div>
                                 <div className="dash-card-icon">💰</div>
                             </div>
                             <div className="dash-card-value">{formatCurrency(balance)}</div>
-                            <div className="dash-card-subtitle opacity-75">Available funds</div>
+                            <div className="dash-card-subtitle opacity-75">{t('wallet.available')}</div>
                         </div>
 
                         {/* Top Up Instructions */}
@@ -112,22 +114,21 @@ export default function Wallet() {
                             <div className="section-header mb-3">
                                 <div className="section-title">
                                     <i className="bi bi-bank me-2 text-primary"></i>
-                                    Top Up Wallet
+                                    {t('wallet.topup_title')}
                                 </div>
                             </div>
                             <div className="p-0">
                                 <p className="text-muted small mb-4">
-                                    To add funds to your wallet, please make a bank transfer with the following details.
-                                    Funds will be credited manually by an administrator.
+                                    {t('wallet.topup_instructions')}
                                 </p>
 
-                                <CopyValue label="IBAN" value="LT447300010091739633" />
-                                <CopyValue label="Receiver" value="Andrius Godeliauskas" />
+                                <CopyValue label={t('wallet.iban')} value="LT447300010091739633" />
+                                <CopyValue label={t('wallet.receiver')} value="Andrius Godeliauskas" />
 
                                 <div className="mb-3">
-                                    <CopyValue label="Payment Purpose" value={`${user?.name} ${user?.surname || ''} Top Up`} />
+                                    <CopyValue label={t('wallet.payment_purpose')} value={`${user?.name} ${user?.surname || ''} Top Up`} />
                                     <small className="text-muted d-block mt-1">
-                                        * Please include your player name and surname exactly as registered.
+                                        {t('wallet.payment_note')}
                                     </small>
                                 </div>
                             </div>
@@ -140,23 +141,23 @@ export default function Wallet() {
                             <div className="section-header">
                                 <div className="section-title">
                                     <i className="bi bi-clock-history me-2 text-primary"></i>
-                                    Transaction History
+                                    {t('wallet.history')}
                                 </div>
                             </div>
                             <div className="p-0">
                                 {transactions.length === 0 ? (
                                     <div className="text-center py-5 text-muted">
                                         <i className="bi bi-receipt fs-1 opacity-25"></i>
-                                        <p className="mt-2">No transactions yet.</p>
+                                        <p className="mt-2">{t('wallet.no_transactions')}</p>
                                     </div>
                                 ) : (
                                     <div className="table-responsive">
                                         <table className="table table-hover align-middle mb-0">
                                             <thead className="bg-light">
                                                 <tr>
-                                                    <th className="border-0 ps-4">Date</th>
-                                                    <th className="border-0">Description</th>
-                                                    <th className="border-0 text-end pe-4">Amount</th>
+                                                    <th className="border-0 ps-4">{t('wallet.date')}</th>
+                                                    <th className="border-0">{t('wallet.desc')}</th>
+                                                    <th className="border-0 text-end pe-4">{t('wallet.amount')}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
