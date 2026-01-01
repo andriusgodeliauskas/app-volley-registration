@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get } from '../api/config';
 import Navbar from '../components/Navbar';
 
 function AllEvents() {
+    const { t } = useLanguage();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -18,7 +20,7 @@ function AllEvents() {
                 }
             } catch (err) {
                 console.error('Failed to fetch events:', err);
-                setError('Failed to load events. Please try again.');
+                setError(t('common.error'));
             } finally {
                 setLoading(false);
             }
@@ -53,13 +55,13 @@ function AllEvents() {
                 <div className="section">
                     <div className="section-header">
                         <div>
-                            <div className="section-title">📅 All Available Events</div>
-                            <div className="section-subtitle">Browse and register for all volleyball games</div>
+                            <div className="section-title">📅 {t('event.all_events')}</div>
+                            <div className="section-subtitle">{t('event.browse_register')}</div>
                         </div>
                     </div>
 
                     {loading ? (
-                        <div className="text-center py-5 text-muted">Loading events...</div>
+                        <div className="text-center py-5 text-muted">{t('common.loading')}</div>
                     ) : error ? (
                         <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger">
                             <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
@@ -67,8 +69,8 @@ function AllEvents() {
                         </div>
                     ) : events.length === 0 ? (
                         <div className="text-center py-5 text-muted">
-                            <p className="mb-0">No upcoming events scheduled at the moment.</p>
-                            <Link to="/dashboard" className="btn-custom mt-3">Back to Dashboard</Link>
+                            <p className="mb-0">{t('dash.no_events')}</p>
+                            <Link to="/dashboard" className="btn-custom mt-3">{t('common.back')}</Link>
                         </div>
                     ) : (
                         <div className="d-flex flex-column gap-3">
@@ -80,19 +82,19 @@ function AllEvents() {
                                     <div className="event-info">
                                         <div className="event-title">
                                             {formatDate(event.date_time)} {event.title}
-                                            {event.user_registered && <span className="event-badge">✓ Registered</span>}
+                                            {event.user_registered && <span className="event-badge">✓ {t('dash.registered')}</span>}
                                         </div>
                                         <div className="event-details">
                                             <div className="event-detail">📍 {event.location}</div>
                                             <div className="event-detail">📅 {formatDate(event.date_time)}, {formatTime(event.date_time)}</div>
                                             <div className="event-detail">
-                                                👥 {event.spots_available > 0 ? `${event.spots_available} spots left` : 'Full'} • {event.group_name}
+                                                👥 {event.spots_available > 0 ? `${event.spots_available} ${t('dash.spots_left')}` : t('dash.full')} • {event.group_name}
                                             </div>
                                             <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
                                         </div>
                                     </div>
                                     <div className="event-actions">
-                                        <Link to={`/event/${event.id}`} className="btn-custom">More info</Link>
+                                        <Link to={`/event/${event.id}`} className="btn-custom">{t('dash.more_info')}</Link>
                                     </div>
                                 </div>
                             ))}
