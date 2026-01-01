@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { get, post, API_ENDPOINTS } from '../api/config';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -14,7 +15,8 @@ const AVATAR_SEEDS = [
 const getAvatarUrl = (seed) => `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
 
 export default function Profile() {
-    const { user, updateUser } = useAuth(); // updateUser to sync context
+    const { user, updateUser } = useAuth();
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         name: '',
         surname: '',
