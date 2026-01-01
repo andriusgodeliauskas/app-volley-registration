@@ -64,7 +64,15 @@ function handleGetStats($pdo, $currentUser) {
         $stmt = $pdo->query("SELECT SUM(rent_price) FROM events WHERE date_time < NOW() OR status = 'closed'");
         $stats['total_rent_amount'] = (float)$stmt->fetchColumn() ?: 0.00;
         
-        $stats['pending_topups'] = 0; // Keeping structure consistent for now
+        // 6. Total Revenue (Transactions type='payment' are negative, so we simulate abs)
+        $stmt = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'payment'");
+        $total_revenue = abs((float)$stmt->fetchColumn() ?: 0.00);
+
+        // 7. Total Earnings (Revenue - Rent)
+        $stats['total_earnings'] = $total_revenue - $stats['total_rent_amount'];
+        
+        // Remove pending topups (deprecated)
+        unset($stats['pending_topups']);
 
         sendSuccess(['stats' => $stats]);
 
