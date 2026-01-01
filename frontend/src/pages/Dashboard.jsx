@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post, del } from '../api/config';
 import Navbar from '../components/Navbar';
 
@@ -14,6 +15,7 @@ import Navbar from '../components/Navbar';
  */
 function Dashboard() {
     const { user, logout, updateUser } = useAuth();
+    const { t } = useLanguage();
 
     // State
     const [balance, setBalance] = useState(parseFloat(user?.balance || 0));
