@@ -19,6 +19,7 @@ import AdminUsers from './pages/AdminUsers';
 import AdminUserEdit from './pages/AdminUserEdit';
 import AdminWallet from './pages/AdminWallet';
 import AdminTopups from './pages/AdminTopups';
+import AdminRent from './pages/AdminRent';
 
 function App() {
   return (
@@ -133,6 +134,14 @@ function App() {
             element={
               <ProtectedRoute roles={['super_admin', 'group_admin']}>
                 <AdminTopups />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/rent"
+            element={
+              <ProtectedRoute roles={['super_admin']}>
+                <AdminRent />
               </ProtectedRoute>
             }
           />

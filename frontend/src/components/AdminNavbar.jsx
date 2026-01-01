@@ -18,6 +18,9 @@ function AdminNavbar() {
                 <Link to="/admin/users" className={`nav-link-custom ${isActive('/admin/users')}`}>Users</Link>
                 <Link to="/admin/groups" className={`nav-link-custom ${isActive('/admin/groups')}`}>Groups</Link>
                 <Link to="/admin/events" className={`nav-link-custom ${isActive('/admin/events')}`}>Events</Link>
+                {user?.role === 'super_admin' && (
+                    <Link to="/admin/rent" className={`nav-link-custom ${isActive('/admin/rent')}`}>Rent</Link>
+                )}
                 <Link to="/admin/topups" className={`nav-link-custom ${isActive('/admin/topups')}`}>Top Ups</Link>
                 <Link to="/admin/wallet" className={`nav-link-custom ${isActive('/admin/wallet')}`}>Wallet</Link>
             </div>

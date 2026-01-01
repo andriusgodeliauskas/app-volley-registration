@@ -96,6 +96,17 @@ function AdminDashboard() {
                             {loading ? <span className="spinner-border spinner-border-sm"></span> : `€${stats.total_topups_amount?.toFixed(2) || '0.00'}`}
                         </div>
                     </div>
+                    {user?.role === 'super_admin' && (
+                        <div className="dash-card bg-danger text-white">
+                            <div className="dash-card-header text-white-50">
+                                <div className="dash-card-title text-white">Total Rent Cost</div>
+                                <div className="dash-card-icon text-white">🏟️</div>
+                            </div>
+                            <div className="dash-card-value text-white">
+                                {loading ? <span className="spinner-border spinner-border-sm"></span> : `€${stats.total_rent_amount?.toFixed(2) || '0.00'}`}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Admin Actions */}

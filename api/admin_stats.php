@@ -58,6 +58,11 @@ function handleGetStats($pdo, $currentUser) {
         // 4. Total Top Ups Amount
         $stmt = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'topup'");
         $stats['total_topups_amount'] = (float)$stmt->fetchColumn() ?: 0.00;
+
+        // 5. Total Rent Amount
+        // Sum rent_price for events that have ended
+        $stmt = $pdo->query("SELECT SUM(rent_price) FROM events WHERE date_time < NOW() OR status = 'closed'");
+        $stats['total_rent_amount'] = (float)$stmt->fetchColumn() ?: 0.00;
         
         $stats['pending_topups'] = 0; // Keeping structure consistent for now
 
