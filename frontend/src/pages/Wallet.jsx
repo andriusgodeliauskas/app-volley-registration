@@ -4,6 +4,33 @@ import { useAuth } from '../context/AuthContext';
 import { get, API_ENDPOINTS } from '../api/config';
 
 export default function Wallet() {
+
+    const CopyValue = ({ value, label }) => {
+        const [copied, setCopied] = useState(false);
+
+        const handleCopy = () => {
+            navigator.clipboard.writeText(value);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        };
+
+        return (
+            <div className="mb-3">
+                <label className="small text-muted text-uppercase fw-bold">{label}</label>
+                <div className="d-flex align-items-center justify-content-between">
+                    <div className="fw-bold fs-6 text-break me-2">{value}</div>
+                    <button
+                        className="btn btn-link text-decoration-none p-0 text-muted"
+                        onClick={handleCopy}
+                        title="Copy to clipboard"
+                        style={{ minWidth: '24px' }}
+                    >
+                        <i className={`bi ${copied ? 'bi-check-lg text-success' : 'bi-copy'}`}></i>
+                    </button>
+                </div>
+            </div>
+        );
+    };
     const { user } = useAuth();
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
@@ -100,19 +127,11 @@ export default function Wallet() {
                                     Funds will be credited manually by an administrator.
                                 </p>
 
-                                <div className="mb-3">
-                                    <label className="small text-muted text-uppercase fw-bold">IBAN</label>
-                                    <div className="fw-bold fs-6">LT447300010091739633</div>
-                                </div>
+                                <CopyValue label="IBAN" value="LT447300010091739633" />
+                                <CopyValue label="Receiver" value="Andrius Godeliauskas" />
 
                                 <div className="mb-3">
-                                    <label className="small text-muted text-uppercase fw-bold">Receiver</label>
-                                    <div className="fw-bold fs-6">Andrius Godeliauskas</div>
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="small text-muted text-uppercase fw-bold">Payment Purpose</label>
-                                    <div className="fw-bold fs-6">{user?.name} Top Up</div>
+                                    <CopyValue label="Payment Purpose" value={`${user?.name} Top Up`} />
                                     <small className="text-muted d-block mt-1">
                                         * Please include your player name and surname exactly as registered.
                                     </small>
