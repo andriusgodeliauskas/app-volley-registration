@@ -57,7 +57,7 @@ function Dashboard() {
                 setEvents(response.data.events);
             }
         } catch (err) {
-            setError('Failed to load events. Please try again.');
+            setError(t('dash.error_register'));
             console.error('Failed to fetch events:', err);
         } finally {
             setEventsLoading(false);
@@ -148,7 +148,7 @@ function Dashboard() {
                             : event
                     ));
 
-                    setSuccessMessage(`Successfully registered for "${eventTitle}"!`);
+                    setSuccessMessage(t('dash.registration_success'));
                     setTimeout(() => setSuccessMessage(''), 5000);
                 }
             } else if (type === 'cancel') {
@@ -176,7 +176,7 @@ function Dashboard() {
                             : event
                     ));
 
-                    setSuccessMessage(`Registration cancelled. Refund of €${response.data?.refunded_amount?.toFixed(2) || '0.00'} processed.`);
+                    setSuccessMessage(t('dash.cancellation_success', { amount: response.data?.refunded_amount?.toFixed(2) || '0.00' }));
                     setTimeout(() => setSuccessMessage(''), 5000);
                 }
             }
@@ -223,7 +223,7 @@ function Dashboard() {
                         <div className="modal-content shadow border-0 rounded-4">
                             <div className="modal-header border-0 pb-0">
                                 <h5 className="modal-title fw-bold">
-                                    {confirmModal.type === 'register' ? 'Confirm Registration' : 'Confirm Cancellation'}
+                                    {confirmModal.type === 'register' ? t('event.confirm_register_title') : t('event.confirm_cancel_title')}
                                 </h5>
                                 <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
                             </div>
@@ -231,8 +231,8 @@ function Dashboard() {
                                 <p className="mb-0">Are you sure you want to {confirmModal.type === 'register' ? 'register for' : 'cancel your registration for'} <br /><strong>{confirmModal.eventTitle}</strong>?</p>
                             </div>
                             <div className="modal-footer border-0 pt-0">
-                                <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>No</button>
-                                <button type="button" className={`btn-custom ${confirmModal.type === 'register' ? 'btn-custom text-white bg-primary border-primary' : 'btn-danger-custom text-white bg-danger border-danger'} px-4`} onClick={handleConfirmAction}>Yes</button>
+                                <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>{t('common.no')}</button>
+                                <button type="button" className={`btn-custom ${confirmModal.type === 'register' ? 'btn-custom text-white bg-primary border-primary' : 'btn-danger-custom text-white bg-danger border-danger'} px-4`} onClick={handleConfirmAction}>{t('common.yes')}</button>
                             </div>
                         </div>
                     </div>
@@ -257,30 +257,30 @@ function Dashboard() {
 
                 {/* Welcome Section */}
                 <div className="welcome">
-                    <h1>Welcome back, {user?.name?.split(' ')[0]}! 👋</h1>
-                    <p>Browse upcoming events and register in one click.</p>
+                    <h1>{t('dash.welcome')}, {user?.name?.split(' ')[0]}! 👋</h1>
+                    <p>{t('event.browse_register')}</p>
                 </div>
 
                 {/* Upcoming Events */}
                 <div className="section">
                     <div className="section-header">
                         <div>
-                            <div className="section-title">📅 Upcoming Events</div>
-                            <div className="section-subtitle">Register for volleyball games near you</div>
+                            <div className="section-title">📅 {t('dash.upcoming')}</div>
+                            <div className="section-subtitle">{t('event.browse_register')}</div>
                         </div>
                         <button
                             className="btn-refresh"
                             onClick={() => { fetchEvents(); fetchUserData(); }}
                             disabled={eventsLoading}
                         >
-                            {eventsLoading ? 'Loading...' : '🔄 Refresh'}
+                            {eventsLoading ? t('common.loading') : '🔄 ' + t('common.refresh')}
                         </button>
                     </div>
 
                     {loading ? (
-                        <div className="text-center py-5 text-muted">Loading events...</div>
+                        <div className="text-center py-5 text-muted">{t('common.loading')}</div>
                     ) : events.length === 0 ? (
-                        <div className="text-center py-5 text-muted">No upcoming events found.</div>
+                        <div className="text-center py-5 text-muted">{t('dash.no_events')}</div>
                     ) : (
                         events.map(event => {
                             const isRegistered = event.user_registered;
@@ -295,26 +295,26 @@ function Dashboard() {
                                     <div className="event-info">
                                         <div className="event-title">
                                             {formatDate(event.date_time)} {event.title}
-                                            {isRegistered && <span className="event-badge">✓ Registered</span>}
+                                            {isRegistered && <span className="event-badge">✓ {t('dash.registered')}</span>}
                                         </div>
                                         <div className="event-details">
                                             <div className="event-detail">📍 {event.location}</div>
                                             <div className="event-detail">📅 {formatDate(event.date_time)}, {formatTime(event.date_time)}</div>
                                             <div className="event-detail">
-                                                👥 {event.spots_available > 0 ? `${event.spots_available} spots left` : 'Full'} • {event.group_name}
+                                                👥 {event.spots_available > 0 ? `${event.spots_available} ${t('dash.spots_left')}` : t('dash.full')} • {event.group_name}
                                             </div>
                                             <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
                                         </div>
                                     </div>
                                     <div className="event-actions">
-                                        <Link to={`/event/${event.id}`} className="btn-custom">More info</Link>
+                                        <Link to={`/event/${event.id}`} className="btn-custom">{t('dash.more_info')}</Link>
                                         {isRegistered ? (
                                             <button
                                                 className="btn-custom btn-danger-custom"
                                                 onClick={() => handleCancelClick(event)}
                                                 disabled={isProcessing}
                                             >
-                                                {isProcessing ? 'Cancelling...' : 'Cancel Registration'}
+                                                {isProcessing ? t('common.loading') : t('event.cancel_btn')}
                                             </button>
                                         ) : (
                                             <button
@@ -323,7 +323,7 @@ function Dashboard() {
                                                 onClick={() => handleRegister(event)}
                                                 disabled={isProcessing}
                                             >
-                                                {isProcessing ? 'Processing...' : (isFull ? 'Join Waitlist' : 'Register Now')}
+                                                {isProcessing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
                                             </button>
                                         )}
                                     </div>
@@ -337,36 +337,36 @@ function Dashboard() {
                 <div className="dashboard-cards">
                     <div className="dash-card card-wallet">
                         <div className="dash-card-header">
-                            <div className="dash-card-title">Wallet Balance</div>
+                            <div className="dash-card-title">{t('dash.balance_card')}</div>
                             <div className="dash-card-icon">💰</div>
                         </div>
                         <div className="dash-card-value">€{balance.toFixed(2)}</div>
-                        <div className="dash-card-subtitle">Your current balance</div>
-                        <Link to="/wallet" className="card-action">Top Up</Link>
+                        <div className="dash-card-subtitle">{t('wallet.available')}</div>
+                        <Link to="/wallet" className="card-action">{t('dash.top_up')}</Link>
                     </div>
 
                     <div className="dash-card card-registrations">
                         <div className="dash-card-header">
-                            <div className="dash-card-title">My Registrations</div>
+                            <div className="dash-card-title">{t('dash.my_registrations')}</div>
                             <div className="dash-card-icon">✅</div>
                         </div>
                         <div className="dash-card-value">{events.filter(e => e.user_registered).length}</div>
-                        <div className="dash-card-subtitle">Upcoming events you're registered for</div>
+                        <div className="dash-card-subtitle">{t('dash.upcoming')}</div>
                         {events.filter(e => e.user_registered).length > 0 ? (
-                            <Link to={`/event/${events.find(e => e.user_registered).id}`} className="card-action">More</Link>
+                            <Link to={`/event/${events.find(e => e.user_registered).id}`} className="card-action">{t('common.view')}</Link>
                         ) : (
-                            <button className="card-action opacity-50" disabled>More</button>
+                            <button className="card-action opacity-50" disabled>{t('common.view')}</button>
                         )}
                     </div>
 
                     <div className="dash-card card-available">
                         <div className="dash-card-header">
-                            <div className="dash-card-title">Available Events</div>
+                            <div className="dash-card-title">{t('dash.latest_events')}</div>
                             <div className="dash-card-icon">🎯</div>
                         </div>
                         <div className="dash-card-value">{events.filter(e => !e.user_registered && e.spots_available > 0).length}</div>
-                        <div className="dash-card-subtitle">Events with open spots</div>
-                        <Link to="/events" className="card-action">More</Link>
+                        <div className="dash-card-subtitle">{t('dash.find_events')}</div>
+                        <Link to="/events" className="card-action">{t('common.view')}</Link>
                     </div>
                 </div>
 
@@ -374,9 +374,9 @@ function Dashboard() {
                 <div className="quick-actions-section">
                     <h2 className="quick-actions-title">⚡ Quick Actions</h2>
                     <div className="action-buttons">
-                        <Link to="/events" className="action-btn">📅 View All Events</Link>
-                        <Link to="/wallet" className="action-btn">💳 Top Up Wallet</Link>
-                        <Link to="/children" className="action-btn">👨‍👩‍👧‍👦 Manage Family</Link>
+                        <Link to="/events" className="action-btn">📅 {t('dash.view_all')}</Link>
+                        <Link to="/wallet" className="action-btn">💳 {t('wallet.topup_title')}</Link>
+                        <Link to="/children" className="action-btn">👨‍👩‍👧‍👦 {t('children.title')}</Link>
                     </div>
                 </div>
 
@@ -385,7 +385,7 @@ function Dashboard() {
                     <div className="alert-custom">
                         <div className="alert-custom-icon">⚠️</div>
                         <div>
-                            <strong>Low balance!</strong> You have €{balance.toFixed(2)} remaining. <Link to="/wallet">Top up now</Link>
+                            <strong>{t('dash.insufficient_balance')}</strong> {t('wallet.available')}: €{balance.toFixed(2)}. <Link to="/wallet">{t('dash.top_up')}</Link>
                         </div>
                     </div>
                 )}
