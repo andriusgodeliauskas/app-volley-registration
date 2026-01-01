@@ -18,6 +18,7 @@ import AdminEventEdit from './pages/AdminEventEdit';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserEdit from './pages/AdminUserEdit';
 import AdminWallet from './pages/AdminWallet';
+import AdminTopups from './pages/AdminTopups';
 
 function App() {
   return (
@@ -124,6 +125,14 @@ function App() {
             element={
               <ProtectedRoute roles={['super_admin', 'group_admin']}>
                 <AdminWallet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/topups"
+            element={
+              <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                <AdminTopups />
               </ProtectedRoute>
             }
           />

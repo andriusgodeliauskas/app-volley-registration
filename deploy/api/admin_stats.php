@@ -55,10 +55,11 @@ function handleGetStats($pdo, $currentUser) {
         ");
         $stats['upcoming_events'] = (int)$stmt->fetchColumn();
 
-        // 4. Pending Top-ups (Placeholder)
-        // Currently we don't have a top-up request table. 
-        // Logic can be added here later.
-        $stats['pending_topups'] = 0;
+        // 4. Total Top Ups Amount
+        $stmt = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'topup'");
+        $stats['total_topups_amount'] = (float)$stmt->fetchColumn() ?: 0.00;
+        
+        $stats['pending_topups'] = 0; // Keeping structure consistent for now
 
         sendSuccess(['stats' => $stats]);
 

@@ -87,6 +87,15 @@ function AdminDashboard() {
                             {loading ? <span className="spinner-border spinner-border-sm"></span> : stats.pending_topups}
                         </div>
                     </div>
+                    <div className="dash-card bg-purple text-white" style={{ backgroundColor: '#6f42c1' }}>
+                        <div className="dash-card-header text-white-50">
+                            <div className="dash-card-title text-white">Total Top Ups</div>
+                            <div className="dash-card-icon text-white">💰</div>
+                        </div>
+                        <div className="dash-card-value text-white">
+                            {loading ? <span className="spinner-border spinner-border-sm"></span> : `€${stats.total_topups_amount?.toFixed(2) || '0.00'}`}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Admin Actions */}
