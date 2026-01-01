@@ -24,7 +24,7 @@ CREATE TABLE `users` (
     `password_hash` VARCHAR(255) NOT NULL,
     `role` ENUM('super_admin', 'group_admin', 'user') NOT NULL DEFAULT 'user',
     `balance` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
-    `avatar` VARCHAR(100) NULL DEFAULT 'Jack',
+    `avatar` VARCHAR(100) NULL DEFAULT 'Midnight',
     `parent_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'For child/sub-accounts, references parent user',
     `is_active` TINYINT(1) NOT NULL DEFAULT 1,
     `auth_token` VARCHAR(64) NULL DEFAULT NULL COMMENT 'Session auth token',

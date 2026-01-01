@@ -233,7 +233,7 @@ function Dashboard() {
                             <div className="dropdown">
                                 <button className="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
                                     <img
-                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${user?.avatar || 'Felix'}`}
+                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${user?.avatar || 'Midnight'}`}
                                         alt="Avatar"
                                         className="rounded-circle me-2 bg-light"
                                         style={{ width: '24px', height: '24px' }}

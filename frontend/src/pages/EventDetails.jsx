@@ -315,7 +315,7 @@ function EventDetails() {
                                                     </div>
                                                     <div className="d-flex align-items-center">
                                                         <img
-                                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Felix'}`}
+                                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
                                                             alt={attendee.name}
                                                             className="me-3 rounded-circle shadow-sm bg-light"
                                                             style={{ width: '40px', height: '40px' }}
@@ -351,7 +351,7 @@ function EventDetails() {
                                                             </div>
                                                             <div className="d-flex align-items-center">
                                                                 <img
-                                                                    src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Felix'}`}
+                                                                    src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
                                                                     alt={attendee.name}
                                                                     className="me-3 rounded-circle shadow-sm bg-light opacity-75"
                                                                     style={{ width: '40px', height: '40px', filter: 'grayscale(100%)' }}

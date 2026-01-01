@@ -18,7 +18,7 @@ export default function Profile() {
         name: '',
         surname: '',
         userEmail: '', // userEmail to avoid conflict with email input name if any
-        avatar: 'Felix'
+        avatar: 'Midnight'
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -35,7 +35,7 @@ export default function Profile() {
                         name: userData.name || '',
                         surname: userData.surname || '',
                         userEmail: userData.email || '',
-                        avatar: userData.avatar || 'Felix'
+                        avatar: userData.avatar || 'Midnight'
                     });
                 }
             } catch (err) {
