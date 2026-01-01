@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post, del } from '../api/config';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 function EventDetails() {
     const { t } = useLanguage();
@@ -15,6 +16,7 @@ function EventDetails() {
     const [error, setError] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [detailsCollapsed, setDetailsCollapsed] = useState(true); // For mobile view
 
     const fetchDetails = async () => {
         setLoading(true);
@@ -40,6 +42,16 @@ function EventDetails() {
             fetchDetails();
         }
     }, [id, user]);
+
+    // Auto-dismiss success message after 5 seconds
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                setSuccessMessage('');
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
 
     const [confirmModal, setConfirmModal] = useState({ show: false, type: null, eventId: null, eventTitle: null, price: null });
 
@@ -173,31 +185,53 @@ function EventDetails() {
             )}
 
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' },
+                    { label: t('nav.event_details'), path: `/event/${id}` }
+                ]} />
+
                 {/* Alerts */}
                 {successMessage && (
                     <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
                         <i className="bi bi-check-circle-fill alert-custom-icon"></i>
-                        <div>{successMessage} <button type="button" className="btn-close ms-2" onClick={() => setSuccessMessage('')}></button></div>
+                        <div className="flex-grow-1">{successMessage}</div>
+                        <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
                     </div>
                 )}
                 {error && data && (
                     <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
                         <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
-                        <div>{error} <button type="button" className="btn-close ms-2" onClick={() => setError(null)}></button></div>
+                        <div className="flex-grow-1">{error === 'Event is not open for registration' ? t('event.not_open') : error}</div>
+                        <button type="button" className="btn-close" onClick={() => setError(null)}></button>
                     </div>
                 )}
 
+                {/* Mobile: Title First */}
+                <div className="d-lg-none mb-3">
+                    <h2 className="fw-bold text-primary mb-3">{event.title}</h2>
+                </div>
+
                 <div className="row g-4">
-                    {/* Left Column: Event Details */}
-                    <div className="col-lg-5">
+                    {/* Left Column: Event Details (First on mobile) */}
+                    <div className="col-lg-5 order-1 event-details-column">
                         <div className="section h-100">
                             <div className="section-header">
-                                <div>
-                                    <div className="section-title text-primary">{event.title}</div>
-                                    <div className="section-subtitle">{t('event.details')}</div>
+                                <div className="w-100">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div className="section-title text-primary d-none d-lg-block">{event.title}</div>
+                                            <div className="section-title text-primary d-lg-none">{t('event.event_info')}</div>
+                                        </div>
+                                        <button
+                                            className="btn btn-sm btn-outline-primary d-lg-none"
+                                            onClick={() => setDetailsCollapsed(!detailsCollapsed)}
+                                        >
+                                            <i className={`bi bi-chevron-${detailsCollapsed ? 'down' : 'up'}`}></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="p-0">
+                            <div className={`p-0 event-details-content ${detailsCollapsed ? 'collapsed' : ''}`}>
                                 <div className="mb-4">
                                     <div className="d-flex align-items-center mb-3">
                                         <div className="bg-primary bg-opacity-10 p-2 rounded me-3 text-primary">
@@ -263,8 +297,8 @@ function EventDetails() {
                                     </div>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="d-grid gap-2">
+                                {/* Action Buttons - Desktop Only */}
+                                <div className="d-none d-lg-grid gap-2">
                                     {isRegistered ? (
                                         <button
                                             className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
@@ -287,8 +321,31 @@ function EventDetails() {
                         </div>
                     </div>
 
-                    {/* Right Column: Attendees List */}
-                    <div className="col-lg-7">
+                    {/* Mobile: Action Button (Second on mobile, between details and attendees) */}
+                    <div className="col-12 d-lg-none order-2">
+                        <div className="d-grid gap-2">
+                            {isRegistered ? (
+                                <button
+                                    className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
+                                    onClick={openCancelModal}
+                                    disabled={processing}
+                                >
+                                    {processing ? t('common.loading') : t('event.cancel_btn')}
+                                </button>
+                            ) : (
+                                <button
+                                    className={`btn-custom w-100 ${isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary'}`}
+                                    onClick={openRegisterModal}
+                                    disabled={processing}
+                                >
+                                    {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Right Column: Attendees List (Third on mobile, after button) */}
+                    <div className="col-lg-7 order-3 order-lg-2">
                         <div className="section h-100">
                             <div className="section-header">
                                 <div className="section-title">
@@ -325,7 +382,7 @@ function EventDetails() {
                                                         <div>
                                                             <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
                                                             <small className="text-muted">
-                                                                Registered: {(() => {
+                                                                {(() => {
                                                                     const d = new Date(attendee.registered_at);
                                                                     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
                                                                 })()}

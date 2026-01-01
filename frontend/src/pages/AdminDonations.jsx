@@ -96,36 +96,67 @@ function AdminDonations() {
                                 <p className="mt-2">{t('admin.no_donations')}</p>
                             </div>
                         ) : (
-                            <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th className="border-0 px-4 py-3">#</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.donation_date')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.donation_user')}</th>
-                                            <th className="border-0 px-4 py-3 text-end">{t('admin.donation_amount')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {donations.map(donation => (
-                                            <tr key={donation.id}>
-                                                <td className="px-4 text-muted small">#{donation.id}</td>
-                                                <td className="px-4">{formatDate(donation.created_at)}</td>
-                                                <td className="px-4">
-                                                    <div className="fw-semibold">{donation.user_name} {donation.user_surname}</div>
-                                                </td>
-                                                <td className="px-4 fw-bold text-success text-end">{formatCurrency(donation.amount)}</td>
+                            <>
+                                {/* Desktop Table View */}
+                                <div className="table-responsive d-none d-md-block">
+                                    <table className="table table-hover align-middle mb-0">
+                                        <thead className="bg-light">
+                                            <tr>
+                                                <th className="border-0 px-4 py-3">#</th>
+                                                <th className="border-0 px-4 py-3">{t('admin.donation_date')}</th>
+                                                <th className="border-0 px-4 py-3">{t('admin.donation_user')}</th>
+                                                <th className="border-0 px-4 py-3 text-end">{t('admin.donation_amount')}</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                    <tfoot className="bg-light">
-                                        <tr>
-                                            <td colSpan="3" className="px-4 py-3 fw-bold text-end">{t('admin.total')}:</td>
-                                            <td className="px-4 py-3 fw-bold text-success text-end fs-5">{formatCurrency(totalAmount)}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            {donations.map(donation => (
+                                                <tr key={donation.id}>
+                                                    <td className="px-4 text-muted small">#{donation.id}</td>
+                                                    <td className="px-4">{formatDate(donation.created_at)}</td>
+                                                    <td className="px-4">
+                                                        <div className="fw-semibold">{donation.user_name} {donation.user_surname}</div>
+                                                    </td>
+                                                    <td className="px-4 fw-bold text-success text-end">{formatCurrency(donation.amount)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                        <tfoot className="bg-light">
+                                            <tr>
+                                                <td colSpan="3" className="px-4 py-3 fw-bold text-end">{t('admin.total')}:</td>
+                                                <td className="px-4 py-3 fw-bold text-success text-end fs-5">{formatCurrency(totalAmount)}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                {/* Mobile Block View */}
+                                <div className="d-md-none">
+                                    {donations.map((donation) => (
+                                        <div key={donation.id} className="border rounded-3 p-3 mb-3" style={{ backgroundColor: '#f8f9fa' }}>
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <span className="text-muted small">#{donation.id}</span>
+                                                <span className="fw-bold fs-5 text-success">
+                                                    {formatCurrency(donation.amount)}
+                                                </span>
+                                            </div>
+                                            <div className="text-muted small mb-2">
+                                                {formatDate(donation.created_at)}
+                                            </div>
+                                            <div className="fw-semibold text-dark">
+                                                {donation.user_name} {donation.user_surname}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {/* Total Section for Mobile */}
+                                    <div className="border-top pt-3 mt-3">
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <span className="fw-bold">{t('admin.total')}:</span>
+                                            <span className="fw-bold text-success fs-5">{formatCurrency(totalAmount)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>

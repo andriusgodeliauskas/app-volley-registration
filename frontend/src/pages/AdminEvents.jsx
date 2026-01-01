@@ -9,6 +9,9 @@ function AdminEvents() {
     const { user, logout } = useAuth();
     const { t } = useLanguage();
     const [events, setEvents] = useState([]);
+    const [activeEvents, setActiveEvents] = useState([]);
+    const [pastEvents, setPastEvents] = useState([]);
+    const [isPastCollapsed, setIsPastCollapsed] = useState(true);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -46,7 +49,31 @@ function AdminEvents() {
             ]);
 
             if (eventsRes.success && eventsRes.data?.events) {
-                setEvents(eventsRes.data.events);
+                const allEvents = eventsRes.data.events;
+                setEvents(allEvents);
+
+                // Split events into active and past
+                const now = new Date();
+                const active = [];
+                const past = [];
+
+                allEvents.forEach(event => {
+                    // Parse date properly - handle MySQL datetime format
+                    const eventDate = new Date(event.date_time.replace(' ', 'T'));
+
+                    if (eventDate > now) {
+                        active.push(event);
+                    } else {
+                        past.push(event);
+                    }
+                });
+
+                // Sort: active by date ASC (nearest first), past by date DESC (newest first)
+                active.sort((a, b) => new Date(a.date_time.replace(' ', 'T')) - new Date(b.date_time.replace(' ', 'T')));
+                past.sort((a, b) => new Date(b.date_time.replace(' ', 'T')) - new Date(a.date_time.replace(' ', 'T')));
+
+                setActiveEvents(active);
+                setPastEvents(past);
             }
             if (groupsRes.success && groupsRes.data?.groups) {
                 setGroups(groupsRes.data.groups);
@@ -175,70 +202,150 @@ function AdminEvents() {
                     </div>
                 )}
 
-                {/* Events List */}
-                <div className="section">
-                    <div className="section-header">
-                        <div className="section-title">{t('admin.all_events')}</div>
+                {/* Loading State */}
+                {loading ? (
+                    <div className="text-center py-5">
+                        <div className="spinner-border text-primary"></div>
                     </div>
-                    {loading ? (
-                        <div className="text-center py-5">
-                            <div className="spinner-border text-primary"></div>
-                        </div>
-                    ) : events.length === 0 ? (
-                        <div className="text-center py-5 text-muted">
-                            <h5>{t('admin.no_events')}</h5>
-                            <p className="mb-0">{t('admin.no_events_subtitle')}</p>
-                        </div>
-                    ) : (
-                        <div className="d-flex flex-column gap-3">
-                            {events.map(event => (
-                                <div key={event.id} className="event-card">
-                                    <div className="event-icon">
-                                        {event.icon || '🏐'}
-                                    </div>
-                                    <div className="event-info">
-                                        <div className="event-title">
-                                            {event.title}
-                                            <span className={`badge rounded-pill ${event.status === 'open' ? 'bg-success' :
-                                                event.status === 'closed' ? 'bg-secondary' :
-                                                    event.status === 'canceled' ? 'bg-danger' : 'bg-info'
-                                                }`}>
-                                                {event.status}
-                                            </span>
-                                        </div>
-                                        <div className="event-details">
-                                            <div className="event-detail">🏐 {event.group_name}</div>
-                                            <div className="event-detail">📍 {event.location}</div>
-                                            <div className="event-detail">📅 {formatDate(event.date_time)}</div>
-                                            <div className="event-detail">
-                                                👥 {event.registered_count}/{event.max_players}
-                                                {event.spots_available <= 2 && event.spots_available > 0 && (
-                                                    <span className="badge bg-warning text-dark ms-1">{t('admin.event_almost_full')}</span>
-                                                )}
-                                                {event.spots_available <= 0 && (
-                                                    <span className="badge bg-danger ms-1">{t('admin.event_full')}</span>
-                                                )}
-                                            </div>
-                                            <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
-                                        </div>
-                                    </div>
-                                    <div className="event-actions">
-                                        <Link to={`/admin/events/edit/${event.id}`} className="btn-custom">
-                                            {t('common.edit')}
-                                        </Link>
-                                        <button
-                                            onClick={() => handleDuplicateEvent(event)}
-                                            className="btn-custom bg-primary text-white border-primary"
-                                            title={t('common.duplicate')}
-                                        >
-                                            <i className="bi bi-files me-1"></i> {t('common.duplicate')}
-                                        </button>
-                                    </div>
+                ) : events.length === 0 ? (
+                    <div className="text-center py-5 text-muted">
+                        <h5>{t('admin.no_events')}</h5>
+                        <p className="mb-0">{t('admin.no_events_subtitle')}</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* Active Events Block */}
+                        <div className="section mb-4">
+                            <div className="section-header">
+                                <div className="section-title">
+                                    {t('admin.active_events')}
+                                    <span className="badge bg-success ms-2">{activeEvents.length}</span>
                                 </div>
-                            ))}
+                            </div>
+                            <div className="section-body">
+                                {activeEvents.length === 0 ? (
+                                    <div className="text-center py-4 text-muted">
+                                        <p className="mb-0">{t('admin.no_active_events')}</p>
+                                    </div>
+                                ) : (
+                                    <div className="d-flex flex-column gap-3">
+                                        {activeEvents.map(event => (
+                                            <div key={event.id} className="event-card">
+                                                <div className="event-icon">
+                                                    {event.icon || '🏐'}
+                                                </div>
+                                                <div className="event-info">
+                                                    <div className="event-title">
+                                                        {event.title}
+                                                        <span className={`badge rounded-pill ${event.status === 'open' ? 'bg-success' :
+                                                            event.status === 'closed' ? 'bg-secondary' :
+                                                                event.status === 'canceled' ? 'bg-danger' : 'bg-info'
+                                                            }`}>
+                                                            {event.status}
+                                                        </span>
+                                                    </div>
+                                                    <div className="event-details">
+                                                        <div className="event-detail">🏐 {event.group_name}</div>
+                                                        <div className="event-detail">📍 {event.location}</div>
+                                                        <div className="event-detail">📅 {formatDate(event.date_time)}</div>
+                                                        <div className="event-detail">
+                                                            👥 {event.registered_count}/{event.max_players}
+                                                            {event.spots_available <= 2 && event.spots_available > 0 && (
+                                                                <span className="badge bg-warning text-dark ms-1">{t('admin.event_almost_full')}</span>
+                                                            )}
+                                                            {event.spots_available <= 0 && (
+                                                                <span className="badge bg-danger ms-1">{t('admin.event_full')}</span>
+                                                            )}
+                                                        </div>
+                                                        <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="event-actions">
+                                                    <Link to={`/admin/events/edit/${event.id}`} className="btn-custom">
+                                                        {t('common.edit')}
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDuplicateEvent(event)}
+                                                        className="btn-custom bg-primary text-white border-primary"
+                                                        title={t('common.duplicate')}
+                                                    >
+                                                        <i className="bi bi-files me-1"></i> {t('common.duplicate')}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    )}
-                </div>
+
+                        {/* Past Events Block (Collapsible) */}
+                        <div className="section">
+                            <div
+                                className="section-header clickable-header"
+                                onClick={() => setIsPastCollapsed(!isPastCollapsed)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <div className="section-title">
+                                    {t('admin.past_events')}
+                                    <span className="badge bg-secondary ms-2">{pastEvents.length}</span>
+                                    <i className={`bi ${isPastCollapsed ? 'bi-chevron-down' : 'bi-chevron-up'} ms-2`}></i>
+                                </div>
+                            </div>
+                            {!isPastCollapsed && (
+                                <div className="section-body">
+                                    {pastEvents.length === 0 ? (
+                                        <div className="text-center py-4 text-muted">
+                                            <p className="mb-0">{t('admin.no_past_events')}</p>
+                                        </div>
+                                    ) : (
+                                        <div className="d-flex flex-column gap-3">
+                                            {pastEvents.map(event => (
+                                                <div key={event.id} className="event-card past-event">
+                                                    <div className="event-icon">
+                                                        {event.icon || '🏐'}
+                                                    </div>
+                                                    <div className="event-info">
+                                                        <div className="event-title">
+                                                            {event.title}
+                                                            <span className={`badge rounded-pill ${event.status === 'open' ? 'bg-success' :
+                                                                event.status === 'closed' ? 'bg-secondary' :
+                                                                    event.status === 'canceled' ? 'bg-danger' : 'bg-info'
+                                                                }`}>
+                                                                {event.status}
+                                                            </span>
+                                                        </div>
+                                                        <div className="event-details">
+                                                            <div className="event-detail">🏐 {event.group_name}</div>
+                                                            <div className="event-detail">📍 {event.location}</div>
+                                                            <div className="event-detail">📅 {formatDate(event.date_time)}</div>
+                                                            <div className="event-detail">
+                                                                👥 {event.registered_count}/{event.max_players}
+                                                            </div>
+                                                            <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="event-actions">
+                                                        <Link to={`/admin/events/edit/${event.id}`} className="btn-custom">
+                                                            {t('common.edit')}
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDuplicateEvent(event)}
+                                                            className="btn-custom bg-primary text-white border-primary"
+                                                            title={t('common.duplicate')}
+                                                        >
+                                                            <i className="bi bi-files me-1"></i> {t('common.duplicate')}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* Create Event Modal */}

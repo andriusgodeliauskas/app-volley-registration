@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { API_ENDPOINTS, get, post } from '../api/config';
+import { API_ENDPOINTS, get, post, put } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminGroups() {
@@ -12,7 +12,9 @@ function AdminGroups() {
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [creating, setCreating] = useState(false);
+    const [updating, setUpdating] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -21,6 +23,8 @@ function AdminGroups() {
         name: '',
         description: ''
     });
+
+    const [editingGroup, setEditingGroup] = useState(null);
 
     // Fetch groups
     useEffect(() => {
@@ -59,6 +63,42 @@ function AdminGroups() {
             setError(err.message || t('admin.group_create_failed'));
         } finally {
             setCreating(false);
+        }
+    };
+
+    const handleEditClick = (group) => {
+        setEditingGroup({
+            id: group.id,
+            name: group.name,
+            max_depositors: group.max_depositors !== null ? group.max_depositors : ''
+        });
+        setShowEditModal(true);
+    };
+
+    const handleUpdateGroup = async (e) => {
+        e.preventDefault();
+        setUpdating(true);
+        setError('');
+
+        try {
+            const maxDepositors = editingGroup.max_depositors === '' ? null : parseInt(editingGroup.max_depositors, 10);
+
+            const response = await put(API_ENDPOINTS.GROUPS, {
+                group_id: editingGroup.id,
+                max_depositors: maxDepositors
+            });
+
+            if (response.success) {
+                setSuccess('Group updated successfully!');
+                setShowEditModal(false);
+                setEditingGroup(null);
+                fetchGroups();
+                setTimeout(() => setSuccess(''), 3000);
+            }
+        } catch (err) {
+            setError(err.message || 'Failed to update group');
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -125,9 +165,20 @@ function AdminGroups() {
                                         <div className="event-details">
                                             <div className="event-detail">📝 {group.description || '-'}</div>
                                             <div className="event-detail">👤 {group.owner_name || 'N/A'}</div>
+                                            <div className="event-detail">
+                                                💰 Max Depositors: {group.max_depositors !== null ? group.max_depositors : 'Unlimited'}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="event-actions">
+                                        {user?.role === 'super_admin' && (
+                                            <button
+                                                className="btn-custom bg-primary text-white me-2"
+                                                onClick={() => handleEditClick(group)}
+                                            >
+                                                <i className="bi bi-pencil me-1"></i> Edit Limit
+                                            </button>
+                                        )}
                                         <Link
                                             to={`/admin/events?group=${group.id}`}
                                             className="btn-custom"
@@ -189,6 +240,59 @@ function AdminGroups() {
                                         disabled={creating}
                                     >
                                         {creating ? 'Creating...' : 'Create Group'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Max Depositors Modal */}
+            {showEditModal && editingGroup && (
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content border-0 shadow rounded-4">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title">Edit Max Depositors Limit</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+                            </div>
+                            <form onSubmit={handleUpdateGroup}>
+                                <div className="modal-body">
+                                    <p className="text-muted small mb-3">
+                                        Group: <strong>{editingGroup.name}</strong>
+                                    </p>
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">
+                                            Max Depositors (leave empty for unlimited)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={editingGroup.max_depositors}
+                                            onChange={(e) => setEditingGroup({ ...editingGroup, max_depositors: e.target.value })}
+                                            placeholder="e.g., 50 (or leave empty)"
+                                            min="0"
+                                        />
+                                        <div className="form-text">
+                                            This limits how many users can have active deposits in this group.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer border-0 pt-0">
+                                    <button
+                                        type="button"
+                                        className="btn-custom bg-light border"
+                                        onClick={() => setShowEditModal(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn-custom bg-primary text-white"
+                                        disabled={updating}
+                                    >
+                                        {updating ? 'Updating...' : 'Update Limit'}
                                     </button>
                                 </div>
                             </form>

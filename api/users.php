@@ -31,8 +31,8 @@ function handleGetUsers($pdo) {
     try {
         // Fetch all users
         $stmt = $pdo->query("
-            SELECT id, name, email, role, balance, is_active, created_at, parent_id 
-            FROM users 
+            SELECT id, name, surname, email, role, balance, is_active, created_at, parent_id
+            FROM users
             ORDER BY created_at DESC
         ");
         $users = $stmt->fetchAll();

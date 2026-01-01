@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { get, post, API_ENDPOINTS } from '../api/config';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 const AVATAR_SEEDS = [
     'Felix', 'Aneka', 'Zack', 'Midnight', 'Abby',
@@ -96,6 +97,11 @@ export default function Profile() {
             <Navbar />
 
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' },
+                    { label: t('nav.profile'), path: '/profile' }
+                ]} />
+
                 <div className="row justify-content-center">
                     <div className="col-lg-8">
                         <div className="section">

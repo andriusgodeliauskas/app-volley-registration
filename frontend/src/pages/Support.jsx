@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { get, post, API_ENDPOINTS } from '../api/config';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function Support() {
     const { user } = useAuth();
@@ -109,6 +110,11 @@ export default function Support() {
             <Navbar />
 
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' },
+                    { label: t('nav.support'), path: '/support' }
+                ]} />
+
                 <div className="row g-4">
                     {/* Left Column: Support Info & Donation */}
                     <div className="col-lg-5">
@@ -200,34 +206,56 @@ export default function Support() {
                                         <p className="mt-2">{t('support.no_donations')}</p>
                                     </div>
                                 ) : (
-                                    <div className="table-responsive">
-                                        <table className="table table-hover align-middle mb-0">
-                                            <thead className="bg-light">
-                                                <tr>
-                                                    <th className="border-0 ps-4">{t('support.donor')}</th>
-                                                    <th className="border-0">{t('support.date')}</th>
-                                                    <th className="border-0 text-end pe-4">{t('support.amount')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {donations.map((donation) => (
-                                                    <tr key={donation.id}>
-                                                        <td className="ps-4">
-                                                            <div className="fw-semibold text-dark">
-                                                                {donation.user_name} {donation.user_surname}
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-muted small">
-                                                            {formatDate(donation.created_at)}
-                                                        </td>
-                                                        <td className="text-end pe-4 fw-bold text-success">
-                                                            {formatCurrency(donation.amount)}
-                                                        </td>
+                                    <>
+                                        {/* Desktop Table View */}
+                                        <div className="table-responsive d-none d-md-block">
+                                            <table className="table table-hover align-middle mb-0">
+                                                <thead className="bg-light">
+                                                    <tr>
+                                                        <th className="border-0 ps-4">{t('support.donor')}</th>
+                                                        <th className="border-0">{t('support.date')}</th>
+                                                        <th className="border-0 text-end pe-4">{t('support.amount')}</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </thead>
+                                                <tbody>
+                                                    {donations.map((donation) => (
+                                                        <tr key={donation.id}>
+                                                            <td className="ps-4">
+                                                                <div className="fw-semibold text-dark">
+                                                                    {donation.user_name} {donation.user_surname}
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-muted small">
+                                                                {formatDate(donation.created_at)}
+                                                            </td>
+                                                            <td className="text-end pe-4 fw-bold text-success">
+                                                                {formatCurrency(donation.amount)}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        {/* Mobile Block View */}
+                                        <div className="d-md-none">
+                                            {donations.map((donation) => (
+                                                <div key={donation.id} className="border rounded-3 p-3 mb-3" style={{ backgroundColor: '#f8f9fa' }}>
+                                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                                        <div className="fw-semibold text-dark">
+                                                            {donation.user_name} {donation.user_surname}
+                                                        </div>
+                                                        <span className="fw-bold fs-5 text-success">
+                                                            {formatCurrency(donation.amount)}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-muted small">
+                                                        {formatDate(donation.created_at)}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         </div>

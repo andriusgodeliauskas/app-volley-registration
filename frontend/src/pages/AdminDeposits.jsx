@@ -15,6 +15,14 @@ function AdminDeposits() {
     const [showConfirm, setShowConfirm] = useState(false);
     const [selectedDeposit, setSelectedDeposit] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [loadingUsers, setLoadingUsers] = useState(false);
+    const [newDeposit, setNewDeposit] = useState({
+        user_id: '',
+        amount: '50.00',
+        deposit_date: ''
+    });
 
     useEffect(() => {
         fetchDeposits();
@@ -35,6 +43,19 @@ function AdminDeposits() {
             setError(err.message || 'Failed to fetch deposits');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchUsers = async () => {
+        setLoadingUsers(true);
+        try {
+            const response = await get(API_ENDPOINTS.USERS);
+            const usersList = response.data?.users || response?.users || [];
+            setUsers(usersList);
+        } catch (err) {
+            console.error('Failed to fetch users:', err);
+        } finally {
+            setLoadingUsers(false);
         }
     };
 
@@ -68,6 +89,44 @@ function AdminDeposits() {
         }
     };
 
+    const handleCreateClick = () => {
+        fetchUsers();
+        setShowCreateModal(true);
+    };
+
+    const handleCreateDeposit = async (e) => {
+        e.preventDefault();
+        setProcessing(true);
+
+        try {
+            const payload = {
+                user_id: parseInt(newDeposit.user_id),
+                amount: parseFloat(newDeposit.amount)
+            };
+
+            if (newDeposit.deposit_date) {
+                payload.deposit_date = newDeposit.deposit_date;
+            }
+
+            const response = await post(API_ENDPOINTS.ADMIN_DEPOSIT_CREATE, payload);
+
+            if (response.success) {
+                alert('✅ Deposit created successfully for ' + response.user_name);
+                setShowCreateModal(false);
+                setNewDeposit({ user_id: '', amount: '50.00', deposit_date: '' });
+                await fetchDeposits();
+            } else {
+                alert('❌ Error: ' + (response.message || 'Failed to create deposit'));
+            }
+        } catch (error) {
+            console.error('Create deposit failed:', error);
+            const errorMsg = error.message || error.error || 'Failed to create deposit';
+            alert('❌ Error: ' + errorMsg);
+        } finally {
+            setProcessing(false);
+        }
+    };
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleString('lt-LT', {
             year: 'numeric',
@@ -92,12 +151,19 @@ function AdminDeposits() {
                         <h1 className="h3 fw-bold mb-1">{t('admin.deposits_title')}</h1>
                         <p className="text-muted mb-0">{t('admin.deposits_subtitle')}</p>
                     </div>
+                    <button
+                        className="btn btn-primary"
+                        onClick={handleCreateClick}
+                    >
+                        <i className="bi bi-plus-lg me-2"></i>
+                        Create Deposit
+                    </button>
                 </div>
 
                 {/* Statistics Cards */}
                 <div className="row mb-4">
                     <div className="col-md-4">
-                        <div className="dash-card card-wallet">
+                        <div className="dash-card card-primary">
                             <div className="dash-card-header">
                                 <div className="dash-card-title">{t('admin.total_deposits')}</div>
                                 <div className="dash-card-icon">💰</div>
@@ -109,7 +175,7 @@ function AdminDeposits() {
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <div className="dash-card card-success">
+                        <div className="dash-card card-primary">
                             <div className="dash-card-header">
                                 <div className="dash-card-title">{t('admin.active_deposits')}</div>
                                 <div className="dash-card-icon">✅</div>
@@ -142,45 +208,94 @@ function AdminDeposits() {
                                 <p className="mt-2">{t('admin.no_deposits')}</p>
                             </div>
                         ) : (
-                            <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th className="border-0 px-4 py-3">#</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.user')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.email')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.date')}</th>
-                                            <th className="border-0 px-4 py-3 text-end">{t('admin.amount')}</th>
-                                            <th className="border-0 px-4 py-3 text-center">{t('admin.status')}</th>
-                                            <th className="border-0 px-4 py-3 text-center">{t('admin.actions')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {deposits.map(deposit => (
-                                            <tr key={deposit.id}>
-                                                <td className="px-4 text-muted small">#{deposit.id}</td>
-                                                <td className="px-4">
-                                                    <div className="fw-semibold">{deposit.user_name} {deposit.user_surname}</div>
-                                                </td>
-                                                <td className="px-4 text-muted small">{deposit.user_email}</td>
-                                                <td className="px-4">
-                                                    <div>{formatDate(deposit.created_at)}</div>
-                                                    {deposit.refunded_at && (
-                                                        <div className="small text-muted">
-                                                            {t('admin.refunded')}: {formatDate(deposit.refunded_at)}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className="px-4 fw-bold text-primary text-end">{formatCurrency(deposit.amount)}</td>
-                                                <td className="px-4 text-center">
-                                                    {deposit.status === 'active' ? (
+                            <>
+                                {/* Desktop Table View */}
+                                <div className="table-responsive d-none d-md-block">
+                                    <table className="table table-hover align-middle mb-0">
+                                        <thead className="bg-light">
+                                            <tr>
+                                                <th className="border-0 px-4 py-3">#</th>
+                                                <th className="border-0 px-4 py-3">{t('admin.user')}</th>
+                                                <th className="border-0 px-4 py-3">{t('admin.email')}</th>
+                                                <th className="border-0 px-4 py-3">{t('admin.date')}</th>
+                                                <th className="border-0 px-4 py-3 text-end">{t('admin.amount')}</th>
+                                                <th className="border-0 px-4 py-3 text-center">{t('admin.status')}</th>
+                                                <th className="border-0 px-4 py-3 text-center">{t('admin.actions')}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {deposits.map(deposit => (
+                                                <tr key={deposit.id}>
+                                                    <td className="px-4 text-muted small">#{deposit.id}</td>
+                                                    <td className="px-4">
+                                                        <div className="fw-semibold">{deposit.user_name} {deposit.user_surname}</div>
+                                                    </td>
+                                                    <td className="px-4 text-muted small">{deposit.user_email}</td>
+                                                    <td className="px-4">
+                                                        <div>{formatDate(deposit.created_at)}</div>
+                                                        {deposit.refunded_at && (
+                                                            <div className="small text-muted">
+                                                                {t('admin.refunded')}: {formatDate(deposit.refunded_at)}
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-4 fw-bold text-primary text-end">{formatCurrency(deposit.amount)}</td>
+                                                    <td className="px-4 text-center">
+                                                        {deposit.status === 'active' ? (
+                                                            <span className="badge bg-success">{t('deposit.status_active')}</span>
+                                                        ) : (
+                                                            <span className="badge bg-secondary">{t('deposit.status_refunded')}</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-4 text-center">
+                                                        {deposit.status === 'active' ? (
+                                                            <button
+                                                                className="btn btn-sm btn-outline-danger"
+                                                                onClick={() => handleRefundClick(deposit)}
+                                                            >
+                                                                <i className="bi bi-arrow-return-left me-1"></i>
+                                                                {t('admin.refund_button')}
+                                                            </button>
+                                                        ) : (
+                                                            <span className="text-muted small">
+                                                                {t('admin.refunded_by')}: {deposit.refunded_by_name} {deposit.refunded_by_surname}
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Mobile Block View */}
+                                <div className="d-md-none">
+                                    {deposits.map((deposit) => (
+                                        <div key={deposit.id} className="border rounded-3 p-3 mb-3" style={{ backgroundColor: '#f8f9fa' }}>
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <span className="text-muted small">#{deposit.id}</span>
+                                                <span className="fw-bold fs-5 text-primary">
+                                                    {formatCurrency(deposit.amount)}
+                                                </span>
+                                            </div>
+                                            <div className="fw-semibold text-dark mb-1">
+                                                {deposit.user_name} {deposit.user_surname}
+                                            </div>
+                                            <div className="text-muted small mb-2">
+                                                {deposit.user_email}
+                                            </div>
+                                            <div className="text-muted small mb-2">
+                                                {formatDate(deposit.created_at)}
+                                            </div>
+                                            {deposit.refunded_at && (
+                                                <div className="text-muted small mb-2">
+                                                    {t('admin.refunded')}: {formatDate(deposit.refunded_at)}
+                                                </div>
+                                            )}
+                                            <div className="d-flex justify-content-between align-items-center mt-2">
+                                                {deposit.status === 'active' ? (
+                                                    <>
                                                         <span className="badge bg-success">{t('deposit.status_active')}</span>
-                                                    ) : (
-                                                        <span className="badge bg-secondary">{t('deposit.status_refunded')}</span>
-                                                    )}
-                                                </td>
-                                                <td className="px-4 text-center">
-                                                    {deposit.status === 'active' ? (
                                                         <button
                                                             className="btn btn-sm btn-outline-danger"
                                                             onClick={() => handleRefundClick(deposit)}
@@ -188,23 +303,26 @@ function AdminDeposits() {
                                                             <i className="bi bi-arrow-return-left me-1"></i>
                                                             {t('admin.refund_button')}
                                                         </button>
-                                                    ) : (
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <span className="badge bg-secondary">{t('deposit.status_refunded')}</span>
                                                         <span className="text-muted small">
-                                                            {t('admin.refunded_by')}: {deposit.refunded_by_name} {deposit.refunded_by_surname}
+                                                            {deposit.refunded_by_name} {deposit.refunded_by_surname}
                                                         </span>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* Confirmation Modal */}
+            {/* Refund Confirmation Modal */}
             {showConfirm && selectedDeposit && (
                 <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
                     <div className="modal-dialog modal-dialog-centered">
@@ -243,6 +361,96 @@ function AdminDeposits() {
                                     {processing ? t('common.loading') : t('common.yes')}
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Deposit Modal */}
+            {showCreateModal && (
+                <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Create Manual Deposit</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setShowCreateModal(false)}
+                                    disabled={processing}
+                                ></button>
+                            </div>
+                            <form onSubmit={handleCreateDeposit}>
+                                <div className="modal-body">
+                                    <div className="mb-3">
+                                        <label className="form-label">User *</label>
+                                        {loadingUsers ? (
+                                            <div className="text-center py-2">
+                                                <div className="spinner-border spinner-border-sm"></div>
+                                            </div>
+                                        ) : (
+                                            <select
+                                                className="form-select"
+                                                value={newDeposit.user_id}
+                                                onChange={(e) => setNewDeposit({ ...newDeposit, user_id: e.target.value })}
+                                                required
+                                            >
+                                                <option value="">Select user...</option>
+                                                {users.map(u => (
+                                                    <option key={u.id} value={u.id}>
+                                                        {u.name} {u.surname} ({u.email})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Amount (EUR) *</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={newDeposit.amount}
+                                            onChange={(e) => setNewDeposit({ ...newDeposit, amount: e.target.value })}
+                                            step="0.01"
+                                            min="0"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Deposit Date (Optional)</label>
+                                        <input
+                                            type="datetime-local"
+                                            className="form-control"
+                                            value={newDeposit.deposit_date}
+                                            onChange={(e) => setNewDeposit({ ...newDeposit, deposit_date: e.target.value })}
+                                        />
+                                        <div className="form-text">
+                                            Leave empty to use current date/time
+                                        </div>
+                                    </div>
+                                    <div className="alert alert-warning">
+                                        <i className="bi bi-exclamation-triangle me-2"></i>
+                                        This will deduct the amount from the user's balance and create a deposit record. The user will see this deposit in their deposit history.
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setShowCreateModal(false)}
+                                        disabled={processing}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={processing}
+                                    >
+                                        {processing ? 'Creating...' : 'Create Deposit'}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

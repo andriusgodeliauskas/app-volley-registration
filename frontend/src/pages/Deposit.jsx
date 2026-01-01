@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { get, post, API_ENDPOINTS } from '../api/config';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function Deposit() {
     const { user } = useAuth();
@@ -90,6 +91,11 @@ export default function Deposit() {
             <Navbar />
 
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' },
+                    { label: t('nav.deposit'), path: '/deposit' }
+                ]} />
+
                 <div className="row g-4">
                     {/* Left Column: Deposit Info & Payment */}
                     <div className="col-lg-5">
@@ -174,47 +180,80 @@ export default function Deposit() {
                                         <p className="mt-2">{t('deposit.no_deposits')}</p>
                                     </div>
                                 ) : (
-                                    <div className="table-responsive">
-                                        <table className="table table-hover align-middle mb-0">
-                                            <thead className="bg-light">
-                                                <tr>
-                                                    <th className="border-0 ps-4">{t('deposit.date')}</th>
-                                                    <th className="border-0 text-end">{t('deposit.amount')}</th>
-                                                    <th className="border-0 text-end pe-4">{t('deposit.status')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {deposits.map((deposit) => (
-                                                    <tr key={deposit.id}>
-                                                        <td className="ps-4">
-                                                            <div className="fw-semibold text-dark">
-                                                                {formatDate(deposit.created_at)}
-                                                            </div>
-                                                            {deposit.refunded_at && (
-                                                                <div className="small text-muted">
-                                                                    {t('deposit.refunded_at')}: {formatDate(deposit.refunded_at)}
-                                                                </div>
-                                                            )}
-                                                        </td>
-                                                        <td className="text-end fw-bold text-primary">
-                                                            {formatCurrency(deposit.amount)}
-                                                        </td>
-                                                        <td className="text-end pe-4">
-                                                            {deposit.status === 'active' ? (
-                                                                <span className="badge bg-success">
-                                                                    {t('deposit.status_active')}
-                                                                </span>
-                                                            ) : (
-                                                                <span className="badge bg-secondary">
-                                                                    {t('deposit.status_refunded')}
-                                                                </span>
-                                                            )}
-                                                        </td>
+                                    <>
+                                        {/* Desktop Table View */}
+                                        <div className="table-responsive d-none d-md-block">
+                                            <table className="table table-hover align-middle mb-0">
+                                                <thead className="bg-light">
+                                                    <tr>
+                                                        <th className="border-0 ps-4">{t('deposit.date')}</th>
+                                                        <th className="border-0 text-end">{t('deposit.amount')}</th>
+                                                        <th className="border-0 text-end pe-4">{t('deposit.status')}</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </thead>
+                                                <tbody>
+                                                    {deposits.map((deposit) => (
+                                                        <tr key={deposit.id}>
+                                                            <td className="ps-4">
+                                                                <div className="fw-semibold text-dark">
+                                                                    {formatDate(deposit.created_at)}
+                                                                </div>
+                                                                {deposit.refunded_at && (
+                                                                    <div className="small text-muted">
+                                                                        {t('deposit.refunded_at')}: {formatDate(deposit.refunded_at)}
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                            <td className="text-end fw-bold text-primary">
+                                                                {formatCurrency(deposit.amount)}
+                                                            </td>
+                                                            <td className="text-end pe-4">
+                                                                {deposit.status === 'active' ? (
+                                                                    <span className="badge bg-success">
+                                                                        {t('deposit.status_active')}
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="badge bg-secondary">
+                                                                        {t('deposit.status_refunded')}
+                                                                    </span>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        {/* Mobile Block View */}
+                                        <div className="d-md-none">
+                                            {deposits.map((deposit) => (
+                                                <div key={deposit.id} className="border rounded-3 p-3 mb-3" style={{ backgroundColor: '#f8f9fa' }}>
+                                                    <div className="text-muted small mb-2">
+                                                        {formatDate(deposit.created_at)}
+                                                    </div>
+                                                    {deposit.refunded_at && (
+                                                        <div className="text-muted small mb-2">
+                                                            {t('deposit.refunded_at')}: {formatDate(deposit.refunded_at)}
+                                                        </div>
+                                                    )}
+                                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                                        <div className="fw-bold fs-5 text-primary">
+                                                            {formatCurrency(deposit.amount)}
+                                                        </div>
+                                                        {deposit.status === 'active' ? (
+                                                            <span className="badge bg-success">
+                                                                {t('deposit.status_active')}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="badge bg-secondary">
+                                                                {t('deposit.status_refunded')}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         </div>

@@ -131,6 +131,13 @@ function Navbar() {
                                 {t('nav.wallet')}
                             </Link>
                             <Link
+                                to="/deposit"
+                                className={`mobile-menu-link ${isActive('/deposit')}`}
+                                onClick={closeMobileMenu}
+                            >
+                                {t('nav.deposit')}
+                            </Link>
+                            <Link
                                 to="/support"
                                 className={`mobile-menu-link ${isActive('/support')}`}
                                 onClick={closeMobileMenu}

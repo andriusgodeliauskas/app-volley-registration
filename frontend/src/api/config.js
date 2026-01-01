@@ -50,6 +50,7 @@ export const API_ENDPOINTS = {
   DEPOSIT_CREATE: `${API_BASE_URL}/deposit_create.php`,
   ADMIN_DEPOSITS: `${API_BASE_URL}/admin_deposits.php`,
   ADMIN_DEPOSIT_REFUND: `${API_BASE_URL}/admin_deposit_refund.php`,
+  ADMIN_DEPOSIT_CREATE: `${API_BASE_URL}/admin_deposit_create.php`,
 };
 
 /**

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { get, API_ENDPOINTS } from '../api/config';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function Wallet() {
     const { t } = useLanguage();
@@ -96,6 +97,11 @@ export default function Wallet() {
             <Navbar />
 
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' },
+                    { label: t('nav.wallet'), path: '/wallet' }
+                ]} />
+
                 <div className="row g-4">
                     {/* Left Column: Balance & Top Up */}
                     <div className="col-lg-4">
@@ -151,34 +157,56 @@ export default function Wallet() {
                                         <p className="mt-2">{t('wallet.no_transactions')}</p>
                                     </div>
                                 ) : (
-                                    <div className="table-responsive">
-                                        <table className="table table-hover align-middle mb-0">
-                                            <thead className="bg-light">
-                                                <tr>
-                                                    <th className="border-0 ps-4">{t('wallet.date')}</th>
-                                                    <th className="border-0">{t('wallet.desc')}</th>
-                                                    <th className="border-0 text-end pe-4">{t('wallet.amount')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {transactions.map((tx) => (
-                                                    <tr key={tx.id}>
-                                                        <td className="ps-4 text-muted small" style={{ width: '25%' }}>
-                                                            {formatDate(tx.created_at)}
-                                                        </td>
-                                                        <td>
-                                                            <div className="fw-semibold text-dark">{tx.description}</div>
-                                                            <div className="small text-muted text-capitalize">{tx.type}</div>
-                                                        </td>
-                                                        <td className={`text-end pe-4 fw-bold ${parseFloat(tx.amount) >= 0 ? 'text-success' : 'text-danger'}`}>
-                                                            {parseFloat(tx.amount) >= 0 ? '+' : ''}
-                                                            {formatCurrency(tx.amount)}
-                                                        </td>
+                                    <>
+                                        {/* Desktop Table View */}
+                                        <div className="table-responsive d-none d-md-block">
+                                            <table className="table table-hover align-middle mb-0">
+                                                <thead className="bg-light">
+                                                    <tr>
+                                                        <th className="border-0 ps-4">{t('wallet.date')}</th>
+                                                        <th className="border-0">{t('wallet.desc')}</th>
+                                                        <th className="border-0 text-end pe-4">{t('wallet.amount')}</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </thead>
+                                                <tbody>
+                                                    {transactions.map((tx) => (
+                                                        <tr key={tx.id}>
+                                                            <td className="ps-4 text-muted small" style={{ width: '25%' }}>
+                                                                {formatDate(tx.created_at)}
+                                                            </td>
+                                                            <td>
+                                                                <div className="fw-semibold text-dark">{tx.description}</div>
+                                                                <div className="small text-muted text-capitalize">{tx.type}</div>
+                                                            </td>
+                                                            <td className={`text-end pe-4 fw-bold ${parseFloat(tx.amount) >= 0 ? 'text-success' : 'text-danger'}`}>
+                                                                {parseFloat(tx.amount) >= 0 ? '+' : ''}
+                                                                {formatCurrency(tx.amount)}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        {/* Mobile Block View */}
+                                        <div className="d-md-none">
+                                            {transactions.map((tx) => (
+                                                <div key={tx.id} className="border rounded-3 p-3 mb-3" style={{ backgroundColor: '#f8f9fa' }}>
+                                                    <div className="text-muted small mb-2">
+                                                        {formatDate(tx.created_at)}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <div className="fw-semibold text-dark">{tx.description}</div>
+                                                        <div className="small text-muted text-capitalize">{tx.type}</div>
+                                                    </div>
+                                                    <div className={`fw-bold fs-5 ${parseFloat(tx.amount) >= 0 ? 'text-success' : 'text-danger'}`}>
+                                                        {parseFloat(tx.amount) >= 0 ? '+' : ''}
+                                                        {formatCurrency(tx.amount)}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         </div>

@@ -35,6 +35,16 @@ function handleCreateDeposit(array $currentUser): void
         // Start transaction
         $pdo->beginTransaction();
 
+        // Check if user already has an active deposit
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM deposits WHERE user_id = ? AND status = 'active'");
+        $stmt->execute([$currentUser['id']]);
+        $depositCheck = $stmt->fetch();
+
+        if ($depositCheck['count'] > 0) {
+            $pdo->rollBack();
+            sendError('You already have an active deposit', 400);
+        }
+
         // Check user balance with row lock
         $stmt = $pdo->prepare("SELECT balance FROM users WHERE id = ? FOR UPDATE");
         $stmt->execute([$currentUser['id']]);
@@ -50,6 +60,40 @@ function handleCreateDeposit(array $currentUser): void
         if ($currentBalance < $amount) {
             $pdo->rollBack();
             sendError('Insufficient balance. You need at least 50 EUR to pay a deposit.', 400);
+        }
+
+        // Check max_depositors limit for user's groups
+        // Get all groups the user belongs to
+        $stmt = $pdo->prepare("
+            SELECT DISTINCT g.id, g.max_depositors
+            FROM groups g
+            INNER JOIN user_groups ug ON g.id = ug.group_id
+            WHERE ug.user_id = ? AND g.is_active = 1
+        ");
+        $stmt->execute([$currentUser['id']]);
+        $userGroups = $stmt->fetchAll();
+
+        // Check limits for each group
+        foreach ($userGroups as $group) {
+            if ($group['max_depositors'] !== null) {
+                $maxDepositors = (int)$group['max_depositors'];
+
+                // Count active deposits in this group
+                $stmt = $pdo->prepare("
+                    SELECT COUNT(DISTINCT d.user_id) as active_count
+                    FROM deposits d
+                    INNER JOIN user_groups ug ON d.user_id = ug.user_id
+                    WHERE ug.group_id = ? AND d.status = 'active'
+                ");
+                $stmt->execute([$group['id']]);
+                $depositCount = $stmt->fetch();
+                $activeCount = (int)$depositCount['active_count'];
+
+                if ($activeCount >= $maxDepositors) {
+                    $pdo->rollBack();
+                    sendError('Depositor limit reached for this group. Please contact the administrator.', 400);
+                }
+            }
         }
 
         // Deduct from user balance

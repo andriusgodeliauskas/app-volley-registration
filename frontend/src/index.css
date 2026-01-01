@@ -160,6 +160,46 @@ body {
   border-bottom: 1px solid #f3f4f6;
 }
 
+/* ==========================================================================
+   Breadcrumb
+   ========================================================================== */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin-bottom: 1rem;
+  list-style: none;
+  background-color: transparent;
+}
+
+.breadcrumb-item {
+  display: flex;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "/";
+  padding: 0 0.5rem;
+  color: #d1d5db;
+}
+
+.breadcrumb-item.active {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.breadcrumb-item a {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-item a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
 .section-title {
   display: flex;
   align-items: center;
@@ -739,16 +779,17 @@ body {
   }
 
   .section {
-    padding: 1.75rem;
+    padding: 1.5rem 1rem 0.5rem 1rem;
     margin-bottom: 2rem;
     border-radius: 20px;
   }
 
   .section-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
+    text-align: center;
   }
 
   .section-title {
@@ -833,6 +874,19 @@ body {
     justify-content: center;
   }
 
+  /* Event Details Collapse (EventDetails page mobile) */
+  .event-details-content {
+    max-height: 2000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 1;
+  }
+
+  .event-details-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+  }
+
   .quick-actions-section {
     padding: 1.75rem;
     margin-bottom: 2rem;
@@ -859,4 +913,63 @@ body {
     gap: 1rem;
     font-size: 0.9rem;
   }
+}
+
+/* ==========================================================================
+   Admin Events - Collapsible Sections
+   ========================================================================== */
+.clickable-header {
+  transition: background-color 0.2s ease;
+  user-select: none;
+}
+
+.clickable-header:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+}
+
+.clickable-header:active {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Past Event Card - Dimmed Style */
+.event-card.past-event {
+  opacity: 0.75;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.event-card.past-event:hover {
+  opacity: 0.85;
+}
+
+/* Section Body Animation */
+.section-body {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge adjustments */
+.section-title .badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* Chevron icon in collapsible header */
+.section-title .bi-chevron-down,
+.section-title .bi-chevron-up {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
 }

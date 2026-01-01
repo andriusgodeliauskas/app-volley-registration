@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get } from '../api/config';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 function AllEvents() {
     const { t } = useLanguage();
@@ -52,9 +53,14 @@ function AllEvents() {
             <Navbar />
 
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' },
+                    { label: t('nav.all_events'), path: '/events' }
+                ]} />
+
                 <div className="section">
                     <div className="section-header">
-                        <div>
+                        <div className="text-center w-100">
                             <div className="section-title">📅 {t('event.all_events')}</div>
                             <div className="section-subtitle">{t('event.browse_register')}</div>
                         </div>

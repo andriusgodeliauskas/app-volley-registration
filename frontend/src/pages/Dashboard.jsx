@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post, del } from '../api/config';
 import Navbar from '../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
 
 /**
  * UserDashboard Component
@@ -241,6 +242,10 @@ function Dashboard() {
 
             {/* Main Content */}
             <div className="main-container">
+                <Breadcrumb items={[
+                    { label: t('nav.home'), path: '/dashboard' }
+                ]} />
+
                 {/* Apps Alerts */}
                 {error && (
                     <div className="alert-custom mb-4 bg-danger bg-opacity-10 border-danger text-danger">
@@ -262,13 +267,31 @@ function Dashboard() {
 
                 {/* Upcoming Events */}
                 <div className="section">
-                    <div className="section-header">
-                        <div>
+                    {/* Mobile: Stacked layout */}
+                    <div className="d-md-none">
+                        <div className="text-center w-100 mb-3">
+                            <div className="section-title">📅 {t('dash.upcoming')}</div>
+                            <div className="section-subtitle">{t('event.browse_register')}</div>
+                        </div>
+                        <div className="d-flex justify-content-center mb-3">
+                            <button
+                                className="btn-custom"
+                                onClick={() => { fetchEvents(); fetchUserData(); }}
+                                disabled={eventsLoading}
+                            >
+                                {eventsLoading ? t('common.loading') : '🔄 ' + t('common.refresh')}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Desktop: Single line layout */}
+                    <div className="section-header d-none d-md-flex">
+                        <div className="text-center w-100">
                             <div className="section-title">📅 {t('dash.upcoming')}</div>
                             <div className="section-subtitle">{t('event.browse_register')}</div>
                         </div>
                         <button
-                            className="btn-refresh"
+                            className="btn-custom"
                             onClick={() => { fetchEvents(); fetchUserData(); }}
                             disabled={eventsLoading}
                         >
