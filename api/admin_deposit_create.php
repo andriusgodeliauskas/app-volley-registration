@@ -1,9 +1,10 @@
 <?php
 /**
  * Volley Registration App - Admin Create Deposit API
+ * VERSION: 2.0 (Updated 2026-01-01 - Allow negative balance)
  *
  * Endpoints:
- * - POST: Super admin manually creates a deposit for a user (without deducting from balance)
+ * - POST: Super admin manually creates a deposit for a user (allows negative balance)
  */
 
 require_once __DIR__ . '/auth.php';
@@ -32,6 +33,9 @@ switch ($method) {
 function handleAdminCreateDeposit(array $currentUser): void
 {
     $input = getJsonInput();
+
+    // DEBUG: Log that we're using the new version
+    error_log('admin_deposit_create.php VERSION 2.0 - Allow negative balance');
 
     // Validate required fields
     $required = ['user_id', 'amount'];
@@ -75,7 +79,7 @@ function handleAdminCreateDeposit(array $currentUser): void
             sendError('User already has an active deposit', 400);
         }
 
-        // Check user balance FIRST (before creating deposit)
+        // Get user balance (allow negative balance for admin-created deposits)
         $stmt = $pdo->prepare("SELECT balance FROM users WHERE id = ? FOR UPDATE");
         $stmt->execute([$userId]);
         $userBalance = $stmt->fetch();
@@ -86,11 +90,6 @@ function handleAdminCreateDeposit(array $currentUser): void
         }
 
         $currentBalance = floatval($userBalance['balance']);
-
-        if ($currentBalance < $amount) {
-            $pdo->rollBack();
-            sendError('User has insufficient balance. Current balance: €' . number_format($currentBalance, 2), 400);
-        }
 
         // Check max_depositors limit for user's groups
         $stmt = $pdo->prepare("
@@ -177,9 +176,7 @@ function handleAdminCreateDeposit(array $currentUser): void
             $pdo->rollBack();
         }
 
-        if (APP_ENV === 'development') {
-            sendError('Database error: ' . $e->getMessage(), 500);
-        }
-        sendError('Failed to create deposit', 500);
+        // Always show detailed error for debugging (temporarily)
+        sendError('Database error: ' . $e->getMessage() . ' | Line: ' . $e->getLine(), 500);
     }
 }

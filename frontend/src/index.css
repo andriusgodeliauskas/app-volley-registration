@@ -420,6 +420,11 @@ body {
   --card-to: #f5576c;
 }
 
+.card-primary {
+  --card-from: #3b82f6;
+  --card-to: #2563eb;
+}
+
 .dash-card-header {
   display: flex;
   justify-content: space-between;
