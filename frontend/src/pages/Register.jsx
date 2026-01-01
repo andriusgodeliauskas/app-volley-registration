@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 function Register() {
+    const { t } = useLanguage();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -85,8 +87,8 @@ function Register() {
                                             <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                                         </svg>
                                     </div>
-                                    <h2 className="fw-bold mb-1">Create Account</h2>
-                                    <p className="text-muted mb-0">Join Volley App today</p>
+                                    <h2 className="fw-bold mb-1">{t('auth.register_title')}</h2>
+                                    <p className="text-muted mb-0">{t('auth.register_subtitle')}</p>
                                 </div>
 
                                 {/* Error Alert */}
@@ -105,7 +107,7 @@ function Register() {
 
                                     {/* Name Field */}
                                     <div className="mb-3">
-                                        <label htmlFor="firstName" className="form-label fw-medium">Name</label>
+                                        <label htmlFor="firstName" className="form-label fw-medium">{t('auth.name')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -130,7 +132,7 @@ function Register() {
 
                                     {/* Surname Field */}
                                     <div className="mb-3">
-                                        <label htmlFor="lastName" className="form-label fw-medium">Surname</label>
+                                        <label htmlFor="lastName" className="form-label fw-medium">{t('auth.surname')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -155,7 +157,7 @@ function Register() {
 
                                     {/* Email Field */}
                                     <div className="mb-3">
-                                        <label htmlFor="email" className="form-label fw-medium">Email address</label>
+                                        <label htmlFor="email" className="form-label fw-medium">{t('auth.email')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -180,7 +182,7 @@ function Register() {
 
                                     {/* Password Field */}
                                     <div className="mb-3">
-                                        <label htmlFor="password" className="form-label fw-medium">Password</label>
+                                        <label htmlFor="password" className="form-label fw-medium">{t('auth.password')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -224,7 +226,7 @@ function Register() {
 
                                     {/* Confirm Password Field */}
                                     <div className="mb-4">
-                                        <label htmlFor="confirmPassword" className="form-label fw-medium">Confirm Password</label>
+                                        <label htmlFor="confirmPassword" className="form-label fw-medium">{t('auth.confirm_password')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -259,7 +261,7 @@ function Register() {
                                                 Creating account...
                                             </>
                                         ) : (
-                                            'Create Account'
+                                            t('auth.register_button')
                                         )}
                                     </button>
                                 </form>
@@ -273,9 +275,8 @@ function Register() {
 
                                 {/* Login Link */}
                                 <p className="text-center mb-0">
-                                    Already have an account?{' '}
                                     <Link to="/login" className="fw-semibold text-decoration-none">
-                                        Sign in
+                                        {t('auth.login_link')}
                                     </Link>
                                 </p>
 
@@ -290,7 +291,7 @@ function Register() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
