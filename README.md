@@ -2,6 +2,11 @@
 
 A web application to manage volleyball game registrations, groups, payments, and events.
 
+## 🌐 Environments
+
+- **Production:** [volley.godeliauskas.com](https://volley.godeliauskas.com)
+- **Staging:** [staging.godeliauskas.com](https://staging.godeliauskas.com)
+
 ## Features
 - User Authentication (Login/Register)
 - Group & Event Management
@@ -40,3 +45,30 @@ A web application to manage volleyball game registrations, groups, payments, and
 - `api/`: PHP backend endpoints and logic.
 - `frontend/`: React frontend application.
 - `database.sql`: Database schema and seed data.
+- `deploy/`: Production deployment package (generated, not in Git).
+- `deploy-staging/`: Staging deployment package (generated, not in Git).
+
+## 🚀 Deployment
+
+This project uses a **two-stage deployment** process:
+
+### Quick Start
+```powershell
+# Deploy to STAGING for testing
+./prepare-deploy-staging.ps1
+
+# Deploy to PRODUCTION (after staging testing)
+./prepare-deploy.ps1
+```
+
+### Documentation
+- **[DEPLOYMENT-WORKFLOW.md](DEPLOYMENT-WORKFLOW.md)** - Complete deployment workflow
+- **[DEPLOYMENT-STAGING.md](DEPLOYMENT-STAGING.md)** - Staging environment setup
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment guide
+
+### Deployment Process
+1. Make code changes
+2. Deploy to staging → Test thoroughly
+3. Deploy to production → Verify
+
+**Always test on staging before deploying to production!**

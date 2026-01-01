@@ -1,10 +1,16 @@
-# Deployment Guide
+# Production Deployment Guide
 
-This document describes the deployment process for the Volley Registration App.
+This document describes the **production** deployment process for the Volley Registration App (`volley.godeliauskas.com`).
 
-## 🚀 Quick Deploy
+**📘 New to deployment?** Start with [DEPLOYMENT-WORKFLOW.md](DEPLOYMENT-WORKFLOW.md) for the complete staging → production workflow.
 
-To prepare the files for deployment, run the automated script in PowerShell:
+**🧪 Setting up staging?** See [DEPLOYMENT-STAGING.md](DEPLOYMENT-STAGING.md) for staging environment setup.
+
+---
+
+## 🚀 Quick Production Deploy
+
+To prepare the files for **production** deployment, run the automated script in PowerShell:
 
 ```powershell
 ./prepare-deploy.ps1
@@ -19,12 +25,15 @@ This script will:
     *   Verifies `.htaccess` exists and protects config files.
     *   Scans PHP files for dangerous functions (like `eval`, `exec`).
 
-## 📂 Uploading to Server
+## 📂 Uploading to Production Server
+
+**⚠️ IMPORTANT:** Always test on staging first! See [DEPLOYMENT-WORKFLOW.md](DEPLOYMENT-WORKFLOW.md).
 
 1.  Run the script above.
 2.  Open your FTP client (FileZilla, etc.).
-3.  Navigate to the `deploy` folder on your local machine.
-4.  Upload **ALL** contents of `deploy/` to your server's `public_html` (or subdomain root).
+3.  Connect to `volley.godeliauskas.com` FTP server.
+4.  Navigate to the `deploy` folder on your local machine.
+5.  Upload **ALL** contents of `deploy/` to your server's `public_html` (or subdomain root).
 
 ## 🔒 Security Measures
 
@@ -37,4 +46,13 @@ The deployment script enforces the following policies:
 
 If you have made changes to the database schema:
 1.  **Do NOT upload `database.sql` to public folders.**
-2.  Import `database.sql` manually via **phpMyAdmin** or your hosting control panel.
+2.  Test the changes on **staging database first**
+3.  Import `database.sql` manually to production via **phpMyAdmin** or your hosting control panel.
+
+---
+
+## 🔗 Related Documentation
+
+- **[DEPLOYMENT-WORKFLOW.md](DEPLOYMENT-WORKFLOW.md)** - Complete staging → production workflow
+- **[DEPLOYMENT-STAGING.md](DEPLOYMENT-STAGING.md)** - Staging environment setup
+- **[README.md](README.md)** - General project information

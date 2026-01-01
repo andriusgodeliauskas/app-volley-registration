@@ -264,14 +264,14 @@ body {
 .event-icon {
   width: 72px;
   height: 72px;
-  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-  border-radius: 18px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.25rem;
+  font-size: 2rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
 }
 
 .event-info {
@@ -767,10 +767,6 @@ body {
   }
 
   /* Hide desktop navigation elements */
-  .logo-text {
-    display: none;
-  }
-
   .nav-links {
     display: none;
   }
@@ -790,38 +786,51 @@ body {
 
   .event-card {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     padding: 1.5rem;
-    gap: 1.25rem;
+    gap: 0;
     margin-bottom: 1rem;
   }
 
   .event-icon {
-    width: 64px;
-    height: 64px;
-    font-size: 2rem;
+    display: none;
+  }
+
+  .event-info {
+    margin-bottom: 1.25rem;
   }
 
   .event-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
     flex-wrap: wrap;
+    margin-bottom: 1rem;
   }
 
   .event-details {
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.625rem;
     font-size: 0.875rem;
+  }
+
+  .event-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .event-actions {
     width: 100%;
-    flex-direction: row;
-    gap: 0.75rem;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: auto;
   }
 
   .event-actions .btn-custom {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    justify-content: center;
   }
 
   .quick-actions-section {
