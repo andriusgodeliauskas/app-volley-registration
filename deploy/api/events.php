@@ -88,6 +88,30 @@ function handleGetEvents(array $currentUser): void
         $params['group_id'] = $groupId;
     }
     
+    // RESTRICT BY USER GROUPS (Logic for user/group_admin)
+    // Super Admin sees all events. Others see only events from their assigned groups.
+    if ($currentUser['role'] !== 'super_admin') {
+        $groupStmt = $pdo->prepare("SELECT group_id FROM user_groups WHERE user_id = ?");
+        $groupStmt->execute([$currentUser['id']]);
+        $userGroupIds = $groupStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // If user has no groups, return empty immediately
+        if (empty($userGroupIds)) {
+            sendSuccess(['events' => []]);
+            return;
+        }
+        
+        // Add IN clause with unique named parameters
+        $inParams = [];
+        foreach ($userGroupIds as $idx => $gid) {
+            $paramName = "gid_$idx";
+            $inParams[] = ":$paramName";
+            $params[$paramName] = $gid;
+        }
+        
+        $sql .= " AND e.group_id IN (" . implode(',', $inParams) . ")";
+    }
+    
     $sql .= " ORDER BY e.date_time ASC LIMIT :limit";
     
     try {

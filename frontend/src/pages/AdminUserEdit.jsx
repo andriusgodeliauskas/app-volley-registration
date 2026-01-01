@@ -19,7 +19,8 @@ function AdminUserEdit() {
         email: '',
         role: 'user',
         balance: 0,
-        is_active: true
+        is_active: true,
+        group_ids: []
     });
 
     const [topUpData, setTopUpData] = useState({ amount: '', description: '', created_at: '' });
@@ -29,12 +30,26 @@ function AdminUserEdit() {
     const [editingTx, setEditingTx] = useState(null);
     const [editTxData, setEditTxData] = useState({ amount: '', description: '', created_at: '' });
 
+    const [allGroups, setAllGroups] = useState([]);
+
     useEffect(() => {
         if (id) {
             fetchUserDetails();
             fetchTransactions();
+            fetchGroups();
         }
     }, [id]);
+
+    const fetchGroups = async () => {
+        try {
+            const response = await get(API_ENDPOINTS.GROUPS);
+            if (response.success && response.data?.groups) {
+                setAllGroups(response.data.groups);
+            }
+        } catch (error) {
+            console.error('Failed to fetch groups:', error);
+        }
+    };
 
     const fetchUserDetails = async () => {
         setLoading(true);
@@ -46,7 +61,8 @@ function AdminUserEdit() {
                     email: response.data.user.email,
                     role: response.data.user.role,
                     balance: response.data.user.balance,
-                    is_active: response.data.user.is_active
+                    is_active: response.data.user.is_active,
+                    group_ids: response.data.user.group_ids || []
                 });
             } else {
                 setError(response.message || 'Failed to load user details');
@@ -303,6 +319,42 @@ function AdminUserEdit() {
                                                 Inactive users cannot log in. Newly registered users are inactive by default.
                                             </div>
                                         )}
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Assign Groups</label>
+                                        <div className="card p-3 bg-light border-0">
+                                            {allGroups.length === 0 ? (
+                                                <div className="text-muted small">No groups available.</div>
+                                            ) : (
+                                                <div className="row g-2">
+                                                    {allGroups.map(group => (
+                                                        <div className="col-md-6" key={group.id}>
+                                                            <div className="form-check">
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="checkbox"
+                                                                    id={`group-${group.id}`}
+                                                                    checked={formData.group_ids?.includes(group.id)}
+                                                                    onChange={(e) => {
+                                                                        const checked = e.target.checked;
+                                                                        const currentGroups = formData.group_ids || [];
+                                                                        if (checked) {
+                                                                            setFormData({ ...formData, group_ids: [...currentGroups, group.id] });
+                                                                        } else {
+                                                                            setFormData({ ...formData, group_ids: currentGroups.filter(id => id !== group.id) });
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                <label className="form-check-label" htmlFor={`group-${group.id}`}>
+                                                                    {group.name}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="d-flex justify-content-end gap-2">

@@ -104,6 +104,32 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
+    // Update User Groups if provided
+    if (isset($input['group_ids']) && is_array($input['group_ids'])) {
+        $groupIds = array_map('intval', $input['group_ids']);
+        
+        // Remove existing groups
+        $deleteStmt = $pdo->prepare("DELETE FROM user_groups WHERE user_id = ?");
+        $deleteStmt->execute([$id]);
+        
+        // Insert new groups
+        if (!empty($groupIds)) {
+            $insertSql = "INSERT INTO user_groups (user_id, group_id) VALUES ";
+            $insertParams = [];
+            $placeholders = [];
+            
+            foreach ($groupIds as $gid) {
+                $placeholders[] = "(?, ?)";
+                $insertParams[] = $id;
+                $insertParams[] = $gid;
+            }
+            
+            $insertSql .= implode(", ", $placeholders);
+            $insertStmt = $pdo->prepare($insertSql);
+            $insertStmt->execute($insertParams);
+        }
+    }
+
     sendSuccess([], 'User updated successfully');
 
 } catch (PDOException $e) {

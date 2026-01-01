@@ -44,6 +44,12 @@ try {
     $user['is_active'] = (bool)$user['is_active'];
     $user['parent_id'] = $user['parent_id'] ? (int)$user['parent_id'] : null;
 
+    // Fetch user groups
+    $groupStmt = $pdo->prepare("SELECT group_id FROM user_groups WHERE user_id = ?");
+    $groupStmt->execute([$userId]);
+    $user['group_ids'] = $groupStmt->fetchAll(PDO::FETCH_COLUMN);
+    $user['group_ids'] = array_map('intval', $user['group_ids']);
+
     sendSuccess(['user' => $user]);
 
 } catch (PDOException $e) {
