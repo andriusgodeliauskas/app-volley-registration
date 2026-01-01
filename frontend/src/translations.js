@@ -46,6 +46,8 @@ export const translations = {
         'dash.cancellation_success': 'Registration cancelled',
         'dash.error_register': 'Failed to register',
         'dash.error_cancel': 'Failed to cancel registration',
+        'dash.more_info': 'More Info',
+        'dash.no_events': 'No events available',
 
         // Events
         'event.details': 'Event Details',
@@ -74,6 +76,40 @@ export const translations = {
         'event.will_be_charged': 'You will be charged',
         'event.will_be_refunded': 'You will be refunded',
         'event.waiting_since': 'Waiting since',
+        'event.all_events': 'All Events',
+        'event.browse_register': 'Browse and register for upcoming volleyball games',
+
+        // Profile
+        'profile.title': 'My Profile',
+        'profile.subtitle': 'Manage your account information',
+        'profile.personal_info': 'Personal Information',
+        'profile.avatar': 'Avatar',
+        'profile.change_avatar': 'Change Avatar',
+        'profile.select_avatar': 'Select your avatar',
+        'profile.account_info': 'Account Information',
+        'profile.member_since': 'Member since',
+        'profile.save': 'Save Changes',
+        'profile.success': 'Profile updated successfully!',
+        'profile.error': 'Failed to update profile',
+
+        // Children
+        'children.title': 'My Children',
+        'children.subtitle': 'Manage your children accounts',
+        'children.add_child': 'Add Child',
+        'children.no_children': 'No children added yet.',
+        'children.add_first': 'Add your first child to manage their registrations',
+        'children.edit': 'Edit',
+        'children.delete': 'Delete',
+        'children.confirm_delete': 'Are you sure you want to remove this child?',
+        'children.delete_warning': 'This will remove the child from your account.',
+        'children.modal_add_title': 'Add New Child',
+        'children.modal_edit_title': 'Edit Child',
+        'children.form_name': 'Child Name',
+        'children.form_surname': 'Child Surname',
+        'children.form_avatar': 'Avatar',
+        'children.success_add': 'Child added successfully!',
+        'children.success_edit': 'Child updated successfully!',
+        'children.success_delete': 'Child removed successfully!',
 
         // Wallet
         'wallet.title': 'My Wallet',
@@ -93,6 +129,19 @@ export const translations = {
         'wallet.amount': 'Amount',
         'wallet.no_transactions': 'No transactions yet.',
         'wallet.copy_tooltip': 'Copy to clipboard',
+
+        // Admin
+        'admin.dashboard': 'Admin Dashboard',
+        'admin.users': 'Users',
+        'admin.groups': 'Groups',
+        'admin.events': 'Events',
+        'admin.wallet': 'Wallet Management',
+        'admin.topups': 'Top-up Requests',
+        'admin.rent': 'Rent Management',
+        'admin.total_users': 'Total Users',
+        'admin.total_events': 'Total Events',
+        'admin.pending_topups': 'Pending Top-ups',
+        'admin.total_balance': 'Total Balance',
 
         // Common
         'common.loading': 'Loading...',
@@ -115,6 +164,10 @@ export const translations = {
         'common.role': 'Role',
         'common.created': 'Created',
         'common.updated': 'Updated',
+        'common.yes': 'Yes',
+        'common.no': 'No',
+        'common.add': 'Add',
+        'common.view': 'View',
     },
     lt: {
         // Navigation
@@ -163,6 +216,8 @@ export const translations = {
         'dash.cancellation_success': 'Registracija atšaukta',
         'dash.error_register': 'Nepavyko užsiregistruoti',
         'dash.error_cancel': 'Nepavyko atšaukti registracijos',
+        'dash.more_info': 'Daugiau Info',
+        'dash.no_events': 'Renginių nėra',
 
         // Events
         'event.details': 'Renginio Informacija',
@@ -191,6 +246,40 @@ export const translations = {
         'event.will_be_charged': 'Jums bus nuskaičiuota',
         'event.will_be_refunded': 'Jums bus grąžinta',
         'event.waiting_since': 'Laukia nuo',
+        'event.all_events': 'Visi Renginiai',
+        'event.browse_register': 'Naršykite ir registruokitės į artimiausiusrenginius',
+
+        // Profile
+        'profile.title': 'Mano Profilis',
+        'profile.subtitle': 'Valdykite savo paskyros informaciją',
+        'profile.personal_info': 'Asmeninė Informacija',
+        'profile.avatar': 'Avataras',
+        'profile.change_avatar': 'Keisti Avatarą',
+        'profile.select_avatar': 'Pasirinkite savo avatarą',
+        'profile.account_info': 'Paskyros Informacija',
+        'profile.member_since': 'Narys nuo',
+        'profile.save': 'Išsaugoti',
+        'profile.success': 'Profilis sėkmingai atnaujintas!',
+        'profile.error': 'Nepavyko atnaujinti profilio',
+
+        // Children
+        'children.title': 'Mano Vaikai',
+        'children.subtitle': 'Valdykite savo vaikų paskyras',
+        'children.add_child': 'Pridėti Vaiką',
+        'children.no_children': 'Vaikų dar nepridėta.',
+        'children.add_first': 'Pridėkite pirmą vaiką, kad galėtumėte valdyti jų registracijas',
+        'children.edit': 'Redaguoti',
+        'children.delete': 'Ištrinti',
+        'children.confirm_delete': 'Ar tikrai norite pašalinti šį vaiką?',
+        'children.delete_warning': 'Tai pašalins vaiką iš jūsų paskyros.',
+        'children.modal_add_title': 'Pridėti Naują Vaiką',
+        'children.modal_edit_title': 'Redaguoti Vaiką',
+        'children.form_name': 'Vaiko Vardas',
+        'children.form_surname': 'Vaiko Pavardė',
+        'children.form_avatar': 'Avataras',
+        'children.success_add': 'Vaikas sėkmingai pridėtas!',
+        'children.success_edit': 'Vaikas sėkmingai atnaujintas!',
+        'children.success_delete': 'Vaikas sėkmingai pašalintas!',
 
         // Wallet
         'wallet.title': 'Mano Piniginė',
@@ -210,6 +299,19 @@ export const translations = {
         'wallet.amount': 'Suma',
         'wallet.no_transactions': 'Operacijų dar nėra.',
         'wallet.copy_tooltip': 'Kopijuoti',
+
+        // Admin
+        'admin.dashboard': 'Admin Panelė',
+        'admin.users': 'Vartotojai',
+        'admin.groups': 'Grupės',
+        'admin.events': 'Renginiai',
+        'admin.wallet': 'Piniginės Valdymas',
+        'admin.topups': 'Papildymo Užklausos',
+        'admin.rent': 'Nuomos Valdymas',
+        'admin.total_users': 'Viso Vartotojų',
+        'admin.total_events': 'Viso Renginių',
+        'admin.pending_topups': 'Laukiančios Užklausos',
+        'admin.total_balance': 'Bendras Likutis',
 
         // Common
         'common.loading': 'Kraunama...',
@@ -232,5 +334,9 @@ export const translations = {
         'common.role': 'Rolė',
         'common.created': 'Sukurta',
         'common.updated': 'Atnaujinta',
+        'common.yes': 'Taip',
+        'common.no': 'Ne',
+        'common.add': 'Pridėti',
+        'common.view': 'Žiūrėti',
     }
 };
