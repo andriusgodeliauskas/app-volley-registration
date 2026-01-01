@@ -19,8 +19,8 @@ export default function Wallet() {
                 ]);
 
                 // Handle different response structures if necessary
-                // user.php usually returns the user object directly or wrapped
-                const userBalance = userData.balance !== undefined ? userData.balance : (userData.data?.balance || 0);
+                // user.php usually returns the user object wrapped in a 'user' key
+                const userBalance = userData.data?.user?.balance ?? userData.data?.balance ?? 0;
                 setBalance(parseFloat(userBalance));
 
                 // transactions.php returns array of transactions
