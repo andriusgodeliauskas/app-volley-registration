@@ -102,21 +102,17 @@ export default function Wallet() {
 
                                 <div className="mb-3">
                                     <label className="small text-muted text-uppercase fw-bold">IBAN</label>
-                                    <div className="d-flex align-items-center bg-light p-2 rounded">
-                                        <code className="fs-5 text-dark fw-bold flex-grow-1">LT447300010091739633</code>
-                                    </div>
+                                    <div className="fw-bold fs-6">LT447300010091739633</div>
                                 </div>
 
                                 <div className="mb-3">
                                     <label className="small text-muted text-uppercase fw-bold">Receiver</label>
-                                    <div className="fw-semibold">Andrius Godeliauskas</div>
+                                    <div className="fw-bold fs-6">Andrius Godeliauskas</div>
                                 </div>
 
                                 <div className="mb-3">
                                     <label className="small text-muted text-uppercase fw-bold">Payment Purpose</label>
-                                    <div className="alert alert-info py-2 px-3 mb-0">
-                                        <small className="fw-bold">{user?.name} Top Up</small>
-                                    </div>
+                                    <div className="fw-bold fs-6">{user?.name} Top Up</div>
                                     <small className="text-muted d-block mt-1">
                                         * Please include your player name and surname exactly as registered.
                                     </small>
