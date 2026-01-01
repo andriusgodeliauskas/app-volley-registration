@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { get, API_ENDPOINTS } from '../api/config';
+import Navbar from '../components/Navbar';
 
 export default function Wallet() {
 
@@ -89,40 +90,32 @@ export default function Wallet() {
     }
 
     return (
-        <div className="min-vh-100 bg-light">
-            {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-                <div className="container">
-                    <Link className="navbar-brand fw-bold" to="/dashboard">🏐 Volley App</Link>
-                    <div className="ms-auto">
-                        <Link to="/dashboard" className="btn btn-outline-light btn-sm">
-                            <i className="bi bi-arrow-left me-1"></i>Back to Dashboard
-                        </Link>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <Navbar />
 
-            <div className="container pb-5">
+            <div className="main-container">
                 <div className="row g-4">
                     {/* Left Column: Balance & Top Up */}
                     <div className="col-lg-4">
                         {/* Balance Card */}
-                        <div className="card border-0 shadow-sm mb-4" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                            <div className="card-body text-white p-4 text-center">
-                                <h6 className="text-uppercase opacity-75 mb-2">Current Balance</h6>
-                                <h1 className="display-4 fw-bold mb-0">{formatCurrency(balance)}</h1>
+                        <div className="dash-card card-wallet mb-4">
+                            <div className="dash-card-header">
+                                <div className="dash-card-title">Current Balance</div>
+                                <div className="dash-card-icon">💰</div>
                             </div>
+                            <div className="dash-card-value">{formatCurrency(balance)}</div>
+                            <div className="dash-card-subtitle opacity-75">Available funds</div>
                         </div>
 
                         {/* Top Up Instructions */}
-                        <div className="card border-0 shadow-sm">
-                            <div className="card-header bg-white border-0 py-3">
-                                <h5 className="mb-0 fw-bold">
+                        <div className="section">
+                            <div className="section-header mb-3">
+                                <div className="section-title">
                                     <i className="bi bi-bank me-2 text-primary"></i>
                                     Top Up Wallet
-                                </h5>
+                                </div>
                             </div>
-                            <div className="card-body p-4">
+                            <div className="p-0">
                                 <p className="text-muted small mb-4">
                                     To add funds to your wallet, please make a bank transfer with the following details.
                                     Funds will be credited manually by an administrator.
@@ -143,14 +136,14 @@ export default function Wallet() {
 
                     {/* Right Column: Transactions */}
                     <div className="col-lg-8">
-                        <div className="card border-0 shadow-sm h-100">
-                            <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                                <h5 className="mb-0 fw-bold">
+                        <div className="section h-100">
+                            <div className="section-header">
+                                <div className="section-title">
                                     <i className="bi bi-clock-history me-2 text-primary"></i>
                                     Transaction History
-                                </h5>
+                                </div>
                             </div>
-                            <div className="card-body p-0">
+                            <div className="p-0">
                                 {transactions.length === 0 ? (
                                     <div className="text-center py-5 text-muted">
                                         <i className="bi bi-receipt fs-1 opacity-25"></i>

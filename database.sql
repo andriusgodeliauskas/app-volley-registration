@@ -85,6 +85,7 @@ CREATE TABLE `events` (
     `court_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     `price_per_person` DECIMAL(8, 2) NOT NULL DEFAULT 0.00,
     `status` ENUM('draft', 'open', 'closed', 'canceled') NOT NULL DEFAULT 'open',
+    `icon` VARCHAR(50) NOT NULL DEFAULT 'volleyball',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     

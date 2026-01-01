@@ -46,6 +46,7 @@ try {
             e.price_per_person, 
             e.max_players, 
             e.status,
+            e.icon,
             g.name as group_name,
             (
                 SELECT COUNT(*) 

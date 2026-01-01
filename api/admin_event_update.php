@@ -32,7 +32,9 @@ $location = isset($input['location']) ? trim($input['location']) : null;
 $maxPlayers = isset($input['max_players']) ? (int)$input['max_players'] : null;
 $courtCount = isset($input['court_count']) ? (int)$input['court_count'] : null;
 $price = isset($input['price_per_person']) ? (float)$input['price_per_person'] : null;
+$price = isset($input['price_per_person']) ? (float)$input['price_per_person'] : null;
 $status = isset($input['status']) ? trim($input['status']) : null;
+$icon = isset($input['icon']) ? trim($input['icon']) : null;
 
 // Validation
 if ($title && strlen($title) < 3) {
@@ -91,6 +93,10 @@ try {
     if ($status !== null) {
         $fields[] = 'status = ?';
         $params[] = $status;
+    }
+    if ($icon !== null) {
+        $fields[] = 'icon = ?';
+        $params[] = $icon;
     }
 
     if (empty($fields)) {

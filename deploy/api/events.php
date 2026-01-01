@@ -57,6 +57,8 @@ function handleGetEvents(array $currentUser): void
             e.court_count,
             e.price_per_person,
             e.status,
+            e.status,
+            e.icon,
             e.created_at,
             g.name as group_name,
             (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'registered') as registered_count,
@@ -158,8 +160,8 @@ function handleCreateEvent(array $currentUser): void
         $stmt = $pdo->prepare("
             INSERT INTO events (
                 group_id, title, description, date_time, location, 
-                max_players, court_count, price_per_person, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                max_players, court_count, price_per_person, status, icon
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
         $stmt->execute([
@@ -171,7 +173,8 @@ function handleCreateEvent(array $currentUser): void
             $input['max_players'] ?? 12,
             $input['court_count'] ?? 1,
             $input['price_per_person'] ?? 0.00,
-            $input['status'] ?? 'open'
+            $input['status'] ?? 'open',
+            $input['icon'] ?? 'volleyball'
         ]);
         
         $eventId = $pdo->lastInsertId();

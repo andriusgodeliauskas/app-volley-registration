@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
+import AdminNavbar from '../components/AdminNavbar';
 
 function AdminUserEdit() {
     const { id } = useParams();
@@ -185,68 +186,53 @@ function AdminUserEdit() {
     }
 
     return (
-        <div className="min-vh-100 bg-dark">
-            {/* Admin Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
-                <div className="container-fluid px-4">
-                    <Link className="navbar-brand fw-bold text-warning" to="/admin">⚡ Volley Admin</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="adminNav">
-                        <ul className="navbar-nav me-auto">
-                            <li className="nav-item"><Link className="nav-link" to="/admin">Dashboard</Link></li>
-                            <li className="nav-item"><Link className="nav-link active" to="/admin/users">Users</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/groups">Groups</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/events">Events</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/wallet">Wallet</Link></li>
-                        </ul>
-                        <div className="d-flex align-items-center">
-                            <span className="badge bg-warning text-dark me-3">{user?.role?.replace('_', ' ').toUpperCase()}</span>
-                            <div className="dropdown">
-                                <button className="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">{user?.name}</button>
-                                <ul className="dropdown-menu dropdown-menu-end">
-                                    <li><Link className="dropdown-item" to="/dashboard">User View</Link></li>
-                                    <li><hr className="dropdown-divider" /></li>
-                                    <li><button className="dropdown-item text-danger" onClick={logout}>Logout</button></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <AdminNavbar />
 
-            <div className="container px-4 py-4">
+            <div className="main-container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h1 className="h3 text-white mb-0">Edit User</h1>
-                    <Link to="/admin/users" className="btn btn-outline-light btn-sm">
+                    <div>
+                        <h1 className="h3 fw-bold mb-1">Edit User</h1>
+                        <p className="text-muted mb-0">Manage user details and wallet</p>
+                    </div>
+                    <Link to="/admin/users" className="btn-custom bg-light border">
                         <i className="bi bi-arrow-left me-1"></i> Back to Users
                     </Link>
                 </div>
 
                 <div className="row g-4">
                     <div className="col-lg-8">
-                        <div className="card bg-secondary bg-opacity-25 border-secondary">
-                            <div className="card-body p-4">
+                        {/* User Details Form */}
+                        <div className="section mb-4">
+                            <div className="section-header">
+                                <div className="section-title">User Information</div>
+                            </div>
+                            <div className="p-4">
                                 {successMessage && (
-                                    <div className="alert alert-success alert-dismissible fade show">
-                                        {successMessage}
-                                        <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
+                                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
+                                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                                        <div>
+                                            {successMessage}
+                                            <button type="button" className="btn-close ms-auto" onClick={() => setSuccessMessage('')}></button>
+                                        </div>
                                     </div>
                                 )}
                                 {error && (
-                                    <div className="alert alert-danger alert-dismissible fade show">
-                                        {error}
-                                        <button type="button" className="btn-close" onClick={() => setError(null)}></button>
+                                    <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
+                                        <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
+                                        <div>
+                                            {error}
+                                            <button type="button" className="btn-close ms-auto" onClick={() => setError(null)}></button>
+                                        </div>
                                     </div>
                                 )}
 
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
-                                        <label className="form-label text-light">Full Name</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Full Name</label>
                                         <input
                                             type="text"
-                                            className="form-control bg-dark text-white border-secondary"
+                                            className="form-control"
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
@@ -256,10 +242,10 @@ function AdminUserEdit() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label text-light">Email Address</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Email Address</label>
                                         <input
                                             type="email"
-                                            className="form-control bg-dark text-white border-secondary"
+                                            className="form-control"
                                             name="email"
                                             value={formData.email}
                                             onChange={handleChange}
@@ -269,9 +255,9 @@ function AdminUserEdit() {
 
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-light">Role</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Role</label>
                                             <select
-                                                className="form-select bg-dark text-white border-secondary"
+                                                className="form-select"
                                                 name="role"
                                                 value={formData.role}
                                                 onChange={handleChange}
@@ -284,11 +270,11 @@ function AdminUserEdit() {
                                             </select>
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-light">Balance (€)</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Balance (€)</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="balance"
                                                 value={formData.balance}
                                                 onChange={handleChange}
@@ -307,7 +293,7 @@ function AdminUserEdit() {
                                                 checked={formData.is_active}
                                                 onChange={handleChange}
                                             />
-                                            <label className="form-check-label text-light" htmlFor="activeSwitch">
+                                            <label className="form-check-label" htmlFor="activeSwitch">
                                                 Active Account {formData.is_active ? '(Can login)' : '(Access denied)'}
                                             </label>
                                         </div>
@@ -320,101 +306,36 @@ function AdminUserEdit() {
                                     </div>
 
                                     <div className="d-flex justify-content-end gap-2">
-                                        <Link to="/admin/users" className="btn btn-outline-light">Cancel</Link>
-                                        <button type="submit" className="btn btn-warning px-4" disabled={submitting}>
+                                        <Link to="/admin/users" className="btn-custom bg-light border">Cancel</Link>
+                                        <button type="submit" className="btn-custom bg-warning text-dark border-warning" disabled={submitting}>
                                             {submitting ? 'Saving...' : 'Save Changes'}
                                         </button>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Wallet Management Card */}
-                    <div className="col-lg-4">
-                        <div className="card bg-secondary bg-opacity-25 border-secondary h-100">
-                            <div className="card-header bg-transparent border-secondary text-white fw-bold">
-                                <i className="bi bi-wallet2 me-2"></i> Wallet Management
-                            </div>
-                            <div className="card-body p-4">
-                                <div className="mb-4 text-center p-3 bg-dark rounded border border-secondary">
-                                    <small className="text-muted text-uppercase d-block mb-1">Current Balance</small>
-                                    <h2 className={`mb-0 ${formData.balance < 0 ? 'text-danger' : 'text-success'}`}>
-                                        €{parseFloat(formData.balance).toFixed(2)}
-                                    </h2>
+                        {/* Transaction History Row */}
+                        <div className="section">
+                            <div className="section-header d-flex justify-content-between align-items-center">
+                                <div className="section-title">
+                                    <i className="bi bi-clock-history me-2"></i> Transaction History
                                 </div>
-
-                                <form onSubmit={handleTopUp}>
-                                    <div className="mb-3">
-                                        <label className="form-label text-light small">Top Up Amount (€)</label>
-                                        <div className="input-group">
-                                            <span className="input-group-text bg-dark text-white border-secondary">€</span>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0.01"
-                                                className="form-control bg-dark text-white border-secondary"
-                                                value={topUpData.amount}
-                                                onChange={(e) => setTopUpData({ ...topUpData, amount: e.target.value })}
-                                                placeholder="0.00"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label text-light small">Date (Optional)</label>
-                                        <input
-                                            type="datetime-local"
-                                            className="form-control bg-dark text-white border-secondary"
-                                            value={topUpData.created_at}
-                                            onChange={(e) => setTopUpData({ ...topUpData, created_at: e.target.value })}
-                                        />
-                                        <div className="form-text text-muted small">Leave empty for current time</div>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label text-light small">Description</label>
-                                        <input
-                                            type="text"
-                                            className="form-control bg-dark text-white border-secondary"
-                                            value={topUpData.description}
-                                            onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
-                                            placeholder="Manual Top-up"
-                                        />
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="btn btn-success w-100"
-                                        disabled={topUpLoading}
-                                    >
-                                        {topUpLoading ? 'Processing...' : 'Add Funds'}
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Transaction History Row */}
-                <div className="row mt-4">
-                    <div className="col-12">
-                        <div className="card bg-secondary bg-opacity-25 border-secondary">
-                            <div className="card-header bg-transparent border-secondary text-white fw-bold d-flex justify-content-between align-items-center">
-                                <span><i className="bi bi-clock-history me-2"></i> Transaction History</span>
-                                <button className="btn btn-sm btn-outline-light" onClick={fetchTransactions}>
+                                <button className="btn btn-sm btn-outline-secondary" onClick={fetchTransactions}>
                                     <i className="bi bi-arrow-clockwise"></i> Refresh
                                 </button>
                             </div>
-                            <div className="card-body p-0">
+                            <div className="p-0">
                                 <div className="table-responsive">
-                                    <table className="table table-dark table-hover mb-0">
-                                        <thead>
+                                    <table className="table table-hover align-middle mb-0">
+                                        <thead className="bg-light">
                                             <tr>
-                                                <th>Date</th>
-                                                <th>Type</th>
-                                                <th>Description</th>
-                                                <th>Created By</th>
-                                                <th className="text-end">Amount</th>
-                                                <th className="text-end">Actions</th>
+                                                <th className="border-0 px-4 py-3">Date</th>
+                                                <th className="border-0 px-4 py-3">Type</th>
+                                                <th className="border-0 px-4 py-3">Description</th>
+                                                <th className="border-0 px-4 py-3">Created By</th>
+                                                <th className="border-0 px-4 py-3 text-end">Amount</th>
+                                                <th className="border-0 px-4 py-3 text-end">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -422,34 +343,34 @@ function AdminUserEdit() {
                                                 <tr key={tx.id}>
                                                     {editingTx === tx.id ? (
                                                         <>
-                                                            <td>
+                                                            <td className="px-4">
                                                                 <input
                                                                     type="datetime-local"
-                                                                    className="form-control form-control-sm bg-dark text-white border-secondary"
+                                                                    className="form-control form-control-sm"
                                                                     value={editTxData.created_at}
                                                                     onChange={e => setEditTxData({ ...editTxData, created_at: e.target.value })}
                                                                 />
                                                             </td>
-                                                            <td className="text-capitalize">{tx.type}</td>
-                                                            <td>
+                                                            <td className="px-4 text-capitalize">{tx.type}</td>
+                                                            <td className="px-4">
                                                                 <input
                                                                     type="text"
-                                                                    className="form-control form-control-sm bg-dark text-white border-secondary"
+                                                                    className="form-control form-control-sm"
                                                                     value={editTxData.description}
                                                                     onChange={e => setEditTxData({ ...editTxData, description: e.target.value })}
                                                                 />
                                                             </td>
-                                                            <td className="text-muted small">{tx.created_by_name || '-'}</td>
-                                                            <td>
+                                                            <td className="px-4 text-muted small">{tx.created_by_name || '-'}</td>
+                                                            <td className="px-4">
                                                                 <input
                                                                     type="number"
                                                                     step="0.01"
-                                                                    className="form-control form-control-sm bg-dark text-white border-secondary text-end"
+                                                                    className="form-control form-control-sm text-end"
                                                                     value={editTxData.amount}
                                                                     onChange={e => setEditTxData({ ...editTxData, amount: e.target.value })}
                                                                 />
                                                             </td>
-                                                            <td className="text-end">
+                                                            <td className="px-4 text-end">
                                                                 <button className="btn btn-sm btn-success me-1" onClick={() => handleUpdateTransaction(tx.id)}>
                                                                     <i className="bi bi-check"></i>
                                                                 </button>
@@ -460,20 +381,20 @@ function AdminUserEdit() {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <td>{new Date(tx.created_at).toLocaleString('en-GB')}</td>
-                                                            <td>
-                                                                <span className={`badge ${tx.type === 'topup' ? 'bg-success' : 'bg-primary'}`}>
+                                                            <td className="px-4">{new Date(tx.created_at).toLocaleString('en-GB')}</td>
+                                                            <td className="px-4">
+                                                                <span className={`badge rounded-pill ${tx.type === 'topup' ? 'bg-success' : 'bg-primary'}`}>
                                                                     {tx.type}
                                                                 </span>
                                                             </td>
-                                                            <td>{tx.description}</td>
-                                                            <td className="text-muted small">{tx.created_by_name || '-'}</td>
-                                                            <td className={`text-end fw-bold ${parseFloat(tx.amount) >= 0 ? 'text-success' : 'text-danger'}`}>
+                                                            <td className="px-4">{tx.description}</td>
+                                                            <td className="px-4 text-muted small">{tx.created_by_name || '-'}</td>
+                                                            <td className={`px-4 text-end fw-bold ${parseFloat(tx.amount) >= 0 ? 'text-success' : 'text-danger'}`}>
                                                                 €{parseFloat(tx.amount).toFixed(2)}
                                                             </td>
-                                                            <td className="text-end">
+                                                            <td className="px-4 text-end">
                                                                 {user?.role === 'super_admin' && (
-                                                                    <button className="btn btn-sm btn-outline-warning" onClick={() => startEditingTx(tx)}>
+                                                                    <button className="btn btn-custom btn-sm bg-light border" onClick={() => startEditingTx(tx)}>
                                                                         <i className="bi bi-pencil"></i>
                                                                     </button>
                                                                 )}
@@ -484,12 +405,77 @@ function AdminUserEdit() {
                                             ))}
                                             {userTransactions.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="6" className="text-center py-4 text-muted">No transactions found</td>
+                                                    <td colSpan="6" className="text-center py-5 text-muted">No transactions found</td>
                                                 </tr>
                                             )}
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Wallet Management Card */}
+                    <div className="col-lg-4">
+                        <div className="section h-100">
+                            <div className="section-header">
+                                <div className="section-title">
+                                    <i className="bi bi-wallet2 me-2"></i> Wallet Management
+                                </div>
+                            </div>
+                            <div className="p-4">
+                                <div className="mb-4 text-center p-4 bg-light rounded border">
+                                    <small className="text-muted text-uppercase d-block mb-1 fw-bold">Current Balance</small>
+                                    <h2 className={`display-6 fw-bold mb-0 ${formData.balance < 0 ? 'text-danger' : 'text-success'}`}>
+                                        €{parseFloat(formData.balance).toFixed(2)}
+                                    </h2>
+                                </div>
+
+                                <form onSubmit={handleTopUp}>
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Top Up Amount (€)</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text bg-light text-muted">€</span>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0.01"
+                                                className="form-control"
+                                                value={topUpData.amount}
+                                                onChange={(e) => setTopUpData({ ...topUpData, amount: e.target.value })}
+                                                placeholder="0.00"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Date (Optional)</label>
+                                        <input
+                                            type="datetime-local"
+                                            className="form-control"
+                                            value={topUpData.created_at}
+                                            onChange={(e) => setTopUpData({ ...topUpData, created_at: e.target.value })}
+                                        />
+                                        <div className="form-text text-muted small">Leave empty for current time</div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Description</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={topUpData.description}
+                                            onChange={(e) => setTopUpData({ ...topUpData, description: e.target.value })}
+                                            placeholder="Manual Top-up"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="btn-custom bg-success text-white w-100"
+                                        disabled={topUpLoading}
+                                    >
+                                        {topUpLoading ? 'Processing...' : 'Add Funds'}
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

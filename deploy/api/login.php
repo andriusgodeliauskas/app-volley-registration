@@ -103,7 +103,7 @@ try {
         'role' => $user['role'],
         'balance' => $user['balance'],
         'parent_id' => $user['parent_id'] ? (int) $user['parent_id'] : null,
-        'avatar' => $user['avatar'] ?? 'Felix',
+        'avatar' => $user['avatar'] ?? 'Midnight',
         'children' => $children
     ];
     

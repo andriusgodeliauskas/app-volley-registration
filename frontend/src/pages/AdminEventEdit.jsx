@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
+import AdminNavbar from '../components/AdminNavbar';
 
 function AdminEventEdit() {
     const { id } = useParams();
@@ -23,8 +24,11 @@ function AdminEventEdit() {
         max_players: 0,
         court_count: 1,
         price_per_person: 0,
-        status: 'open'
+        status: 'open',
+        icon: '🏐'
     });
+
+    const ICONS = ['🏐', '🏆', '🏖️', '👟', '🍺', '🍕', '🎉', '🔥', '💪', '🥇'];
 
     const [finalizeLoading, setFinalizeLoading] = useState(false);
 
@@ -138,68 +142,49 @@ function AdminEventEdit() {
     }
 
     return (
-        <div className="min-vh-100 bg-dark">
-            {/* Admin Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
-                <div className="container-fluid px-4">
-                    <Link className="navbar-brand fw-bold text-warning" to="/admin">⚡ Volley Admin</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="adminNav">
-                        <ul className="navbar-nav me-auto">
-                            <li className="nav-item"><Link className="nav-link" to="/admin">Dashboard</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/users">Users</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/groups">Groups</Link></li>
-                            <li className="nav-item"><Link className="nav-link active" to="/admin/events">Events</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/wallet">Wallet</Link></li>
-                        </ul>
-                        <div className="d-flex align-items-center">
-                            <span className="badge bg-warning text-dark me-3">{user?.role?.replace('_', ' ').toUpperCase()}</span>
-                            <div className="dropdown">
-                                <button className="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">{user?.name}</button>
-                                <ul className="dropdown-menu dropdown-menu-end">
-                                    <li><Link className="dropdown-item" to="/dashboard">User View</Link></li>
-                                    <li><hr className="dropdown-divider" /></li>
-                                    <li><button className="dropdown-item text-danger" onClick={logout}>Logout</button></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <AdminNavbar />
 
-            <div className="container px-4 py-4">
+            <div className="main-container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h1 className="h3 text-white mb-0">Edit Event</h1>
-                    <Link to="/admin/events" className="btn btn-outline-light btn-sm">
+                    <div>
+                        <h1 className="h3 fw-bold mb-1">Edit Event</h1>
+                        <p className="text-muted mb-0">Update event details or status</p>
+                    </div>
+                    <Link to="/admin/events" className="btn-custom bg-light border">
                         <i className="bi bi-arrow-left me-1"></i> Back to Events
                     </Link>
                 </div>
 
                 <div className="row g-4">
                     <div className="col-lg-8">
-                        <div className="card bg-secondary bg-opacity-25 border-secondary">
-                            <div className="card-body p-4">
+                        <div className="section">
+                            <div className="p-4">
                                 {successMessage && (
-                                    <div className="alert alert-success alert-dismissible fade show">
-                                        {successMessage}
-                                        <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
+                                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
+                                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                                        <div>
+                                            {successMessage}
+                                            <button type="button" className="btn-close ms-auto" onClick={() => setSuccessMessage('')}></button>
+                                        </div>
                                     </div>
                                 )}
                                 {error && (
-                                    <div className="alert alert-danger alert-dismissible fade show">
-                                        {error}
-                                        <button type="button" className="btn-close" onClick={() => setError(null)}></button>
+                                    <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
+                                        <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
+                                        <div>
+                                            {error}
+                                            <button type="button" className="btn-close ms-auto" onClick={() => setError(null)}></button>
+                                        </div>
                                     </div>
                                 )}
 
                                 <form onSubmit={handleSubmit}>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-light">Group</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Group</label>
                                             <select
-                                                className="form-select bg-dark text-white border-secondary"
+                                                className="form-select"
                                                 name="group_id"
                                                 value={formData.group_id}
                                                 onChange={handleChange}
@@ -211,10 +196,10 @@ function AdminEventEdit() {
                                             </select>
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-light">Event Title</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Event Title</label>
                                             <input
                                                 type="text"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="title"
                                                 value={formData.title}
                                                 onChange={handleChange}
@@ -223,12 +208,28 @@ function AdminEventEdit() {
                                         </div>
                                     </div>
 
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Icon</label>
+                                        <div className="d-flex gap-2 flex-wrap bg-light p-2 rounded border">
+                                            {ICONS.map(icon => (
+                                                <button
+                                                    key={icon}
+                                                    type="button"
+                                                    className={`btn btn-sm fs-5 ${formData.icon === icon ? 'btn-primary' : 'btn-outline-light text-dark border-0 hover-shadow'}`}
+                                                    onClick={() => setFormData({ ...formData, icon })}
+                                                >
+                                                    {icon}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-light">Date & Time</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Date & Time</label>
                                             <input
                                                 type="datetime-local"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="date_time"
                                                 value={formData.date_time}
                                                 onChange={handleChange}
@@ -236,10 +237,10 @@ function AdminEventEdit() {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-light">Location</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Location</label>
                                             <input
                                                 type="text"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="location"
                                                 value={formData.location}
                                                 onChange={handleChange}
@@ -250,10 +251,10 @@ function AdminEventEdit() {
 
                                     <div className="row">
                                         <div className="col-md-4 mb-3">
-                                            <label className="form-label text-light">Max Players</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Max Players</label>
                                             <input
                                                 type="number"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="max_players"
                                                 value={formData.max_players}
                                                 onChange={handleChange}
@@ -261,10 +262,10 @@ function AdminEventEdit() {
                                             />
                                         </div>
                                         <div className="col-md-4 mb-3">
-                                            <label className="form-label text-light">Courts</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Courts</label>
                                             <input
                                                 type="number"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="court_count"
                                                 value={formData.court_count}
                                                 onChange={handleChange}
@@ -272,11 +273,11 @@ function AdminEventEdit() {
                                             />
                                         </div>
                                         <div className="col-md-4 mb-3">
-                                            <label className="form-label text-light">Price (€)</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Price (€)</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
-                                                className="form-control bg-dark text-white border-secondary"
+                                                className="form-control"
                                                 name="price_per_person"
                                                 value={formData.price_per_person}
                                                 onChange={handleChange}
@@ -285,9 +286,9 @@ function AdminEventEdit() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label text-light">Status</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Status</label>
                                         <select
-                                            className="form-select bg-dark text-white border-secondary"
+                                            className="form-select"
                                             name="status"
                                             value={formData.status}
                                             onChange={handleChange}
@@ -299,9 +300,9 @@ function AdminEventEdit() {
                                     </div>
 
                                     <div className="mb-4">
-                                        <label className="form-label text-light">Description</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Description</label>
                                         <textarea
-                                            className="form-control bg-dark text-white border-secondary"
+                                            className="form-control"
                                             name="description"
                                             value={formData.description || ''}
                                             onChange={handleChange}
@@ -310,8 +311,8 @@ function AdminEventEdit() {
                                     </div>
 
                                     <div className="d-flex justify-content-end gap-2">
-                                        <Link to="/admin/events" className="btn btn-outline-light">Cancel</Link>
-                                        <button type="submit" className="btn btn-warning px-4" disabled={submitting}>
+                                        <Link to="/admin/events" className="btn-custom bg-light border">Cancel</Link>
+                                        <button type="submit" className="btn-custom bg-warning text-dark border-warning" disabled={submitting}>
                                             {submitting ? 'Saving...' : 'Save Changes'}
                                         </button>
                                     </div>
@@ -322,22 +323,26 @@ function AdminEventEdit() {
 
                     {/* Event Actions Card */}
                     <div className="col-lg-4">
-                        <div className="card bg-secondary bg-opacity-25 border-secondary h-100">
-                            <div className="card-header bg-transparent border-secondary text-white fw-bold">
-                                <i className="bi bi-gear me-2"></i> Event Actions
+                        <div className="section h-100">
+                            <div className="section-header">
+                                <div className="section-title">
+                                    <i className="bi bi-gear me-2"></i> Event Actions
+                                </div>
                             </div>
-                            <div className="card-body p-4">
-                                <div className="mb-4 text-center p-3 bg-dark rounded border border-secondary">
+                            <div className="p-4">
+                                <div className="mb-4 text-center p-3 bg-light rounded border">
                                     <small className="text-muted text-uppercase d-block mb-1">Current Status</small>
                                     <h3 className={`mb-0 text-uppercase ${formData.status === 'open' ? 'text-success' : (formData.status === 'closed' ? 'text-danger' : 'text-warning')}`}>
                                         {formData.status}
                                     </h3>
                                 </div>
 
-                                <div className="alert alert-info small border-0 bg-opacity-10 bg-info text-info">
-                                    <i className="bi bi-info-circle me-1"></i>
-                                    Finalizing the event will:
-                                    <ul className="mb-0 ps-3 mt-1">
+                                <div className="alert-custom bg-info bg-opacity-10 border-info text-info mb-4" style={{ display: 'block' }}>
+                                    <div className="d-flex align-items-center mb-2">
+                                        <i className="bi bi-info-circle-fill me-2"></i>
+                                        <strong>Finalizing limits:</strong>
+                                    </div>
+                                    <ul className="mb-0 ps-3 small">
                                         <li>Charge all registered players €{parseFloat(formData.price_per_person).toFixed(2)}</li>
                                         <li>Close the event for new registrations</li>
                                         <li>Add transactions to user wallets</li>
@@ -346,15 +351,15 @@ function AdminEventEdit() {
 
                                 <button
                                     type="button"
-                                    className="btn btn-danger w-100 py-2"
+                                    className="btn-custom bg-danger text-white w-100 py-3"
                                     onClick={handleFinalize}
                                     disabled={finalizeLoading || formData.status === 'closed' || formData.status === 'canceled'}
                                 >
                                     {finalizeLoading ? 'Processing...' : (formData.status === 'closed' ? 'Event Finalized' : 'Finalize Event & Charge')}
                                 </button>
                                 {formData.status === 'closed' && (
-                                    <div className="text-center mt-2 text-muted small">
-                                        <i className="bi bi-check-circle-fill text-success me-1"></i>
+                                    <div className="text-center mt-3 text-success small fw-bold">
+                                        <i className="bi bi-check-circle-fill me-1"></i>
                                         Payments have been processed.
                                     </div>
                                 )}

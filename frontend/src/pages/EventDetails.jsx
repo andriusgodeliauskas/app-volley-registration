@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS, get, post, del } from '../api/config';
+import Navbar from '../components/Navbar';
 
 function EventDetails() {
     const { id } = useParams();
@@ -143,24 +144,14 @@ function EventDetails() {
     const timeStr = eventDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
     return (
-        <div className="min-vh-100 bg-light">
-            {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-                <div className="container">
-                    <Link className="navbar-brand fw-bold" to="/dashboard">🏐 Volley App</Link>
-                    <div className="ms-auto">
-                        <Link to="/dashboard" className="btn btn-outline-light btn-sm">
-                            <i className="bi bi-arrow-left me-1"></i>Back
-                        </Link>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <Navbar />
 
             {/* Confirmation Modal */}
             {confirmModal.show && (
                 <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content shadow">
+                        <div className="modal-content shadow border-0 rounded-4">
                             <div className="modal-header border-0 pb-0">
                                 <h5 className="modal-title fw-bold">
                                     {confirmModal.type === 'register' ? 'Confirm Registration' : 'Confirm Cancellation'}
@@ -171,61 +162,71 @@ function EventDetails() {
                                 <p className="mb-0">Are you sure you want to {confirmModal.type === 'register' ? 'register for' : 'cancel your registration for'} <br /><strong>{confirmModal.eventTitle}</strong>?</p>
                             </div>
                             <div className="modal-footer border-0 pt-0">
-                                <button type="button" className="btn btn-light" onClick={() => setConfirmModal({ show: false })}>No</button>
-                                <button type="button" className={`btn ${confirmModal.type === 'register' ? 'btn-primary' : 'btn-danger'} px-4`} onClick={handleConfirmAction}>Yes</button>
+                                <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>No</button>
+                                <button type="button" className={`btn-custom ${confirmModal.type === 'register' ? 'bg-primary text-white border-primary' : 'btn-danger-custom text-white bg-danger border-danger'} px-4`} onClick={handleConfirmAction}>Yes</button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
-            <div className="container pb-5">
-                {/* Alerts allow displaying temporary success/error messages inside the page */}
+            <div className="main-container">
+                {/* Alerts */}
                 {successMessage && (
-                    <div className="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                        {successMessage}
-                        <button type="button" className="btn-close" onClick={() => setSuccessMessage('')}></button>
+                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
+                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                        <div>{successMessage} <button type="button" className="btn-close ms-2" onClick={() => setSuccessMessage('')}></button></div>
                     </div>
                 )}
                 {error && data && (
-                    <div className="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                        {error}
-                        <button type="button" className="btn-close" onClick={() => setError(null)}></button>
+                    <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
+                        <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
+                        <div>{error} <button type="button" className="btn-close ms-2" onClick={() => setError(null)}></button></div>
                     </div>
                 )}
 
                 <div className="row g-4">
                     {/* Left Column: Event Details */}
                     <div className="col-lg-5">
-                        <div className="card border-0 shadow-sm h-100">
-                            <div className="card-body p-4">
-                                <h5 className="text-uppercase text-muted small fw-bold mb-3">Event Details</h5>
-                                <h2 className="card-title fw-bold mb-3 text-primary">{event.title}</h2>
-
+                        <div className="section h-100">
+                            <div className="section-header">
+                                <Link to="/events" className="btn-custom btn-sm mb-2 d-inline-block">&larr; Back</Link>
+                                <div className="section-title text-primary">{event.title}</div>
+                                <div className="section-subtitle">Event Details</div>
+                            </div>
+                            <div className="p-0">
                                 <div className="mb-4">
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-calendar-event fs-5 text-primary me-3"></i>
+                                    <div className="d-flex align-items-center mb-3">
+                                        <div className="bg-primary bg-opacity-10 p-2 rounded me-3 text-primary">
+                                            <i className="bi bi-calendar-event fs-5"></i>
+                                        </div>
                                         <div>
                                             <div className="fw-semibold">{dateStr}</div>
                                             <div className="text-muted small">{timeStr}</div>
                                         </div>
                                     </div>
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-geo-alt fs-5 text-primary me-3"></i>
+                                    <div className="d-flex align-items-center mb-3">
+                                        <div className="bg-primary bg-opacity-10 p-2 rounded me-3 text-primary">
+                                            <i className="bi bi-geo-alt fs-5"></i>
+                                        </div>
                                         <div>
                                             <div className="fw-semibold">{event.location}</div>
                                             <div className="text-muted small">Location</div>
                                         </div>
                                     </div>
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-people fs-5 text-primary me-3"></i>
+                                    <div className="d-flex align-items-center mb-3">
+                                        <div className="bg-primary bg-opacity-10 p-2 rounded me-3 text-primary">
+                                            <i className="bi bi-people fs-5"></i>
+                                        </div>
                                         <div>
                                             <div className="fw-semibold">{event.group_name}</div>
                                             <div className="text-muted small">Group</div>
                                         </div>
                                     </div>
-                                    <div className="d-flex align-items-center mb-2">
-                                        <i className="bi bi-tag fs-5 text-primary me-3"></i>
+                                    <div className="d-flex align-items-center mb-3">
+                                        <div className="bg-primary bg-opacity-10 p-2 rounded me-3 text-primary">
+                                            <i className="bi bi-tag fs-5"></i>
+                                        </div>
                                         <div>
                                             <div className="fw-semibold">€{parseFloat(event.price_per_person).toFixed(2)}</div>
                                             <div className="text-muted small">Per person</div>
@@ -263,7 +264,7 @@ function EventDetails() {
                                 <div className="d-grid gap-2">
                                     {isRegistered ? (
                                         <button
-                                            className="btn btn-outline-danger btn-lg"
+                                            className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
                                             onClick={openCancelModal}
                                             disabled={processing}
                                         >
@@ -271,7 +272,7 @@ function EventDetails() {
                                         </button>
                                     ) : (
                                         <button
-                                            className={`btn btn-lg shadow-sm ${isFull ? 'btn-warning' : 'btn-primary'}`}
+                                            className={`btn-custom w-100 ${isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary'}`}
                                             onClick={openRegisterModal}
                                             disabled={processing}
                                         >
@@ -285,28 +286,26 @@ function EventDetails() {
 
                     {/* Right Column: Attendees List */}
                     <div className="col-lg-7">
-                        <div className="card border-0 shadow-sm h-100">
-                            <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                                <h5 className="mb-0">
-                                    <i className="bi bi-list-ol me-2 text-primary"></i>
+                        <div className="section h-100">
+                            <div className="section-header">
+                                <div className="section-title">
                                     Registered Players
-                                </h5>
-                                <span className="badge bg-primary rounded-pill">
-                                    {attendees.length}
-                                </span>
+                                    <span className="badge bg-primary rounded-pill ms-2 fs-6 align-middle">
+                                        {attendees.length}
+                                    </span>
+                                </div>
                             </div>
-                            <div className="card-body p-0">
+                            <div className="p-0">
                                 {attendees.length === 0 ? (
                                     <div className="text-center py-5 text-muted">
-                                        <i className="bi bi-person-x fs-1 opacity-50"></i>
                                         <p className="mt-2">No players registered yet.</p>
                                     </div>
                                 ) : (
                                     <>
                                         {/* Main List */}
-                                        <div className="list-group list-group-flush">
+                                        <div className="d-flex flex-column gap-2">
                                             {attendees.filter(a => a.index <= event.max_players).map((attendee) => (
-                                                <div key={attendee.id} className="list-group-item px-4 py-3 d-flex align-items-center">
+                                                <div key={attendee.id} className="p-3 bg-white border rounded-3 d-flex align-items-center">
                                                     <div
                                                         className="me-3 rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
                                                         style={{ width: '32px', height: '32px' }}
@@ -317,7 +316,7 @@ function EventDetails() {
                                                         <img
                                                             src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
                                                             alt={attendee.name}
-                                                            className="me-3 rounded-circle shadow-sm bg-light"
+                                                            className="me-3 rounded-circle shadow-sm bg-gray-100"
                                                             style={{ width: '40px', height: '40px' }}
                                                         />
                                                         <div>
@@ -337,12 +336,12 @@ function EventDetails() {
                                         {/* Waitlist */}
                                         {attendees.some(a => a.index > event.max_players) && (
                                             <>
-                                                <div className="bg-light px-4 py-2 border-top border-bottom">
+                                                <div className="px-1 py-3">
                                                     <small className="fw-bold text-uppercase text-warning">Waitlist / Queue</small>
                                                 </div>
-                                                <div className="list-group list-group-flush bg-light bg-opacity-25">
+                                                <div className="d-flex flex-column gap-2 opacity-75">
                                                     {attendees.filter(a => a.index > event.max_players).map((attendee) => (
-                                                        <div key={attendee.id} className="list-group-item px-4 py-3 d-flex align-items-center bg-transparent">
+                                                        <div key={attendee.id} className="p-3 bg-light border border-warning rounded-3 d-flex align-items-center">
                                                             <div
                                                                 className="me-3 rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center fw-bold text-dark"
                                                                 style={{ width: '32px', height: '32px' }}

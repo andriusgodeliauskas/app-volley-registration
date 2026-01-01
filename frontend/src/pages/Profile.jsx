@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { get, post, API_ENDPOINTS } from '../api/config';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 const AVATAR_SEEDS = [
     'Felix', 'Aneka', 'Zack', 'Midnight', 'Abby',
@@ -89,29 +90,29 @@ export default function Profile() {
     }
 
     return (
-        <div className="min-vh-100 bg-light">
-            {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-                <div className="container">
-                    <Link className="navbar-brand fw-bold" to="/dashboard">🏐 Volley App</Link>
-                    <div className="ms-auto">
-                        <Link to="/dashboard" className="btn btn-outline-light btn-sm">
-                            <i className="bi bi-arrow-left me-1"></i>Back to Dashboard
-                        </Link>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <Navbar />
 
-            <div className="container pb-5">
+            <div className="main-container">
                 <div className="row justify-content-center">
                     <div className="col-lg-8">
-                        <div className="card border-0 shadow-sm">
-                            <div className="card-header bg-white border-0 py-3">
-                                <h4 className="mb-0 fw-bold">My Profile</h4>
+                        <div className="section">
+                            <div className="section-header border-0 pb-0">
+                                <div className="section-title">My Profile</div>
                             </div>
-                            <div className="card-body p-4">
-                                {message && <div className="alert alert-success">{message}</div>}
-                                {error && <div className="alert alert-danger">{error}</div>}
+                            <div className="p-3">
+                                {message && (
+                                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-3">
+                                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                                        <div>{message}</div>
+                                    </div>
+                                )}
+                                {error && (
+                                    <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-3">
+                                        <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
+                                        <div>{error}</div>
+                                    </div>
+                                )}
 
                                 <form onSubmit={handleSubmit}>
                                     <div className="row mb-4">
@@ -120,7 +121,7 @@ export default function Profile() {
                                                 <img
                                                     src={getAvatarUrl(formData.avatar)}
                                                     alt="Avatar"
-                                                    className="rounded-circle shadow-sm bg-light"
+                                                    className="rounded-circle shadow-sm bg-gray-100"
                                                     style={{ width: '120px', height: '120px' }}
                                                 />
                                             </div>
@@ -187,7 +188,7 @@ export default function Profile() {
                                     <div className="d-flex justify-content-end">
                                         <button
                                             type="submit"
-                                            className="btn btn-primary px-4"
+                                            className="btn-custom bg-primary text-white border-primary px-4"
                                             disabled={saving}
                                         >
                                             {saving ? 'Saving...' : 'Save Changes'}

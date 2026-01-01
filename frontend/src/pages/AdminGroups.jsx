@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
+import AdminNavbar from '../components/AdminNavbar';
 
 function AdminGroups() {
     const { user, logout } = useAuth();
@@ -59,95 +61,78 @@ function AdminGroups() {
     };
 
     return (
-        <div className="min-vh-100 bg-dark">
-            {/* Admin Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
-                <div className="container-fluid px-4">
-                    <Link className="navbar-brand fw-bold text-warning" to="/admin">⚡ Volley Admin</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="adminNav">
-                        <ul className="navbar-nav me-auto">
-                            <li className="nav-item"><Link className="nav-link" to="/admin">Dashboard</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/users">Users</Link></li>
-                            <li className="nav-item"><Link className="nav-link active" to="/admin/groups">Groups</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/events">Events</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/wallet">Wallet</Link></li>
-                        </ul>
-                        <div className="d-flex align-items-center">
-                            <span className="badge bg-warning text-dark me-3">{user?.role?.replace('_', ' ').toUpperCase()}</span>
-                            <div className="dropdown">
-                                <button className="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">{user?.name}</button>
-                                <ul className="dropdown-menu dropdown-menu-end">
-                                    <li><Link className="dropdown-item" to="/dashboard">User View</Link></li>
-                                    <li><hr className="dropdown-divider" /></li>
-                                    <li><button className="dropdown-item text-danger" onClick={logout}>Logout</button></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <AdminNavbar />
 
-            {/* Main Content */}
-            <div className="container-fluid px-4 py-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="main-container">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
                     <div>
-                        <h1 className="h3 text-white mb-1">Groups</h1>
-                        <p className="text-secondary mb-0">Manage volleyball groups/clubs</p>
+                        <h1 className="h3 fw-bold mb-1">Groups</h1>
+                        <p className="text-muted mb-0">Manage volleyball groups/clubs</p>
                     </div>
-                    <button
-                        className="btn btn-warning"
-                        onClick={() => setShowCreateModal(true)}
-                    >
-                        + Create Group
-                    </button>
+                    <div className="d-flex gap-2">
+                        <Link to="/admin" className="btn-custom bg-light border">Back</Link>
+                        <button
+                            className="btn-custom bg-warning text-dark border-warning"
+                            onClick={() => setShowCreateModal(true)}
+                        >
+                            <i className="bi bi-plus-lg me-1"></i> Create Group
+                        </button>
+                    </div>
                 </div>
 
                 {/* Alerts */}
                 {error && (
-                    <div className="alert alert-danger">{error}</div>
+                    <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
+                        <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
+                        <div>{error}</div>
+                    </div>
                 )}
                 {success && (
-                    <div className="alert alert-success">{success}</div>
+                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
+                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                        <div>{success}</div>
+                    </div>
                 )}
 
                 {/* Groups List */}
-                <div className="card bg-secondary bg-opacity-25 border-secondary">
-                    <div className="card-body">
+                <div className="section">
+                    <div className="section-header">
+                        <div className="section-title">All Groups</div>
+                    </div>
+                    <div className="p-0">
                         {loading ? (
-                            <div className="text-center py-4">
-                                <div className="spinner-border text-warning"></div>
+                            <div className="text-center py-5">
+                                <div className="spinner-border text-primary"></div>
                             </div>
                         ) : groups.length === 0 ? (
-                            <div className="text-center py-5 text-white">
+                            <div className="text-center py-5 text-muted">
                                 <h5>No groups yet</h5>
-                                <p className="text-secondary">Create your first group to start adding events.</p>
+                                <p className="mb-0">Create your first group to start adding events.</p>
                             </div>
                         ) : (
                             <div className="table-responsive">
-                                <table className="table table-dark table-hover">
-                                    <thead>
+                                <table className="table table-hover align-middle mb-0">
+                                    <thead className="bg-light">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                            <th>Owner</th>
-                                            <th>Actions</th>
+                                            <th className="border-0 px-4 py-3">ID</th>
+                                            <th className="border-0 px-4 py-3">Name</th>
+                                            <th className="border-0 px-4 py-3">Description</th>
+                                            <th className="border-0 px-4 py-3">Owner</th>
+                                            <th className="border-0 px-4 py-3">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {groups.map(group => (
                                             <tr key={group.id}>
-                                                <td>{group.id}</td>
-                                                <td className="fw-semibold">{group.name}</td>
-                                                <td className="text-secondary">{group.description || '-'}</td>
-                                                <td>{group.owner_name || 'N/A'}</td>
-                                                <td>
+                                                <td className="px-4">{group.id}</td>
+                                                <td className="px-4 fw-semibold">{group.name}</td>
+                                                <td className="px-4 text-muted small">{group.description || '-'}</td>
+                                                <td className="px-4">{group.owner_name || 'N/A'}</td>
+                                                <td className="px-4">
                                                     <Link
-                                                        to={`/admin/events?group=${group.id}`}
-                                                        className="btn btn-sm btn-outline-light"
+                                                        to={`/ admin / events ? group = ${group.id} `}
+                                                        className="btn-custom btn-sm bg-light border"
                                                     >
                                                         View Events
                                                     </Link>
@@ -164,24 +149,20 @@ function AdminGroups() {
 
             {/* Create Group Modal */}
             {showCreateModal && (
-                <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content bg-dark text-white border-secondary">
-                            <div className="modal-header border-secondary">
-                                <h5 className="modal-title">Create New Group</h5>
-                                <button
-                                    type="button"
-                                    className="btn-close btn-close-white"
-                                    onClick={() => setShowCreateModal(false)}
-                                ></button>
+                        <div className="modal-content border-0 shadow rounded-4">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title fw-bold">Create New Group</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowCreateModal(false)}></button>
                             </div>
                             <form onSubmit={handleCreateGroup}>
                                 <div className="modal-body">
                                     <div className="mb-3">
-                                        <label className="form-label">Group Name *</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Group Name *</label>
                                         <input
                                             type="text"
-                                            className="form-control bg-secondary border-secondary text-white"
+                                            className="form-control"
                                             value={newGroup.name}
                                             onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                                             placeholder="e.g., Vilnius Volleyball Club"
@@ -189,9 +170,9 @@ function AdminGroups() {
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Description</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Description</label>
                                         <textarea
-                                            className="form-control bg-secondary border-secondary text-white"
+                                            className="form-control"
                                             value={newGroup.description}
                                             onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
                                             placeholder="Brief description of the group..."
@@ -199,17 +180,17 @@ function AdminGroups() {
                                         ></textarea>
                                     </div>
                                 </div>
-                                <div className="modal-footer border-secondary">
+                                <div className="modal-footer border-0 pt-0">
                                     <button
                                         type="button"
-                                        className="btn btn-secondary"
+                                        className="btn-custom bg-light border"
                                         onClick={() => setShowCreateModal(false)}
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="btn btn-warning"
+                                        className="btn-custom bg-warning text-dark border-warning"
                                         disabled={creating}
                                     >
                                         {creating ? 'Creating...' : 'Create Group'}

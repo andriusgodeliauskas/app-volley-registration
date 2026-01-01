@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
+import AdminNavbar from '../components/AdminNavbar';
 
 function AdminEvents() {
     const { user, logout } = useAuth();
@@ -22,8 +23,11 @@ function AdminEvents() {
         location: '',
         max_players: 12,
         court_count: 1,
-        price_per_person: 5.00
+        price_per_person: 5.00,
+        icon: '🏐'
     });
+
+    const ICONS = ['🏐', '🏆', '🏖️', '👟', '🍺', '🍕', '🎉', '🔥', '💪', '🥇'];
 
     // Fetch data
     useEffect(() => {
@@ -73,7 +77,8 @@ function AdminEvents() {
                     location: '',
                     max_players: 12,
                     court_count: 1,
-                    price_per_person: 5.00
+                    price_per_person: 5.00,
+                    icon: '🏐'
                 });
                 fetchData();
                 setTimeout(() => setSuccess(''), 3000);
@@ -98,103 +103,89 @@ function AdminEvents() {
     };
 
     return (
-        <div className="min-vh-100 bg-dark">
-            {/* Admin Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
-                <div className="container-fluid px-4">
-                    <Link className="navbar-brand fw-bold text-warning" to="/admin">⚡ Volley Admin</Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="adminNav">
-                        <ul className="navbar-nav me-auto">
-                            <li className="nav-item"><Link className="nav-link" to="/admin">Dashboard</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/users">Users</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/groups">Groups</Link></li>
-                            <li className="nav-item"><Link className="nav-link active" to="/admin/events">Events</Link></li>
-                            <li className="nav-item"><Link className="nav-link" to="/admin/wallet">Wallet</Link></li>
-                        </ul>
-                        <div className="d-flex align-items-center">
-                            <span className="badge bg-warning text-dark me-3">{user?.role?.replace('_', ' ').toUpperCase()}</span>
-                            <div className="dropdown">
-                                <button className="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">{user?.name}</button>
-                                <ul className="dropdown-menu dropdown-menu-end">
-                                    <li><Link className="dropdown-item" to="/dashboard">User View</Link></li>
-                                    <li><hr className="dropdown-divider" /></li>
-                                    <li><button className="dropdown-item text-danger" onClick={logout}>Logout</button></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+        <div className="min-vh-100">
+            <AdminNavbar />
 
-            {/* Main Content */}
-            <div className="container-fluid px-4 py-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="main-container">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
                     <div>
-                        <h1 className="h3 text-white mb-1">Events</h1>
-                        <p className="text-secondary mb-0">Manage volleyball events</p>
+                        <h1 className="h3 fw-bold mb-1">Events</h1>
+                        <p className="text-muted mb-0">Manage volleyball events</p>
                     </div>
-                    <button
-                        className="btn btn-warning"
-                        onClick={() => setShowCreateModal(true)}
-                        disabled={groups.length === 0}
-                    >
-                        + Create Event
-                    </button>
+                    <div className="d-flex gap-2">
+                        <Link to="/admin" className="btn-custom bg-light border">Back</Link>
+                        <button
+                            className="btn-custom bg-warning text-dark border-warning"
+                            onClick={() => setShowCreateModal(true)}
+                            disabled={groups.length === 0}
+                        >
+                            <i className="bi bi-plus-lg me-1"></i> Create Event
+                        </button>
+                    </div>
                 </div>
 
                 {/* Alerts */}
                 {error && (
-                    <div className="alert alert-danger">{error}</div>
+                    <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
+                        <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
+                        <div>{error}</div>
+                    </div>
                 )}
                 {success && (
-                    <div className="alert alert-success">{success}</div>
+                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
+                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                        <div>{success}</div>
+                    </div>
                 )}
                 {groups.length === 0 && !loading && (
-                    <div className="alert alert-warning">
-                        <strong>No groups found!</strong> You need to <Link to="/admin/groups">create a group</Link> first before creating events.
+                    <div className="alert-custom bg-warning bg-opacity-10 border-warning text-dark mb-4">
+                        <i className="bi bi-exclamation-circle-fill alert-custom-icon"></i>
+                        <div>
+                            <strong>No groups found!</strong> You need to <Link to="/admin/groups" className="text-dark fw-bold text-decoration-underline">create a group</Link> first before creating events.
+                        </div>
                     </div>
                 )}
 
                 {/* Events List */}
-                <div className="card bg-secondary bg-opacity-25 border-secondary">
-                    <div className="card-body">
+                <div className="section">
+                    <div className="section-header">
+                        <div className="section-title">All Events</div>
+                    </div>
+                    <div className="p-0">
                         {loading ? (
-                            <div className="text-center py-4">
-                                <div className="spinner-border text-warning"></div>
+                            <div className="text-center py-5">
+                                <div className="spinner-border text-primary"></div>
                             </div>
                         ) : events.length === 0 ? (
-                            <div className="text-center py-5 text-white">
+                            <div className="text-center py-5 text-muted">
                                 <h5>No events yet</h5>
-                                <p className="text-secondary">Create your first event to start accepting registrations.</p>
+                                <p className="mb-0">Create your first event to start accepting registrations.</p>
                             </div>
                         ) : (
                             <div className="table-responsive">
-                                <table className="table table-dark table-hover">
-                                    <thead>
+                                <table className="table table-hover align-middle mb-0">
+                                    <thead className="bg-light">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Title</th>
-                                            <th>Group</th>
-                                            <th>Date & Time</th>
-                                            <th>Location</th>
-                                            <th>Spots</th>
-                                            <th>Price</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
+                                            <th className="border-0 px-4 py-3">ID</th>
+                                            <th className="border-0 px-4 py-3">Title</th>
+                                            <th className="border-0 px-4 py-3">Group</th>
+                                            <th className="border-0 px-4 py-3">Date & Time</th>
+                                            <th className="border-0 px-4 py-3">Location</th>
+                                            <th className="border-0 px-4 py-3">Spots</th>
+                                            <th className="border-0 px-4 py-3">Price</th>
+                                            <th className="border-0 px-4 py-3">Status</th>
+                                            <th className="border-0 px-4 py-3">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {events.map(event => (
                                             <tr key={event.id}>
-                                                <td>{event.id}</td>
-                                                <td className="fw-semibold">{event.title}</td>
-                                                <td className="text-secondary">{event.group_name}</td>
-                                                <td>{formatDate(event.date_time)}</td>
-                                                <td>{event.location}</td>
-                                                <td>
+                                                <td className="px-4">{event.id}</td>
+                                                <td className="px-4 fw-semibold">{event.title}</td>
+                                                <td className="px-4 text-muted small">{event.group_name}</td>
+                                                <td className="px-4">{formatDate(event.date_time)}</td>
+                                                <td className="px-4">{event.location}</td>
+                                                <td className="px-4">
                                                     {event.registered_count}/{event.max_players}
                                                     {event.spots_available <= 2 && event.spots_available > 0 && (
                                                         <span className="badge bg-warning text-dark ms-1">Almost full</span>
@@ -203,17 +194,17 @@ function AdminEvents() {
                                                         <span className="badge bg-danger ms-1">Full</span>
                                                     )}
                                                 </td>
-                                                <td>€{parseFloat(event.price_per_person).toFixed(2)}</td>
-                                                <td>
-                                                    <span className={`badge ${event.status === 'open' ? 'bg-success' :
+                                                <td className="px-4 fw-bold">€{parseFloat(event.price_per_person).toFixed(2)}</td>
+                                                <td className="px-4">
+                                                    <span className={`badge rounded-pill ${event.status === 'open' ? 'bg-success' :
                                                         event.status === 'closed' ? 'bg-secondary' :
                                                             event.status === 'canceled' ? 'bg-danger' : 'bg-info'
                                                         }`}>
                                                         {event.status}
                                                     </span>
                                                 </td>
-                                                <td>
-                                                    <Link to={`/admin/events/edit/${event.id}`} className="btn btn-sm btn-outline-light">
+                                                <td className="px-4">
+                                                    <Link to={`/admin/events/edit/${event.id}`} className="btn-custom btn-sm bg-light border">
                                                         Edit
                                                     </Link>
                                                 </td>
@@ -229,14 +220,14 @@ function AdminEvents() {
 
             {/* Create Event Modal */}
             {showCreateModal && (
-                <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered modal-lg">
-                        <div className="modal-content bg-dark text-white border-secondary">
-                            <div className="modal-header border-secondary">
-                                <h5 className="modal-title">Create New Event</h5>
+                        <div className="modal-content border-0 shadow rounded-4">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title fw-bold">Create New Event</h5>
                                 <button
                                     type="button"
-                                    className="btn-close btn-close-white"
+                                    className="btn-close"
                                     onClick={() => setShowCreateModal(false)}
                                 ></button>
                             </div>
@@ -244,9 +235,9 @@ function AdminEvents() {
                                 <div className="modal-body">
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Group *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Group *</label>
                                             <select
-                                                className="form-select bg-secondary border-secondary text-white"
+                                                className="form-select"
                                                 value={newEvent.group_id}
                                                 onChange={(e) => setNewEvent({ ...newEvent, group_id: e.target.value })}
                                                 required
@@ -257,10 +248,10 @@ function AdminEvents() {
                                             </select>
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Event Title *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Event Title *</label>
                                             <input
                                                 type="text"
-                                                className="form-control bg-secondary border-secondary text-white"
+                                                className="form-control"
                                                 value={newEvent.title}
                                                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                                                 placeholder="e.g., Friday Night Volleyball"
@@ -268,22 +259,37 @@ function AdminEvents() {
                                             />
                                         </div>
                                     </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Icon</label>
+                                        <div className="d-flex gap-2 flex-wrap bg-light p-2 rounded border">
+                                            {ICONS.map(icon => (
+                                                <button
+                                                    key={icon}
+                                                    type="button"
+                                                    className={`btn btn-sm fs-5 ${newEvent.icon === icon ? 'btn-primary' : 'btn-outline-light text-dark border-0 hover-shadow'}`}
+                                                    onClick={() => setNewEvent({ ...newEvent, icon })}
+                                                >
+                                                    {icon}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Date & Time *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Date & Time *</label>
                                             <input
                                                 type="datetime-local"
-                                                className="form-control bg-secondary border-secondary text-white"
+                                                className="form-control"
                                                 value={newEvent.date_time}
                                                 onChange={(e) => setNewEvent({ ...newEvent, date_time: e.target.value })}
                                                 required
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Location *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Location *</label>
                                             <input
                                                 type="text"
-                                                className="form-control bg-secondary border-secondary text-white"
+                                                className="form-control"
                                                 value={newEvent.location}
                                                 onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
                                                 placeholder="e.g., Sports Hall, Vilnius"
@@ -293,10 +299,10 @@ function AdminEvents() {
                                     </div>
                                     <div className="row">
                                         <div className="col-md-4 mb-3">
-                                            <label className="form-label">Max Players</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Max Players</label>
                                             <input
                                                 type="number"
-                                                className="form-control bg-secondary border-secondary text-white"
+                                                className="form-control"
                                                 value={newEvent.max_players}
                                                 onChange={(e) => setNewEvent({ ...newEvent, max_players: parseInt(e.target.value) })}
                                                 min="2"
@@ -304,10 +310,10 @@ function AdminEvents() {
                                             />
                                         </div>
                                         <div className="col-md-4 mb-3">
-                                            <label className="form-label">Courts</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Courts</label>
                                             <input
                                                 type="number"
-                                                className="form-control bg-secondary border-secondary text-white"
+                                                className="form-control"
                                                 value={newEvent.court_count}
                                                 onChange={(e) => setNewEvent({ ...newEvent, court_count: parseInt(e.target.value) })}
                                                 min="1"
@@ -315,10 +321,10 @@ function AdminEvents() {
                                             />
                                         </div>
                                         <div className="col-md-4 mb-3">
-                                            <label className="form-label">Price (€)</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Price (€)</label>
                                             <input
                                                 type="number"
-                                                className="form-control bg-secondary border-secondary text-white"
+                                                className="form-control"
                                                 value={newEvent.price_per_person}
                                                 onChange={(e) => setNewEvent({ ...newEvent, price_per_person: parseFloat(e.target.value) })}
                                                 min="0"
@@ -327,9 +333,9 @@ function AdminEvents() {
                                         </div>
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Description</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Description</label>
                                         <textarea
-                                            className="form-control bg-secondary border-secondary text-white"
+                                            className="form-control"
                                             value={newEvent.description}
                                             onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                                             placeholder="Additional details about the event..."
@@ -337,17 +343,17 @@ function AdminEvents() {
                                         ></textarea>
                                     </div>
                                 </div>
-                                <div className="modal-footer border-secondary">
+                                <div className="modal-footer border-0 pt-0">
                                     <button
                                         type="button"
-                                        className="btn btn-secondary"
+                                        className="btn-custom bg-light border"
                                         onClick={() => setShowCreateModal(false)}
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="btn btn-warning"
+                                        className="btn-custom bg-warning text-dark border-warning"
                                         disabled={creating}
                                     >
                                         {creating ? 'Creating...' : 'Create Event'}
