@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
@@ -23,137 +24,147 @@ import AdminRent from './pages/AdminRent';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+    <LanguageProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Protected User Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/events"
-            element={
-              <ProtectedRoute>
-                <AllEvents />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/event/:id"
-            element={
-              <ProtectedRoute>
-                <EventDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/wallet"
-            element={
-              <ProtectedRoute>
-                <Wallet />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected User Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events"
+              element={
+                <ProtectedRoute>
+                  <AllEvents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/event/:id"
+              element={
+                <ProtectedRoute>
+                  <EventDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wallet"
+              element={
+                <ProtectedRoute>
+                  <Wallet />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/children"
+              element={
+                <ProtectedRoute>
+                  <Children />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Protected Admin Routes */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminUsers />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/users/edit/:id"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminUserEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/groups"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminGroups />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/events"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminEvents />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/events/edit/:id"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminEventEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/wallet"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminWallet />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/topups"
-            element={
-              <ProtectedRoute roles={['super_admin', 'group_admin']}>
-                <AdminTopups />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/rent"
-            element={
-              <ProtectedRoute roles={['super_admin']}>
-                <AdminRent />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Admin Routes */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users/edit/:id"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminUserEdit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/groups"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminGroups />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/events"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminEvents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/events/edit/:id"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminEventEdit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/wallet"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminWallet />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/topups"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminTopups />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/rent"
+              element={
+                <ProtectedRoute roles={['super_admin']}>
+                  <AdminRent />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* 404 fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            {/* 404 fallback */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

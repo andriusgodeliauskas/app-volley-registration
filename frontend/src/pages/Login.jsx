@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -9,6 +11,7 @@ function Login() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { login, error, setError } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -37,6 +40,11 @@ function Login() {
 
     return (
         <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
+            {/* Language Switcher - Top Right */}
+            <div className="position-absolute top-0 end-0 m-3">
+                <LanguageSwitcher />
+            </div>
+
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
@@ -52,8 +60,8 @@ function Login() {
                                             <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
                                         </svg>
                                     </div>
-                                    <h2 className="fw-bold mb-1">Welcome Back</h2>
-                                    <p className="text-muted mb-0">Sign in to your Volley App account</p>
+                                    <h2 className="fw-bold mb-1">{t('auth.login_title')}</h2>
+                                    <p className="text-muted mb-0">{t('auth.login_subtitle')}</p>
                                 </div>
 
                                 {/* Error Alert */}
@@ -72,7 +80,7 @@ function Login() {
 
                                     {/* Email Field */}
                                     <div className="mb-3">
-                                        <label htmlFor="email" className="form-label fw-medium">Email address</label>
+                                        <label htmlFor="email" className="form-label fw-medium">{t('auth.email')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -95,8 +103,8 @@ function Login() {
                                     {/* Password Field */}
                                     <div className="mb-4">
                                         <div className="d-flex justify-content-between align-items-center mb-1">
-                                            <label htmlFor="password" className="form-label fw-medium mb-0">Password</label>
-                                            <Link to="/forgot-password" className="text-decoration-none small">Forgot password?</Link>
+                                            <label htmlFor="password" className="form-label fw-medium mb-0">{t('auth.password')}</label>
+                                            {/* <Link to="/forgot-password" className="text-decoration-none small">Forgot password?</Link> */}
                                         </div>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
@@ -108,7 +116,7 @@ function Login() {
                                                 type={showPassword ? 'text' : 'password'}
                                                 className="form-control border-start-0 border-end-0 ps-0"
                                                 id="password"
-                                                placeholder="Enter your password"
+                                                placeholder={t('auth.password')}
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
@@ -145,10 +153,10 @@ function Login() {
                                         {isSubmitting ? (
                                             <>
                                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                Signing in...
+                                                {t('common.loading')}
                                             </>
                                         ) : (
-                                            'Sign In'
+                                            t('auth.login_button')
                                         )}
                                     </button>
                                 </form>
@@ -156,15 +164,14 @@ function Login() {
                                 {/* Divider */}
                                 <div className="d-flex align-items-center my-4">
                                     <hr className="flex-grow-1" />
-                                    <span className="px-3 text-muted small">or</span>
+                                    {/* <span className="px-3 text-muted small">or</span> */}
                                     <hr className="flex-grow-1" />
                                 </div>
 
                                 {/* Register Link */}
                                 <p className="text-center mb-0">
-                                    Don't have an account?{' '}
                                     <Link to="/register" className="fw-semibold text-decoration-none">
-                                        Create one
+                                        {t('auth.register_link')}
                                     </Link>
                                 </p>
 
