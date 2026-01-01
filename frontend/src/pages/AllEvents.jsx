@@ -81,15 +81,16 @@ function AllEvents() {
                                     </div>
                                     <div className="event-info">
                                         <div className="event-title">
-                                            {formatDate(event.date_time)} {event.title}
+                                            {event.title}
                                             {event.user_registered && <span className="event-badge">✓ {t('dash.registered')}</span>}
                                         </div>
                                         <div className="event-details">
                                             <div className="event-detail">📍 {event.location}</div>
                                             <div className="event-detail">📅 {formatDate(event.date_time)}, {formatTime(event.date_time)}</div>
                                             <div className="event-detail">
-                                                👥 {event.spots_available > 0 ? `${event.spots_available} ${t('dash.spots_left')}` : t('dash.full')} • {event.group_name}
+                                                👥 {event.spots_available > 0 ? `${event.spots_available} ${t('dash.spots_left')}` : t('dash.full')}
                                             </div>
+                                            <div className="event-detail">🏐 {event.group_name}</div>
                                             <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
                                         </div>
                                     </div>

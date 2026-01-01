@@ -155,7 +155,7 @@ function AdminGroups() {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content border-0 shadow rounded-4">
                             <div className="modal-header border-0 pb-0">
-                                <h5 className="modal-title fw-bold">Create New Group</h5>
+                                <h5 className="modal-title">Create New Group</h5>
                                 <button type="button" className="btn-close" onClick={() => setShowCreateModal(false)}></button>
                             </div>
                             <form onSubmit={handleCreateGroup}>

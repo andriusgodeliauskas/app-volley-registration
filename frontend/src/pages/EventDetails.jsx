@@ -155,7 +155,7 @@ function EventDetails() {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content shadow border-0 rounded-4">
                             <div className="modal-header border-0 pb-0">
-                                <h5 className="modal-title fw-bold">
+                                <h5 className="modal-title">
                                     {confirmModal.type === 'register' ? t('event.confirm_register_title') : t('event.confirm_cancel_title')}
                                 </h5>
                                 <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
@@ -192,9 +192,10 @@ function EventDetails() {
                     <div className="col-lg-5">
                         <div className="section h-100">
                             <div className="section-header">
-                                <Link to="/events" className="btn-custom btn-sm mb-2 d-inline-block">&larr; {t('common.back')}</Link>
-                                <div className="section-title text-primary">{event.title}</div>
-                                <div className="section-subtitle">{t('event.details')}</div>
+                                <div>
+                                    <div className="section-title text-primary">{event.title}</div>
+                                    <div className="section-subtitle">{t('event.details')}</div>
+                                </div>
                             </div>
                             <div className="p-0">
                                 <div className="mb-4">
@@ -240,7 +241,7 @@ function EventDetails() {
                                     <div className="d-flex justify-content-between align-items-center mb-2">
                                         <span className="text-muted">{t('event.status')}</span>
                                         <span className={`badge ${event.status === 'open' ? 'bg-success' : 'bg-secondary'}`}>
-                                            {event.status.toUpperCase()}
+                                            {t('event.open')}
                                         </span>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">

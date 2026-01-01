@@ -359,7 +359,7 @@ function AdminEventEdit() {
                                 <div className="alert-custom bg-info bg-opacity-10 border-info text-info mb-4" style={{ display: 'block' }}>
                                     <div className="d-flex align-items-center mb-2">
                                         <i className="bi bi-info-circle-fill me-2"></i>
-                                        <strong>Finalizing limits:</strong>
+                                        Finalizing limits:
                                     </div>
                                     <ul className="mb-0 ps-3 small">
                                         <li>Charge all registered players €{parseFloat(formData.price_per_person).toFixed(2)}</li>

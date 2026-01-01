@@ -27,16 +27,18 @@ $pdo = getDbConnection();
 
 try {
     $stmt = $pdo->prepare("
-        SELECT 
-            e.id, 
-            e.group_id, 
-            e.title, 
-            e.description, 
-            e.date_time, 
-            e.location, 
-            e.max_players, 
-            e.court_count, 
-            e.price_per_person, 
+        SELECT
+            e.id,
+            e.group_id,
+            e.title,
+            e.description,
+            e.date_time,
+            e.location,
+            e.max_players,
+            e.court_count,
+            e.price_per_person,
+            e.rent_price,
+            e.icon,
             e.status,
             g.name as group_name
         FROM events e
@@ -56,6 +58,13 @@ try {
     $event['max_players'] = (int)$event['max_players'];
     $event['court_count'] = (int)$event['court_count'];
     $event['price_per_person'] = (float)$event['price_per_person'];
+    $event['rent_price'] = (float)($event['rent_price'] ?? 0);
+
+    // Format date_time for datetime-local input (YYYY-MM-DDTHH:MM)
+    if ($event['date_time']) {
+        $dateTime = new DateTime($event['date_time']);
+        $event['date_time'] = $dateTime->format('Y-m-d\TH:i');
+    }
 
     sendSuccess(['event' => $event]);
 

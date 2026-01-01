@@ -222,7 +222,7 @@ function Dashboard() {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content shadow border-0 rounded-4">
                             <div className="modal-header border-0 pb-0">
-                                <h5 className="modal-title fw-bold">
+                                <h5 className="modal-title">
                                     {confirmModal.type === 'register' ? t('event.confirm_register_title') : t('event.confirm_cancel_title')}
                                 </h5>
                                 <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
@@ -258,7 +258,6 @@ function Dashboard() {
                 {/* Welcome Section */}
                 <div className="welcome">
                     <h1>{t('dash.welcome')}, {user?.name?.split(' ')[0]}! 👋</h1>
-                    <p>{t('event.browse_register')}</p>
                 </div>
 
                 {/* Upcoming Events */}
@@ -294,15 +293,16 @@ function Dashboard() {
                                     </div>
                                     <div className="event-info">
                                         <div className="event-title">
-                                            {formatDate(event.date_time)} {event.title}
+                                            {event.title}
                                             {isRegistered && <span className="event-badge">✓ {t('dash.registered')}</span>}
                                         </div>
                                         <div className="event-details">
                                             <div className="event-detail">📍 {event.location}</div>
                                             <div className="event-detail">📅 {formatDate(event.date_time)}, {formatTime(event.date_time)}</div>
                                             <div className="event-detail">
-                                                👥 {event.spots_available > 0 ? `${event.spots_available} ${t('dash.spots_left')}` : t('dash.full')} • {event.group_name}
+                                                👥 {event.spots_available > 0 ? `${event.spots_available} ${t('dash.spots_left')}` : t('dash.full')}
                                             </div>
+                                            <div className="event-detail">🏐 {event.group_name}</div>
                                             <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
                                         </div>
                                     </div>
@@ -376,7 +376,7 @@ function Dashboard() {
                     <div className="action-buttons">
                         <Link to="/events" className="action-btn">📅 {t('dash.view_all')}</Link>
                         <Link to="/wallet" className="action-btn">💳 {t('wallet.topup_title')}</Link>
-                        <Link to="/children" className="action-btn">👨‍👩‍👧‍👦 {t('children.title')}</Link>
+                        {/* <Link to="/children" className="action-btn">👨‍👩‍👧‍👦 {t('children.title')}</Link> */}
                     </div>
                 </div>
 
@@ -385,7 +385,7 @@ function Dashboard() {
                     <div className="alert-custom">
                         <div className="alert-custom-icon">⚠️</div>
                         <div>
-                            <strong>{t('dash.insufficient_balance')}</strong> {t('wallet.available')}: €{balance.toFixed(2)}. <Link to="/wallet">{t('dash.top_up')}</Link>
+                            {t('dash.insufficient_balance')} {t('wallet.available')}: €{balance.toFixed(2)}. <Link to="/wallet">{t('dash.top_up')}</Link>
                         </div>
                     </div>
                 )}

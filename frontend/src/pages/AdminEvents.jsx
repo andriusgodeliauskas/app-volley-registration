@@ -240,7 +240,7 @@ function AdminEvents() {
                                                         <button
                                                             onClick={() => handleDuplicateEvent(event)}
                                                             className="btn-custom btn-sm bg-primary text-white border-primary"
-                                                            title={t('common.view')}
+                                                            title={t('common.duplicate')}
                                                         >
                                                             <i className="bi bi-files"></i>
                                                         </button>
@@ -262,7 +262,7 @@ function AdminEvents() {
                     <div className="modal-dialog modal-dialog-centered modal-lg">
                         <div className="modal-content border-0 shadow rounded-4">
                             <div className="modal-header border-0 pb-0">
-                                <h5 className="modal-title fw-bold">{t('admin.create_event_title')}</h5>
+                                <h5 className="modal-title">{t('admin.create_event_title')}</h5>
                                 <button
                                     type="button"
                                     className="btn-close"

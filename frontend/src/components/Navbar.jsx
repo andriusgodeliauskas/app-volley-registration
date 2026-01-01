@@ -52,7 +52,7 @@ function Navbar() {
                     </div>
                     <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2 mt-2">
                         <li><Link className="dropdown-item rounded-3" to="/profile">{t('nav.profile')}</Link></li>
-                        <li><Link className="dropdown-item rounded-3" to="/children">{t('nav.children')}</Link></li>
+                        {/* <li><Link className="dropdown-item rounded-3" to="/children">{t('nav.children')}</Link></li> */}
                         {(user?.role === 'super_admin' || user?.role === 'group_admin') && (
                             <>
                                 <li><hr className="dropdown-divider" /></li>
@@ -139,13 +139,13 @@ function Navbar() {
                             >
                                 {t('nav.profile')}
                             </Link>
-                            <Link
+                            {/* <Link
                                 to="/children"
                                 className="mobile-menu-link"
                                 onClick={closeMobileMenu}
                             >
                                 {t('nav.children')}
-                            </Link>
+                            </Link> */}
                             {(user?.role === 'super_admin' || user?.role === 'group_admin') && (
                                 <Link
                                     to="/admin"

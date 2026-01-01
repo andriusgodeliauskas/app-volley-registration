@@ -168,6 +168,7 @@ export const translations = {
         'common.no': 'No',
         'common.add': 'Add',
         'common.view': 'View',
+        'common.duplicate': 'Duplicate this event',
 
         // Footer
         'footer.copyright': '© 2025 Volley Registration App. All rights reserved.',
@@ -209,7 +210,7 @@ export const translations = {
         'event.failed_load': 'Failed to load event details',
         'event.failed_register': 'Failed to register.',
         'event.failed_cancel': 'Failed to cancel registration.',
-        'event.confirm_action': 'Are you sure you want to {action} <br /><strong>{title}</strong>?',
+        'event.confirm_action': 'Are you sure you want to {action} {title}?',
         'event.action_register': 'register for',
         'event.action_cancel': 'cancel your registration for',
 
@@ -497,6 +498,7 @@ export const translations = {
         'common.no': 'Ne',
         'common.add': 'Pridėti',
         'common.view': 'Žiūrėti',
+        'common.duplicate': 'Dubliuoti renginį',
 
         // Footer
         'footer.copyright': '© 2025 Tinklinio Registracijos Programa. Visos teisės saugomos.',
@@ -538,7 +540,7 @@ export const translations = {
         'event.failed_load': 'Nepavyko užkrauti renginio informacijos',
         'event.failed_register': 'Nepavyko užsiregistruoti.',
         'event.failed_cancel': 'Nepavyko atšaukti registracijos.',
-        'event.confirm_action': 'Ar tikrai norite {action} <br /><strong>{title}</strong>?',
+        'event.confirm_action': 'Ar tikrai norite {action} {title}?',
         'event.action_register': 'užsiregistruoti į',
         'event.action_cancel': 'atšaukti registraciją į',
 
