@@ -6,18 +6,10 @@
  * 
  * Request Body:
  * {
- *   "name": "John Doe",
+ *   "first_name": "John",
+ *   "last_name": "Doe",
  *   "email": "john@example.com",
  *   "password": "securepassword"
- * }
- * 
- * Response:
- * {
- *   "success": true,
- *   "message": "Registration successful",
- *   "data": {
- *     "user": { "id": 1, "name": "John Doe", "email": "john@example.com", "role": "user" }
- *   }
  * }
  */
 
@@ -48,13 +40,6 @@ if (strlen($first_name) < 2 || strlen($last_name) < 2) {
     sendError('Name and Surname must be at least 2 characters', 400);
 }
 
-// Combine for database storage (backward compatibility)
-$name = $first_name . ' ' . $last_name;
-
-if (strlen($name) > 100) {
-    sendError('Full name exceeds maximum length', 400);
-}
-
 // Validate email format
 if (!isValidEmail($email)) {
     sendError('Invalid email format', 400);
@@ -80,12 +65,13 @@ try {
     $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
     
     // Insert new user
+    // Assuming 'name' column is First Name and 'surname' column is Last Name
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, email, password_hash, role, balance, is_active, created_at)
-        VALUES (?, ?, ?, 'user', 0.00, 0, NOW())
+        INSERT INTO users (name, surname, email, password_hash, role, balance, is_active, created_at)
+        VALUES (?, ?, ?, ?, 'user', 0.00, 0, NOW())
     ");
     
-    $stmt->execute([$name, $email, $passwordHash]);
+    $stmt->execute([$first_name, $last_name, $email, $passwordHash]);
     
     $userId = (int) $pdo->lastInsertId();
     
@@ -93,7 +79,8 @@ try {
     sendSuccess([
         'user' => [
             'id' => $userId,
-            'name' => $name,
+            'name' => $first_name,
+            'surname' => $last_name,
             'email' => $email,
             'role' => 'user'
         ]

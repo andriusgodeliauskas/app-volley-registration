@@ -1,7 +1,8 @@
 -- =====================================================
 -- Volley Registration App - MySQL Database Schema
--- Version: 1.0 (MVP)
+-- Version: 1.1 (Detailed User Fields)
 -- Created: 2025-12-30
+-- Updated: 2026-01-01
 -- =====================================================
 
 -- Drop tables if they exist (for clean re-runs)
@@ -17,11 +18,13 @@ DROP TABLE IF EXISTS `users`;
 -- =====================================================
 CREATE TABLE `users` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(100) NOT NULL,
+    `name` VARCHAR(100) NOT NULL COMMENT 'First Name',
+    `surname` VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'Last Name',
     `email` VARCHAR(255) NOT NULL,
     `password_hash` VARCHAR(255) NOT NULL,
     `role` ENUM('super_admin', 'group_admin', 'user') NOT NULL DEFAULT 'user',
     `balance` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    `avatar` VARCHAR(100) NULL DEFAULT 'Felix',
     `parent_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'For child/sub-accounts, references parent user',
     `is_active` TINYINT(1) NOT NULL DEFAULT 1,
     `auth_token` VARCHAR(64) NULL DEFAULT NULL COMMENT 'Session auth token',
@@ -173,9 +176,10 @@ CREATE TABLE `transactions` (
 -- Password: 'admin123' (change immediately in production!)
 -- Hash generated with: password_hash('admin123', PASSWORD_BCRYPT)
 -- =====================================================
-INSERT INTO `users` (`name`, `email`, `password_hash`, `role`, `balance`, `is_active`) 
+INSERT INTO `users` (`name`, `surname`, `email`, `password_hash`, `role`, `balance`, `is_active`) 
 VALUES (
-    'Super Admin',
+    'Super',
+    'Admin',
     'admin@volleyapp.com',
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
     'super_admin',

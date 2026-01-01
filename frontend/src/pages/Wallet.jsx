@@ -132,7 +132,7 @@ export default function Wallet() {
                                 <CopyValue label="Receiver" value="Andrius Godeliauskas" />
 
                                 <div className="mb-3">
-                                    <CopyValue label="Payment Purpose" value={`${user?.name} Top Up`} />
+                                    <CopyValue label="Payment Purpose" value={`${user?.name} ${user?.surname || ''} Top Up`} />
                                     <small className="text-muted d-block mt-1">
                                         * Please include your player name and surname exactly as registered.
                                     </small>

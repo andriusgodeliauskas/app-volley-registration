@@ -13,9 +13,10 @@ const AVATAR_SEEDS = [
 const getAvatarUrl = (seed) => `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
 
 export default function Profile() {
-    const { user, login } = useAuth(); // login is used to update context user
+    const { user, updateUser } = useAuth(); // updateUser to sync context
     const [formData, setFormData] = useState({
         name: '',
+        surname: '',
         userEmail: '', // userEmail to avoid conflict with email input name if any
         avatar: 'Felix'
     });
@@ -32,6 +33,7 @@ export default function Profile() {
                     const userData = response.data?.user || response.data;
                     setFormData({
                         name: userData.name || '',
+                        surname: userData.surname || '',
                         userEmail: userData.email || '',
                         avatar: userData.avatar || 'Felix'
                     });
@@ -56,15 +58,16 @@ export default function Profile() {
         try {
             const response = await post(API_ENDPOINTS.USER_UPDATE, {
                 name: formData.name,
+                surname: formData.surname,
                 avatar: formData.avatar
             });
 
             if (response.success) {
                 setMessage('Profile updated successfully');
-                // Update local user context if needed, though usually App re-fetches or we update manually
-                // We can't easily update AuthContext user without re-login or reload, 
-                // but if AuthContext exposes a setter it would be good. 
-                // For now, changes stick in DB.
+                // Update context
+                if (response.data?.user) {
+                    updateUser(response.data.user);
+                }
             } else {
                 setError(response.message || 'Failed to update profile');
             }
@@ -135,15 +138,27 @@ export default function Profile() {
                                                 />
                                                 <div className="form-text">Email cannot be changed.</div>
                                             </div>
-                                            <div className="mb-3">
-                                                <label className="form-label text-muted small fw-bold text-uppercase">Name & Surname</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    required
-                                                />
+                                            <div className="row">
+                                                <div className="col-md-6 mb-3">
+                                                    <label className="form-label text-muted small fw-bold text-uppercase">Name</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={formData.name}
+                                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="col-md-6 mb-3">
+                                                    <label className="form-label text-muted small fw-bold text-uppercase">Surname</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={formData.surname}
+                                                        onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

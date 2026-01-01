@@ -31,7 +31,7 @@ function handleGetUser(array $currentUser): void
     try {
         // Fetch fresh user data
         $stmt = $pdo->prepare("
-            SELECT id, name, email, role, balance, parent_id, is_active, created_at, avatar
+            SELECT id, name, surname, email, role, balance, parent_id, is_active, created_at, avatar
             FROM users 
             WHERE id = ?
         ");

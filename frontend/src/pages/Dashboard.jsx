@@ -238,7 +238,7 @@ function Dashboard() {
                                         className="rounded-circle me-2 bg-light"
                                         style={{ width: '24px', height: '24px' }}
                                     />
-                                    {user?.name}
+                                    {user?.name} {user?.surname || ''}
                                 </button>
                                 <ul className="dropdown-menu dropdown-menu-end">
                                     <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
