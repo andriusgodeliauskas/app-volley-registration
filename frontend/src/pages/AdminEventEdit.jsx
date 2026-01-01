@@ -24,6 +24,7 @@ function AdminEventEdit() {
         max_players: 0,
         court_count: 1,
         price_per_person: 0,
+        rent_price: 0,
         status: 'open',
         icon: '🏐'
     });
@@ -114,7 +115,8 @@ function AdminEventEdit() {
                 group_id: parseInt(formData.group_id),
                 max_players: parseInt(formData.max_players),
                 court_count: parseInt(formData.court_count),
-                price_per_person: parseFloat(formData.price_per_person)
+                price_per_person: parseFloat(formData.price_per_person),
+                rent_price: parseFloat(formData.rent_price)
             };
 
             const response = await post(API_ENDPOINTS.ADMIN_EVENT_UPDATE, payload);
@@ -250,7 +252,7 @@ function AdminEventEdit() {
                                     </div>
 
                                     <div className="row">
-                                        <div className="col-md-4 mb-3">
+                                        <div className="col-md-6 mb-3">
                                             <label className="form-label text-muted small fw-bold text-uppercase">Max Players</label>
                                             <input
                                                 type="number"
@@ -261,7 +263,7 @@ function AdminEventEdit() {
                                                 min="2"
                                             />
                                         </div>
-                                        <div className="col-md-4 mb-3">
+                                        <div className="col-md-6 mb-3">
                                             <label className="form-label text-muted small fw-bold text-uppercase">Courts</label>
                                             <input
                                                 type="number"
@@ -272,8 +274,11 @@ function AdminEventEdit() {
                                                 min="1"
                                             />
                                         </div>
-                                        <div className="col-md-4 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Price (€)</label>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className={user?.role === 'super_admin' ? "col-md-6 mb-3" : "col-md-12 mb-3"}>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Price per Person (€)</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
@@ -283,6 +288,20 @@ function AdminEventEdit() {
                                                 onChange={handleChange}
                                             />
                                         </div>
+                                        {user?.role === 'super_admin' && (
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label text-muted small fw-bold text-uppercase">Rent Price Total (€)</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    className="form-control"
+                                                    name="rent_price"
+                                                    value={formData.rent_price}
+                                                    onChange={handleChange}
+                                                    placeholder="Total to pay to venue"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="mb-3">

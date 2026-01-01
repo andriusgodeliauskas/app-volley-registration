@@ -33,6 +33,7 @@ $maxPlayers = isset($input['max_players']) ? (int)$input['max_players'] : null;
 $courtCount = isset($input['court_count']) ? (int)$input['court_count'] : null;
 $price = isset($input['price_per_person']) ? (float)$input['price_per_person'] : null;
 $price = isset($input['price_per_person']) ? (float)$input['price_per_person'] : null;
+$rentPrice = isset($input['rent_price']) ? (float)$input['rent_price'] : null;
 $status = isset($input['status']) ? trim($input['status']) : null;
 $icon = isset($input['icon']) ? trim($input['icon']) : null;
 
@@ -89,6 +90,12 @@ try {
     if ($price !== null) {
         $fields[] = 'price_per_person = ?';
         $params[] = $price;
+    }
+    if ($rentPrice !== null) {
+        if ($currentUser['role'] === 'super_admin') {
+            $fields[] = 'rent_price = ?';
+            $params[] = $rentPrice;
+        }
     }
     if ($status !== null) {
         $fields[] = 'status = ?';

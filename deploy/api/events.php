@@ -56,6 +56,7 @@ function handleGetEvents(array $currentUser): void
             e.max_players,
             e.court_count,
             e.price_per_person,
+            e.rent_price,
             e.status,
             e.status,
             e.icon,
@@ -109,6 +110,7 @@ function handleGetEvents(array $currentUser): void
             $event['max_players'] = (int)$event['max_players'];
             $event['court_count'] = (int)$event['court_count'];
             $event['price_per_person'] = (float)$event['price_per_person'];
+            $event['rent_price'] = (float)($event['rent_price'] ?? 0);
             $event['registered_count'] = (int)$event['registered_count'];
             $event['user_registered'] = (int)$event['user_registered'] > 0;
             $event['spots_available'] = $event['max_players'] - $event['registered_count'];
@@ -160,10 +162,12 @@ function handleCreateEvent(array $currentUser): void
         $stmt = $pdo->prepare("
             INSERT INTO events (
                 group_id, title, description, date_time, location, 
-                max_players, court_count, price_per_person, status, icon
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                max_players, court_count, price_per_person, rent_price, status, icon
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
+        $rentPrice = ($currentUser['role'] === 'super_admin') ? ($input['rent_price'] ?? 0.00) : 0.00;
+
         $stmt->execute([
             (int)$input['group_id'],
             trim($input['title']),
@@ -173,6 +177,7 @@ function handleCreateEvent(array $currentUser): void
             $input['max_players'] ?? 12,
             $input['court_count'] ?? 1,
             $input['price_per_person'] ?? 0.00,
+            $rentPrice,
             $input['status'] ?? 'open',
             $input['icon'] ?? 'volleyball'
         ]);

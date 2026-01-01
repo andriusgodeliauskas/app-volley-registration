@@ -24,6 +24,7 @@ function AdminEvents() {
         max_players: 12,
         court_count: 1,
         price_per_person: 5.00,
+        rent_price: 0.00,
         icon: '🏐'
     });
 
@@ -78,6 +79,7 @@ function AdminEvents() {
                     max_players: 12,
                     court_count: 1,
                     price_per_person: 5.00,
+                    rent_price: 0.00,
                     icon: '🏐'
                 });
                 fetchData();
@@ -298,7 +300,7 @@ function AdminEvents() {
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <div className="col-md-4 mb-3">
+                                        <div className="col-md-6 mb-3">
                                             <label className="form-label text-muted small fw-bold text-uppercase">Max Players</label>
                                             <input
                                                 type="number"
@@ -309,7 +311,7 @@ function AdminEvents() {
                                                 max="100"
                                             />
                                         </div>
-                                        <div className="col-md-4 mb-3">
+                                        <div className="col-md-6 mb-3">
                                             <label className="form-label text-muted small fw-bold text-uppercase">Courts</label>
                                             <input
                                                 type="number"
@@ -320,8 +322,10 @@ function AdminEvents() {
                                                 max="10"
                                             />
                                         </div>
-                                        <div className="col-md-4 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Price (€)</label>
+                                    </div>
+                                    <div className="row">
+                                        <div className={user?.role === 'super_admin' ? "col-md-6 mb-3" : "col-md-12 mb-3"}>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">Price per Person (€)</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -331,6 +335,20 @@ function AdminEvents() {
                                                 step="0.50"
                                             />
                                         </div>
+                                        {user?.role === 'super_admin' && (
+                                            <div className="col-md-6 mb-3">
+                                                <label className="form-label text-muted small fw-bold text-uppercase">Rent Price Total (€)</label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    value={newEvent.rent_price}
+                                                    onChange={(e) => setNewEvent({ ...newEvent, rent_price: parseFloat(e.target.value) })}
+                                                    min="0"
+                                                    step="0.01"
+                                                    placeholder="Total to pay to venue"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label text-muted small fw-bold text-uppercase">Description</label>
