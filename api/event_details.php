@@ -78,7 +78,8 @@ try {
     $stmt = $pdo->prepare("
         SELECT 
             u.id, 
-            u.name,
+            CONCAT_WS(' ', u.name, u.surname) as name,
+            u.avatar,
             r.created_at as registered_at
         FROM registrations r
         JOIN users u ON r.user_id = u.id

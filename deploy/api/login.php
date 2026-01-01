@@ -9,22 +9,6 @@
  *   "email": "john@example.com",
  *   "password": "securepassword"
  * }
- * 
- * Response:
- * {
- *   "success": true,
- *   "message": "Login successful",
- *   "data": {
- *     "user": {
- *       "id": 1,
- *       "name": "John Doe",
- *       "email": "john@example.com",
- *       "role": "user",
- *       "balance": "50.00"
- *     },
- *     "token": "abc123..."
- *   }
- * }
  */
 
 require_once __DIR__ . '/db.php';
@@ -57,7 +41,7 @@ try {
     
     // Find user by email
     $stmt = $pdo->prepare("
-        SELECT id, name, email, password_hash, role, balance, is_active, parent_id, avatar
+        SELECT id, name, surname, email, password_hash, role, balance, is_active, parent_id, avatar
         FROM users 
         WHERE email = ?
     ");
@@ -114,6 +98,7 @@ try {
     $userData = [
         'id' => (int) $user['id'],
         'name' => $user['name'],
+        'surname' => $user['surname'] ?? '',
         'email' => $user['email'],
         'role' => $user['role'],
         'balance' => $user['balance'],

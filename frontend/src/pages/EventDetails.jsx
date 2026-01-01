@@ -314,9 +314,12 @@ function EventDetails() {
                                                         {attendee.index}
                                                     </div>
                                                     <div className="d-flex align-items-center">
-                                                        <div className="avatar me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
-                                                            <i className="bi bi-person-fill"></i>
-                                                        </div>
+                                                        <img
+                                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Felix'}`}
+                                                            alt={attendee.name}
+                                                            className="me-3 rounded-circle shadow-sm bg-light"
+                                                            style={{ width: '40px', height: '40px' }}
+                                                        />
                                                         <div>
                                                             <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
                                                             <small className="text-muted">
@@ -347,9 +350,12 @@ function EventDetails() {
                                                                 {attendee.index}
                                                             </div>
                                                             <div className="d-flex align-items-center">
-                                                                <div className="avatar me-3 bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
-                                                                    <i className="bi bi-clock"></i>
-                                                                </div>
+                                                                <img
+                                                                    src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Felix'}`}
+                                                                    alt={attendee.name}
+                                                                    className="me-3 rounded-circle shadow-sm bg-light opacity-75"
+                                                                    style={{ width: '40px', height: '40px', filter: 'grayscale(100%)' }}
+                                                                />
                                                                 <div>
                                                                     <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
                                                                     <small className="text-muted">
