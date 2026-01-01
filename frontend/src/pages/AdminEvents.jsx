@@ -180,79 +180,64 @@ function AdminEvents() {
                     <div className="section-header">
                         <div className="section-title">{t('admin.all_events')}</div>
                     </div>
-                    <div className="p-0">
-                        {loading ? (
-                            <div className="text-center py-5">
-                                <div className="spinner-border text-primary"></div>
-                            </div>
-                        ) : events.length === 0 ? (
-                            <div className="text-center py-5 text-muted">
-                                <h5>{t('admin.no_events')}</h5>
-                                <p className="mb-0">{t('admin.no_events_subtitle')}</p>
-                            </div>
-                        ) : (
-                            <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_id')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_title')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_group')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_datetime')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_location')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_spots')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_price')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.event_status')}</th>
-                                            <th className="border-0 px-4 py-3">{t('common.actions')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {events.map(event => (
-                                            <tr key={event.id}>
-                                                <td className="px-4">{event.id}</td>
-                                                <td className="px-4 fw-semibold">{event.title}</td>
-                                                <td className="px-4 text-muted small">{event.group_name}</td>
-                                                <td className="px-4">{formatDate(event.date_time)}</td>
-                                                <td className="px-4">{event.location}</td>
-                                                <td className="px-4">
-                                                    {event.registered_count}/{event.max_players}
-                                                    {event.spots_available <= 2 && event.spots_available > 0 && (
-                                                        <span className="badge bg-warning text-dark ms-1">{t('admin.event_almost_full')}</span>
-                                                    )}
-                                                    {event.spots_available <= 0 && (
-                                                        <span className="badge bg-danger ms-1">{t('admin.event_full')}</span>
-                                                    )}
-                                                </td>
-                                                <td className="px-4 fw-bold">€{parseFloat(event.price_per_person).toFixed(2)}</td>
-                                                <td className="px-4">
-                                                    <span className={`badge rounded-pill ${event.status === 'open' ? 'bg-success' :
-                                                        event.status === 'closed' ? 'bg-secondary' :
-                                                            event.status === 'canceled' ? 'bg-danger' : 'bg-info'
-                                                        }`}>
-                                                        {event.status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4">
-                                                    <div className="d-flex gap-2">
-                                                        <Link to={`/admin/events/edit/${event.id}`} className="btn-custom btn-sm bg-light border">
-                                                            {t('common.edit')}
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => handleDuplicateEvent(event)}
-                                                            className="btn-custom btn-sm bg-primary text-white border-primary"
-                                                            title={t('common.duplicate')}
-                                                        >
-                                                            <i className="bi bi-files"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
+                    {loading ? (
+                        <div className="text-center py-5">
+                            <div className="spinner-border text-primary"></div>
+                        </div>
+                    ) : events.length === 0 ? (
+                        <div className="text-center py-5 text-muted">
+                            <h5>{t('admin.no_events')}</h5>
+                            <p className="mb-0">{t('admin.no_events_subtitle')}</p>
+                        </div>
+                    ) : (
+                        <div className="d-flex flex-column gap-3">
+                            {events.map(event => (
+                                <div key={event.id} className="event-card">
+                                    <div className="event-icon">
+                                        {event.icon || '🏐'}
+                                    </div>
+                                    <div className="event-info">
+                                        <div className="event-title">
+                                            {event.title}
+                                            <span className={`badge rounded-pill ${event.status === 'open' ? 'bg-success' :
+                                                event.status === 'closed' ? 'bg-secondary' :
+                                                    event.status === 'canceled' ? 'bg-danger' : 'bg-info'
+                                                }`}>
+                                                {event.status}
+                                            </span>
+                                        </div>
+                                        <div className="event-details">
+                                            <div className="event-detail">🏐 {event.group_name}</div>
+                                            <div className="event-detail">📍 {event.location}</div>
+                                            <div className="event-detail">📅 {formatDate(event.date_time)}</div>
+                                            <div className="event-detail">
+                                                👥 {event.registered_count}/{event.max_players}
+                                                {event.spots_available <= 2 && event.spots_available > 0 && (
+                                                    <span className="badge bg-warning text-dark ms-1">{t('admin.event_almost_full')}</span>
+                                                )}
+                                                {event.spots_available <= 0 && (
+                                                    <span className="badge bg-danger ms-1">{t('admin.event_full')}</span>
+                                                )}
+                                            </div>
+                                            <div className="event-detail">💰 €{parseFloat(event.price_per_person).toFixed(2)}</div>
+                                        </div>
+                                    </div>
+                                    <div className="event-actions">
+                                        <Link to={`/admin/events/edit/${event.id}`} className="btn-custom">
+                                            {t('common.edit')}
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDuplicateEvent(event)}
+                                            className="btn-custom bg-primary text-white border-primary"
+                                            title={t('common.duplicate')}
+                                        >
+                                            <i className="bi bi-files me-1"></i> {t('common.duplicate')}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 

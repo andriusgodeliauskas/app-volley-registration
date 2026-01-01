@@ -102,50 +102,43 @@ function AdminGroups() {
                     <div className="section-header">
                         <div className="section-title">All Groups</div>
                     </div>
-                    <div className="p-0">
-                        {loading ? (
-                            <div className="text-center py-5">
-                                <div className="spinner-border text-primary"></div>
-                            </div>
-                        ) : groups.length === 0 ? (
-                            <div className="text-center py-5 text-muted">
-                                <h5>No groups yet</h5>
-                                <p className="mb-0">Create your first group to start adding events.</p>
-                            </div>
-                        ) : (
-                            <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th className="border-0 px-4 py-3">ID</th>
-                                            <th className="border-0 px-4 py-3">Name</th>
-                                            <th className="border-0 px-4 py-3">Description</th>
-                                            <th className="border-0 px-4 py-3">Owner</th>
-                                            <th className="border-0 px-4 py-3">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {groups.map(group => (
-                                            <tr key={group.id}>
-                                                <td className="px-4">{group.id}</td>
-                                                <td className="px-4 fw-semibold">{group.name}</td>
-                                                <td className="px-4 text-muted small">{group.description || '-'}</td>
-                                                <td className="px-4">{group.owner_name || 'N/A'}</td>
-                                                <td className="px-4">
-                                                    <Link
-                                                        to={`/ admin / events ? group = ${group.id} `}
-                                                        className="btn-custom btn-sm bg-light border"
-                                                    >
-                                                        View Events
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
+                    {loading ? (
+                        <div className="text-center py-5">
+                            <div className="spinner-border text-primary"></div>
+                        </div>
+                    ) : groups.length === 0 ? (
+                        <div className="text-center py-5 text-muted">
+                            <h5>No groups yet</h5>
+                            <p className="mb-0">Create your first group to start adding events.</p>
+                        </div>
+                    ) : (
+                        <div className="d-flex flex-column gap-3">
+                            {groups.map(group => (
+                                <div key={group.id} className="event-card">
+                                    <div className="event-icon">
+                                        🏐
+                                    </div>
+                                    <div className="event-info">
+                                        <div className="event-title">
+                                            {group.name}
+                                        </div>
+                                        <div className="event-details">
+                                            <div className="event-detail">📝 {group.description || '-'}</div>
+                                            <div className="event-detail">👤 {group.owner_name || 'N/A'}</div>
+                                        </div>
+                                    </div>
+                                    <div className="event-actions">
+                                        <Link
+                                            to={`/admin/events?group=${group.id}`}
+                                            className="btn-custom"
+                                        >
+                                            View Events
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 

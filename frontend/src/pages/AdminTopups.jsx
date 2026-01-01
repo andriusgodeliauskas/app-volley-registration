@@ -62,44 +62,39 @@ function AdminTopups() {
                     <div className="section-header">
                         <div className="section-title">{t('admin.recent_transactions')}</div>
                     </div>
-                    <div className="p-0">
-                        {loading ? (
-                            <div className="text-center py-5">
-                                <div className="spinner-border text-primary"></div>
-                            </div>
-                        ) : topups.length === 0 ? (
-                            <div className="text-center py-5 text-muted">
-                                <h5>{t('admin.no_topups')}</h5>
-                            </div>
-                        ) : (
-                            <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th className="border-0 px-4 py-3">{t('admin.topup_id')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.topup_date')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.topup_user')}</th>
-                                            <th className="border-0 px-4 py-3">{t('admin.topup_email')}</th>
-                                            <th className="border-0 px-4 py-3">Admin</th>
-                                            <th className="border-0 px-4 py-3 text-end">{t('wallet.amount')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {topups.map(t => (
-                                            <tr key={t.id}>
-                                                <td className="px-4 text-muted small">#{t.id}</td>
-                                                <td className="px-4">{formatDate(t.created_at)}</td>
-                                                <td className="px-4 fw-semibold">{t.user_full_name}</td>
-                                                <td className="px-4 text-muted small">{t.user_email}</td>
-                                                <td className="px-4 small">{t.admin_name || 'System'}</td>
-                                                <td className="px-4 fw-bold text-success text-end">+€{t.amount.toFixed(2)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
+                    {loading ? (
+                        <div className="text-center py-5">
+                            <div className="spinner-border text-primary"></div>
+                        </div>
+                    ) : topups.length === 0 ? (
+                        <div className="text-center py-5 text-muted">
+                            <h5>{t('admin.no_topups')}</h5>
+                        </div>
+                    ) : (
+                        <div className="d-flex flex-column gap-3">
+                            {topups.map(topup => (
+                                <div key={topup.id} className="event-card">
+                                    <div className="event-icon">
+                                        💰
+                                    </div>
+                                    <div className="event-info">
+                                        <div className="event-title">
+                                            {topup.user_full_name}
+                                            <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                                                +€{topup.amount.toFixed(2)}
+                                            </span>
+                                        </div>
+                                        <div className="event-details">
+                                            <div className="event-detail">📧 {topup.user_email}</div>
+                                            <div className="event-detail">📅 {formatDate(topup.created_at)}</div>
+                                            <div className="event-detail">👤 {topup.admin_name || 'System'}</div>
+                                            <div className="event-detail">🔢 #{topup.id}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

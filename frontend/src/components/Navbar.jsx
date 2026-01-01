@@ -24,13 +24,14 @@ function Navbar() {
         <div className="top-nav">
             <Link to="/dashboard" className="logo">
                 <div className="logo-icon">🏐</div>
-                <span className="logo-text">Volley App</span>
+                <span className="logo-text">AG VOLLEY</span>
             </Link>
 
             <div className="nav-links">
                 <Link to="/dashboard" className={`nav-link-custom ${isActive('/dashboard')}`}>{t('nav.dashboard')}</Link>
                 <Link to="/events" className={`nav-link-custom ${isActive('/events')}`}>{t('nav.all_events')}</Link>
                 <Link to="/wallet" className={`nav-link-custom ${isActive('/wallet')}`}>{t('nav.wallet')}</Link>
+                <Link to="/support" className={`nav-link-custom ${isActive('/support')}`}>{t('nav.support')}</Link>
             </div>
 
             <div className="user-section">
@@ -50,17 +51,17 @@ function Navbar() {
                         <span className="text-white ms-2">{user?.name}</span>
                         <span className="ms-1 text-white opacity-75">▼</span>
                     </div>
-                    <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2 mt-2">
-                        <li><Link className="dropdown-item rounded-3" to="/profile">{t('nav.profile')}</Link></li>
-                        {/* <li><Link className="dropdown-item rounded-3" to="/children">{t('nav.children')}</Link></li> */}
+                    <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-1 mt-2" style={{ minWidth: '200px' }}>
+                        <li><Link className="dropdown-item rounded-2 py-2" to="/profile"><i className="bi bi-person me-2"></i>{t('nav.profile')}</Link></li>
+                        {/* <li><Link className="dropdown-item rounded-2 py-2" to="/children">{t('nav.children')}</Link></li> */}
                         {(user?.role === 'super_admin' || user?.role === 'group_admin') && (
                             <>
-                                <li><hr className="dropdown-divider" /></li>
-                                <li><Link className="dropdown-item rounded-3" to="/admin">{t('nav.admin_dashboard')}</Link></li>
+                                <li><hr className="dropdown-divider my-1" /></li>
+                                <li><Link className="dropdown-item rounded-2 py-2" to="/admin"><i className="bi bi-gear me-2"></i>{t('nav.admin_dashboard')}</Link></li>
                             </>
                         )}
-                        <li><hr className="dropdown-divider" /></li>
-                        <li><button className="dropdown-item rounded-3 text-danger" onClick={logout}>{t('nav.logout')}</button></li>
+                        <li><hr className="dropdown-divider my-1" /></li>
+                        <li><button className="dropdown-item rounded-2 py-2 text-danger" onClick={logout}><i className="bi bi-box-arrow-right me-2"></i>{t('nav.logout')}</button></li>
                     </ul>
                 </div>
             </div>
@@ -127,6 +128,13 @@ function Navbar() {
                                 onClick={closeMobileMenu}
                             >
                                 {t('nav.wallet')}
+                            </Link>
+                            <Link
+                                to="/support"
+                                className={`mobile-menu-link ${isActive('/support')}`}
+                                onClick={closeMobileMenu}
+                            >
+                                {t('nav.support')}
                             </Link>
                         </div>
 

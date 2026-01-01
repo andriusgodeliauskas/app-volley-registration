@@ -14,21 +14,21 @@ function LanguageSwitcher() {
                 >
                     {language}
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end" style={{ minWidth: 'auto' }}>
+                <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-1 mt-2" style={{ minWidth: '120px' }}>
                     <li>
                         <button
-                            className={`dropdown-item ${language === 'lt' ? 'active' : ''}`}
+                            className={`dropdown-item rounded-2 py-2 ${language === 'lt' ? 'active' : ''}`}
                             onClick={() => setLanguage('lt')}
                         >
-                            🇱🇹 LT
+                            Lietuvių
                         </button>
                     </li>
                     <li>
                         <button
-                            className={`dropdown-item ${language === 'en' ? 'active' : ''}`}
+                            className={`dropdown-item rounded-2 py-2 ${language === 'en' ? 'active' : ''}`}
                             onClick={() => setLanguage('en')}
                         >
-                            🇺🇸 EN
+                            English
                         </button>
                     </li>
                 </ul>

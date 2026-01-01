@@ -40,6 +40,10 @@ export const API_ENDPOINTS = {
 
   // Groups
   GROUPS: `${API_BASE_URL}/groups.php`,
+
+  // Donations
+  DONATIONS: `${API_BASE_URL}/donations.php`,
+  DONATION_CREATE: `${API_BASE_URL}/donation_create.php`,
 };
 
 /**

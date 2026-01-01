@@ -130,6 +130,26 @@ export const translations = {
         'wallet.no_transactions': 'No transactions yet.',
         'wallet.copy_tooltip': 'Copy to clipboard',
 
+        // Support
+        'nav.support': 'Support',
+        'support.title': 'Support Organizer',
+        'support.description': 'Organizing events takes time and effort - managing registrations, verifying payments, booking courts. Your support helps keep everything running smoothly!',
+        'support.your_balance': 'Your Balance',
+        'support.select_amount': 'Select Amount',
+        'support.custom_amount': 'Enter custom amount',
+        'support.donate_button': 'Donate',
+        'support.donation_history': 'Donation History',
+        'support.no_donations': 'No donations yet. Be the first to support!',
+        'support.donor': 'Donor',
+        'support.date': 'Date',
+        'support.amount': 'Amount',
+        'support.confirm_title': 'Confirm Donation',
+        'support.confirm_message': 'Are you sure you want to donate {amount}?',
+        'support.donation_success': 'Thank you for your support!',
+        'support.donation_failed': 'Donation failed. Please try again.',
+        'support.invalid_amount': 'Please enter a valid amount.',
+        'support.insufficient_balance': 'Insufficient balance for this donation.',
+
         // Admin
         'admin.dashboard': 'Admin Dashboard',
         'admin.users': 'Users',
@@ -142,6 +162,20 @@ export const translations = {
         'admin.total_events': 'Total Events',
         'admin.pending_topups': 'Pending Top-ups',
         'admin.total_balance': 'Total Balance',
+
+        // Admin Donations
+        'admin.nav_donations': 'Donations',
+        'admin.donations_title': 'Support Donations',
+        'admin.donations_subtitle': 'View all user donations to support organizers',
+        'admin.total_donations': 'Total Donations',
+        'admin.donation': 'donation',
+        'admin.donations': 'donations',
+        'admin.all_donations': 'All Donations',
+        'admin.no_donations': 'No donations yet',
+        'admin.donation_date': 'Date',
+        'admin.donation_user': 'User',
+        'admin.donation_amount': 'Amount',
+        'admin.total': 'Total',
 
         // Common
         'common.loading': 'Loading...',
@@ -460,6 +494,26 @@ export const translations = {
         'wallet.no_transactions': 'Operacijų dar nėra.',
         'wallet.copy_tooltip': 'Kopijuoti',
 
+        // Support
+        'nav.support': 'Parama',
+        'support.title': 'Paremk Organizatorių',
+        'support.description': 'Organizatoriui reikia laiko surinkti žaidėjus, prižiūrėti registraciją, tikrinti mokėjimus, rezervuoti aikšteles. Jūsų parama padeda išlaikyti viską sklandžiai veikiantį!',
+        'support.your_balance': 'Jūsų Likutis',
+        'support.select_amount': 'Pasirinkite Sumą',
+        'support.custom_amount': 'Įveskite sumą',
+        'support.donate_button': 'Paremti',
+        'support.donation_history': 'Paramos Istorija',
+        'support.no_donations': 'Paramos dar nėra. Būkite pirmas!',
+        'support.donor': 'Rėmėjas',
+        'support.date': 'Data',
+        'support.amount': 'Suma',
+        'support.confirm_title': 'Patvirtinti Paramą',
+        'support.confirm_message': 'Ar tikrai norite paremti {amount}?',
+        'support.donation_success': 'Ačiū už paramą!',
+        'support.donation_failed': 'Parama nepavyko. Bandykite dar kartą.',
+        'support.invalid_amount': 'Prašome įvesti teisingą sumą.',
+        'support.insufficient_balance': 'Nepakanka lėšų šiai paramai.',
+
         // Admin
         'admin.dashboard': 'Admin Panelė',
         'admin.users': 'Vartotojai',
@@ -472,6 +526,20 @@ export const translations = {
         'admin.total_events': 'Viso Renginių',
         'admin.pending_topups': 'Laukiančios Užklausos',
         'admin.total_balance': 'Bendras Likutis',
+
+        // Admin Donations
+        'admin.nav_donations': 'Parama',
+        'admin.donations_title': 'Parama Organizatoriui',
+        'admin.donations_subtitle': 'Peržiūrėti visas vartotojų donacijas organizatoriui',
+        'admin.total_donations': 'Viso Paramos',
+        'admin.donation': 'donacija',
+        'admin.donations': 'donacijos',
+        'admin.all_donations': 'Visos Donacijos',
+        'admin.no_donations': 'Donacijų dar nėra',
+        'admin.donation_date': 'Data',
+        'admin.donation_user': 'Vartotojas',
+        'admin.donation_amount': 'Suma',
+        'admin.total': 'Viso',
 
         // Common
         'common.loading': 'Kraunama...',

@@ -341,7 +341,7 @@ body {
 .dash-card {
   background: linear-gradient(135deg, var(--card-from), var(--card-to));
   border-radius: 28px;
-  padding: 2.75rem;
+  padding: 2.2rem;
   color: white;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   position: relative;
