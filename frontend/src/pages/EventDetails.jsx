@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post, del } from '../api/config';
 import Navbar from '../components/Navbar';
 
 function EventDetails() {
+    const { t } = useLanguage();
     const { id } = useParams();
     const { user, updateUser } = useAuth();
     const navigate = useNavigate();
@@ -79,7 +81,7 @@ function EventDetails() {
                         updateUser({ ...user, balance: parseFloat(response.data.new_balance) });
                     }
 
-                    setSuccessMessage('Successfully registered!');
+                    setSuccessMessage(t('dash.registration_success'));
                     fetchDetails(); // Reload data
                 } else {
                     setError(response.message || 'Failed to register.');
@@ -93,7 +95,7 @@ function EventDetails() {
                         updateUser({ ...user, balance: parseFloat(response.data.new_balance) });
                     }
 
-                    setSuccessMessage('Registration cancelled.');
+                    setSuccessMessage(t('dash.cancellation_success'));
                     fetchDetails(); // Reload data
                 } else {
                     setError(response.message || 'Failed to cancel registration.');
@@ -110,7 +112,7 @@ function EventDetails() {
         return (
             <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center">
                 <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">{t('common.loading')}</span>
                 </div>
             </div>
         );
@@ -123,7 +125,7 @@ function EventDetails() {
                     <div className="alert alert-danger">
                         {error}
                         <div className="mt-2">
-                            <Link to="/dashboard" className="btn btn-sm btn-outline-danger">Back to Dashboard</Link>
+                            <Link to="/dashboard" className="btn btn-sm btn-outline-danger">{t('common.back')}</Link>
                         </div>
                     </div>
                 </div>
@@ -154,7 +156,7 @@ function EventDetails() {
                         <div className="modal-content shadow border-0 rounded-4">
                             <div className="modal-header border-0 pb-0">
                                 <h5 className="modal-title fw-bold">
-                                    {confirmModal.type === 'register' ? 'Confirm Registration' : 'Confirm Cancellation'}
+                                    {confirmModal.type === 'register' ? t('event.confirm_register_title') : t('event.confirm_cancel_title')}
                                 </h5>
                                 <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
                             </div>
@@ -190,9 +192,9 @@ function EventDetails() {
                     <div className="col-lg-5">
                         <div className="section h-100">
                             <div className="section-header">
-                                <Link to="/events" className="btn-custom btn-sm mb-2 d-inline-block">&larr; Back</Link>
+                                <Link to="/events" className="btn-custom btn-sm mb-2 d-inline-block">&larr; {t('common.back')}</Link>
                                 <div className="section-title text-primary">{event.title}</div>
-                                <div className="section-subtitle">Event Details</div>
+                                <div className="section-subtitle">{t('event.details')}</div>
                             </div>
                             <div className="p-0">
                                 <div className="mb-4">
@@ -211,7 +213,7 @@ function EventDetails() {
                                         </div>
                                         <div>
                                             <div className="fw-semibold">{event.location}</div>
-                                            <div className="text-muted small">Location</div>
+                                            <div className="text-muted small">{t('event.location')}</div>
                                         </div>
                                     </div>
                                     <div className="d-flex align-items-center mb-3">
@@ -220,7 +222,7 @@ function EventDetails() {
                                         </div>
                                         <div>
                                             <div className="fw-semibold">{event.group_name}</div>
-                                            <div className="text-muted small">Group</div>
+                                            <div className="text-muted small">{t('event.group')}</div>
                                         </div>
                                     </div>
                                     <div className="d-flex align-items-center mb-3">
@@ -229,20 +231,20 @@ function EventDetails() {
                                         </div>
                                         <div>
                                             <div className="fw-semibold">€{parseFloat(event.price_per_person).toFixed(2)}</div>
-                                            <div className="text-muted small">Per person</div>
+                                            <div className="text-muted small">{t('event.per_person')}</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="p-3 bg-light rounded-3 mb-4">
                                     <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <span className="text-muted">Status</span>
+                                        <span className="text-muted">{t('event.status')}</span>
                                         <span className={`badge ${event.status === 'open' ? 'bg-success' : 'bg-secondary'}`}>
                                             {event.status.toUpperCase()}
                                         </span>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <span className="text-muted">Spots Available</span>
+                                        <span className="text-muted">{t('event.spots')}</span>
                                         <span className={`fw-bold ${spotsLeft <= 3 ? 'text-danger' : 'text-dark'}`}>
                                             {spotsLeft} <span className="text-muted fw-normal">/ {event.max_players}</span>
                                         </span>
@@ -268,7 +270,7 @@ function EventDetails() {
                                             onClick={openCancelModal}
                                             disabled={processing}
                                         >
-                                            {processing ? 'Processing...' : 'Cancel Registration'}
+                                            {processing ? t('common.loading') : t('event.cancel_btn')}
                                         </button>
                                     ) : (
                                         <button
@@ -276,7 +278,7 @@ function EventDetails() {
                                             onClick={openRegisterModal}
                                             disabled={processing}
                                         >
-                                            {processing ? 'Processing...' : (isFull ? 'Join Waitlist' : 'Register Now')}
+                                            {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
                                         </button>
                                     )}
                                 </div>
@@ -289,7 +291,7 @@ function EventDetails() {
                         <div className="section h-100">
                             <div className="section-header">
                                 <div className="section-title">
-                                    Registered Players
+                                    {t('event.registered_players')}
                                     <span className="badge bg-primary rounded-pill ms-2 fs-6 align-middle">
                                         {attendees.length}
                                     </span>
@@ -298,7 +300,7 @@ function EventDetails() {
                             <div className="p-0">
                                 {attendees.length === 0 ? (
                                     <div className="text-center py-5 text-muted">
-                                        <p className="mt-2">No players registered yet.</p>
+                                        <p className="mt-2">{t('wallet.no_transactions')}</p>
                                     </div>
                                 ) : (
                                     <>
@@ -337,7 +339,7 @@ function EventDetails() {
                                         {attendees.some(a => a.index > event.max_players) && (
                                             <>
                                                 <div className="px-1 py-3">
-                                                    <small className="fw-bold text-uppercase text-warning">Waitlist / Queue</small>
+                                                    <small className="fw-bold text-uppercase text-warning">{t('event.waitlist')}</small>
                                                 </div>
                                                 <div className="d-flex flex-column gap-2 opacity-75">
                                                     {attendees.filter(a => a.index > event.max_players).map((attendee) => (
@@ -358,7 +360,7 @@ function EventDetails() {
                                                                 <div>
                                                                     <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
                                                                     <small className="text-muted">
-                                                                        Waiting since: {(() => {
+                                                                        {t('event.waiting_since')}: {(() => {
                                                                             const d = new Date(attendee.registered_at);
                                                                             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
                                                                         })()}
