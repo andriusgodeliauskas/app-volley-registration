@@ -26,15 +26,20 @@ function Dashboard() {
     /**
      * Fetch user's current balance from API
      */
-    const fetchBalance = async () => {
+    /**
+     * Fetch user's current data from API
+     */
+    const fetchUserData = async () => {
         try {
             const response = await get(API_ENDPOINTS.USER);
             if (response.success && response.data?.user) {
-                const freshBalance = parseFloat(response.data.user.balance);
-                setBalance(freshBalance);
+                const userData = response.data.user;
+                setBalance(parseFloat(userData.balance));
+                // Update global user context to reflect changes (avatar, balance, etc)
+                updateUser(userData);
             }
         } catch (err) {
-            console.error('Failed to fetch balance:', err);
+            console.error('Failed to fetch user data:', err);
         }
     };
 
@@ -62,7 +67,7 @@ function Dashboard() {
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
-            await Promise.all([fetchBalance(), fetchEvents()]);
+            await Promise.all([fetchUserData(), fetchEvents()]);
             setLoading(false);
         };
         loadData();
@@ -226,7 +231,13 @@ function Dashboard() {
                                 </span>
                             </span>
                             <div className="dropdown">
-                                <button className="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <button className="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                                    <img
+                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${user?.avatar || 'Felix'}`}
+                                        alt="Avatar"
+                                        className="rounded-circle me-2 bg-light"
+                                        style={{ width: '24px', height: '24px' }}
+                                    />
                                     {user?.name}
                                 </button>
                                 <ul className="dropdown-menu dropdown-menu-end">
@@ -308,7 +319,7 @@ function Dashboard() {
                         </div>
                         <button
                             className="btn btn-outline-primary btn-sm"
-                            onClick={() => { fetchEvents(); fetchBalance(); }}
+                            onClick={() => { fetchEvents(); fetchUserData(); }}
                             disabled={eventsLoading}
                         >
                             {eventsLoading ? (

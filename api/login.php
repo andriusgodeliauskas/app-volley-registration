@@ -57,7 +57,7 @@ try {
     
     // Find user by email
     $stmt = $pdo->prepare("
-        SELECT id, name, email, password_hash, role, balance, is_active, parent_id
+        SELECT id, name, email, password_hash, role, balance, is_active, parent_id, avatar
         FROM users 
         WHERE email = ?
     ");
@@ -118,6 +118,7 @@ try {
         'role' => $user['role'],
         'balance' => $user['balance'],
         'parent_id' => $user['parent_id'] ? (int) $user['parent_id'] : null,
+        'avatar' => $user['avatar'] ?? 'Felix',
         'children' => $children
     ];
     

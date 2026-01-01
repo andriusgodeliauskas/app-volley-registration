@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
 
   // User Profile
   USER: `${API_BASE_URL}/user.php`,
+  USER_UPDATE: `${API_BASE_URL}/user_update.php`,
   USERS: `${API_BASE_URL}/users.php`,
   ADMIN_STATS: `${API_BASE_URL}/admin_stats.php`,
   EVENT_DETAILS: `${API_BASE_URL}/event_details.php`,
