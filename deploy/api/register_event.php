@@ -99,34 +99,85 @@ function handleRegister(array $currentUser): void
         
         // Check if already registered (or canceled)
         $stmt = $pdo->prepare("
-            SELECT id, status FROM registrations 
+            SELECT id, status FROM registrations
             WHERE user_id = ? AND event_id = ?
         ");
         $stmt->execute([$registerUserId, $eventId]);
         $existingRegistration = $stmt->fetch();
-        
+
         if ($existingRegistration) {
             if ($existingRegistration['status'] === 'registered') {
                 $pdo->rollBack();
                 sendError('Already registered for this event', 400);
             }
-            
+
             // Re-register: Update status to registered
             $stmt = $pdo->prepare("
-                UPDATE registrations 
-                SET status = 'registered', registered_by = ?, created_at = CURRENT_TIMESTAMP 
+                UPDATE registrations
+                SET status = 'registered', registered_by = ?, created_at = CURRENT_TIMESTAMP
                 WHERE id = ?
             ");
             $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
             $registrationId = $existingRegistration['id'];
 
         } else {
+            // Check if user has an active deposit
+            $stmt = $pdo->prepare("
+                SELECT COUNT(*) as has_deposit
+                FROM deposits
+                WHERE user_id = ? AND status = 'active'
+            ");
+            $stmt->execute([$registerUserId]);
+            $depositCheck = $stmt->fetch();
+            $hasDeposit = (int)$depositCheck['has_deposit'] > 0;
+
+            // Determine initial status based on capacity and deposit
+            $registeredCount = (int)$event['registered_count'];
+            $maxPlayers = (int)$event['max_players'];
+            $status = 'registered';
+
+            // If event is full
+            if ($registeredCount >= $maxPlayers) {
+                if ($hasDeposit) {
+                    // Depositor has priority - find last registered user WITHOUT deposit and move to waitlist
+                    $stmt = $pdo->prepare("
+                        SELECT r.id, r.user_id
+                        FROM registrations r
+                        LEFT JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
+                        WHERE r.event_id = ? AND r.status = 'registered' AND d.id IS NULL
+                        ORDER BY r.id DESC
+                        LIMIT 1
+                    ");
+                    $stmt->execute([$eventId]);
+                    $lastNonDepositor = $stmt->fetch();
+
+                    if ($lastNonDepositor) {
+                        // Move the last non-depositor to waitlist
+                        $stmt = $pdo->prepare("
+                            UPDATE registrations
+                            SET status = 'waitlist'
+                            WHERE id = ?
+                        ");
+                        $stmt->execute([$lastNonDepositor['id']]);
+
+                        // Depositor gets 'registered' status
+                        $status = 'registered';
+                    } else {
+                        // All registered users have deposits, so add to waitlist
+                        $status = 'waitlist';
+                    }
+                } else {
+                    // Non-depositor and event is full - waitlist
+                    $status = 'waitlist';
+                }
+            }
+
             // New registration: Insert
             $stmt = $pdo->prepare("
                 INSERT INTO registrations (user_id, event_id, registered_by, status)
-                VALUES (?, ?, ?, 'registered')
+                VALUES (?, ?, ?, ?)
             ");
-            $stmt->execute([$registerUserId, $eventId, $currentUser['id']]);
+            $stmt->execute([$registerUserId, $eventId, $currentUser['id'], $status]);
             $registrationId = $pdo->lastInsertId();
         }
         

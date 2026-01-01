@@ -5,7 +5,8 @@ function LanguageSwitcher() {
 
     return (
         <div className="language-switcher ms-3">
-            <div className="dropdown">
+            {/* Desktop version - dropdown */}
+            <div className="dropdown d-none d-md-block">
                 <button
                     className="btn btn-sm btn-outline-light dropdown-toggle text-uppercase"
                     type="button"
@@ -32,6 +33,22 @@ function LanguageSwitcher() {
                         </button>
                     </li>
                 </ul>
+            </div>
+
+            {/* Mobile version - simple buttons */}
+            <div className="d-flex d-md-none gap-1">
+                <button
+                    className={`btn btn-sm ${language === 'lt' ? 'btn-light' : 'btn-outline-light'} text-uppercase px-2`}
+                    onClick={() => setLanguage('lt')}
+                >
+                    LT
+                </button>
+                <button
+                    className={`btn btn-sm ${language === 'en' ? 'btn-light' : 'btn-outline-light'} text-uppercase px-2`}
+                    onClick={() => setLanguage('en')}
+                >
+                    EN
+                </button>
             </div>
         </div>
     );

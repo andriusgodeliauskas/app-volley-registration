@@ -31,6 +31,7 @@ function Navbar() {
                 <Link to="/dashboard" className={`nav-link-custom ${isActive('/dashboard')}`}>{t('nav.dashboard')}</Link>
                 <Link to="/events" className={`nav-link-custom ${isActive('/events')}`}>{t('nav.all_events')}</Link>
                 <Link to="/wallet" className={`nav-link-custom ${isActive('/wallet')}`}>{t('nav.wallet')}</Link>
+                <Link to="/deposit" className={`nav-link-custom ${isActive('/deposit')}`}>{t('nav.deposit')}</Link>
                 <Link to="/support" className={`nav-link-custom ${isActive('/support')}`}>{t('nav.support')}</Link>
             </div>
 

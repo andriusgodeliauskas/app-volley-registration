@@ -648,15 +648,34 @@ body {
   width: 100%;
 }
 
+.mobile-menu-section .language-switcher .d-flex {
+  padding: 0;
+  gap: 0.5rem;
+}
+
 .mobile-menu-section .language-switcher .btn {
-  width: 100%;
-  text-align: left;
-  background: white;
-  border: 2px solid #e5e7eb;
-  color: #374151;
+  flex: 1;
+  text-align: center;
   font-weight: 600;
   padding: 0.75rem 1rem;
   border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.mobile-menu-section .language-switcher .btn-light {
+  background: #fbbf24 !important;
+  border-color: #fbbf24 !important;
+  color: #1f2937 !important;
+  font-weight: 700;
+}
+
+.mobile-menu-section .language-switcher .btn-outline-light {
+  background: white !important;
+  border-color: #e5e7eb !important;
+  color: #6b7280 !important;
 }
 
 .mobile-menu-link {

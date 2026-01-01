@@ -13,6 +13,7 @@ import Wallet from './pages/Wallet';
 import Profile from './pages/Profile';
 import Children from './pages/Children';
 import Support from './pages/Support';
+import Deposit from './pages/Deposit';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminGroups from './pages/AdminGroups';
 import AdminEvents from './pages/AdminEvents';
@@ -23,6 +24,7 @@ import AdminWallet from './pages/AdminWallet';
 import AdminTopups from './pages/AdminTopups';
 import AdminRent from './pages/AdminRent';
 import AdminDonations from './pages/AdminDonations';
+import AdminDeposits from './pages/AdminDeposits';
 
 function App() {
   return (
@@ -88,6 +90,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Support />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/deposit"
+              element={
+                <ProtectedRoute>
+                  <Deposit />
                 </ProtectedRoute>
               }
             />
@@ -170,6 +180,14 @@ function App() {
               element={
                 <ProtectedRoute roles={['super_admin']}>
                   <AdminDonations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/deposits"
+              element={
+                <ProtectedRoute roles={['super_admin']}>
+                  <AdminDeposits />
                 </ProtectedRoute>
               }
             />

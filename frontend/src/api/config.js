@@ -44,6 +44,12 @@ export const API_ENDPOINTS = {
   // Donations
   DONATIONS: `${API_BASE_URL}/donations.php`,
   DONATION_CREATE: `${API_BASE_URL}/donation_create.php`,
+
+  // Deposits
+  DEPOSITS: `${API_BASE_URL}/deposits.php`,
+  DEPOSIT_CREATE: `${API_BASE_URL}/deposit_create.php`,
+  ADMIN_DEPOSITS: `${API_BASE_URL}/admin_deposits.php`,
+  ADMIN_DEPOSIT_REFUND: `${API_BASE_URL}/admin_deposit_refund.php`,
 };
 
 /**

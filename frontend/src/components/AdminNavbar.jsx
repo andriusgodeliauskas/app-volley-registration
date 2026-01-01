@@ -35,7 +35,10 @@ function AdminNavbar() {
                 )}
                 <Link to="/admin/topups" className={`nav-link-custom ${isActive('/admin/topups')}`}>{t('admin.nav_topups')}</Link>
                 {user?.role === 'super_admin' && (
-                    <Link to="/admin/donations" className={`nav-link-custom ${isActive('/admin/donations')}`}>{t('admin.nav_donations')}</Link>
+                    <>
+                        <Link to="/admin/deposits" className={`nav-link-custom ${isActive('/admin/deposits')}`}>{t('admin.nav_deposits')}</Link>
+                        <Link to="/admin/donations" className={`nav-link-custom ${isActive('/admin/donations')}`}>{t('admin.nav_donations')}</Link>
+                    </>
                 )}
                 <Link to="/admin/wallet" className={`nav-link-custom ${isActive('/admin/wallet')}`}>{t('admin.nav_wallet')}</Link>
             </div>
