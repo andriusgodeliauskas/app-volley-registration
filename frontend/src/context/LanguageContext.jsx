@@ -21,18 +21,22 @@ export function LanguageProvider({ children }) {
         language,
         setLanguage,
         t: (key) => {
-            const keys = key.split('.');
-            let value = translations[language];
+            // Direct key lookup since our keys already include dots (e.g., 'nav.dashboard')
+            const translation = translations[language]?.[key];
 
-            for (const k of keys) {
-                if (value && value[k]) {
-                    value = value[k];
-                } else {
-                    // Fallback to key or english if missing
-                    return key;
-                }
+            // Fallback to English if not found in current language
+            if (translation) {
+                return translation;
             }
-            return value;
+
+            // Fallback to English
+            const englishTranslation = translations['en']?.[key];
+            if (englishTranslation) {
+                return englishTranslation;
+            }
+
+            // Return key itself if no translation found
+            return key;
         }
     };
 
