@@ -91,7 +91,7 @@ function Login() {
                                                 type="email"
                                                 className="form-control border-start-0 ps-0"
                                                 id="email"
-                                                placeholder="you@example.com"
+                                                placeholder={t('placeholder.email')}
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                                 required
@@ -180,7 +180,7 @@ function Login() {
 
                         {/* Footer */}
                         <p className="text-center text-muted small mt-4">
-                            © 2025 Volley Registration App. All rights reserved.
+                            {t('footer.copyright')}
                         </p>
 
                     </div>

@@ -43,7 +43,7 @@ export default function Profile() {
                 }
             } catch (err) {
                 console.error('Failed to load profile:', err);
-                setError('Failed to load profile data');
+                setError(t('profile.failed_load'));
             } finally {
                 setLoading(false);
             }
@@ -66,16 +66,16 @@ export default function Profile() {
             });
 
             if (response.success) {
-                setMessage('Profile updated successfully');
+                setMessage(t('profile.update_success'));
                 // Update context
                 if (response.data?.user) {
                     updateUser(response.data.user);
                 }
             } else {
-                setError(response.message || 'Failed to update profile');
+                setError(response.message || t('profile.update_failed'));
             }
         } catch (err) {
-            setError(err.message || 'An error occurred');
+            setError(err.message || t('profile.error_occurred'));
         } finally {
             setSaving(false);
         }
@@ -85,7 +85,7 @@ export default function Profile() {
         return (
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">{t('common.loading')}</span>
                 </div>
             </div>
         );
@@ -100,7 +100,7 @@ export default function Profile() {
                     <div className="col-lg-8">
                         <div className="section">
                             <div className="section-header border-0 pb-0">
-                                <div className="section-title">My Profile</div>
+                                <div className="section-title">{t('profile.title')}</div>
                             </div>
                             <div className="p-3">
                                 {message && (
@@ -127,11 +127,11 @@ export default function Profile() {
                                                     style={{ width: '120px', height: '120px' }}
                                                 />
                                             </div>
-                                            <p className="text-muted small">Select an avatar below</p>
+                                            <p className="text-muted small">{t('profile.select_avatar_below')}</p>
                                         </div>
                                         <div className="col-md-8">
                                             <div className="mb-3">
-                                                <label className="form-label text-muted small fw-bold text-uppercase">Email</label>
+                                                <label className="form-label text-muted small fw-bold text-uppercase">{t('auth.email')}</label>
                                                 <input
                                                     type="email"
                                                     className="form-control bg-light"
@@ -139,11 +139,11 @@ export default function Profile() {
                                                     disabled
                                                     readOnly
                                                 />
-                                                <div className="form-text">Email cannot be changed.</div>
+                                                <div className="form-text">{t('profile.email_readonly')}</div>
                                             </div>
                                             <div className="row">
                                                 <div className="col-md-6 mb-3">
-                                                    <label className="form-label text-muted small fw-bold text-uppercase">Name</label>
+                                                    <label className="form-label text-muted small fw-bold text-uppercase">{t('auth.name')}</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -153,7 +153,7 @@ export default function Profile() {
                                                     />
                                                 </div>
                                                 <div className="col-md-6 mb-3">
-                                                    <label className="form-label text-muted small fw-bold text-uppercase">Surname</label>
+                                                    <label className="form-label text-muted small fw-bold text-uppercase">{t('auth.surname')}</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -167,7 +167,7 @@ export default function Profile() {
                                     </div>
 
                                     <div className="mb-4">
-                                        <label className="form-label text-muted small fw-bold text-uppercase mb-3">Choose Avatar</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase mb-3">{t('profile.choose_avatar')}</label>
                                         <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
                                             {AVATAR_SEEDS.map(seed => (
                                                 <button
@@ -193,7 +193,7 @@ export default function Profile() {
                                             className="btn-custom bg-primary text-white border-primary px-4"
                                             disabled={saving}
                                         >
-                                            {saving ? 'Saving...' : 'Save Changes'}
+                                            {saving ? t('profile.saving') : t('common.save')}
                                         </button>
                                     </div>
                                 </form>

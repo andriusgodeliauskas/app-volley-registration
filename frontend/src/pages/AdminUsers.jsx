@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminUsers() {
     const { user, logout } = useAuth();
+    const { t } = useLanguage();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -24,7 +26,7 @@ function AdminUsers() {
             }
         } catch (err) {
             console.error('Failed to fetch users:', err);
-            setError('Failed to load users');
+            setError(t('admin.failed_load_users'));
         } finally {
             setLoading(false);
         }
@@ -37,11 +39,11 @@ function AdminUsers() {
             <div className="main-container">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
                     <div>
-                        <h1 className="h3 fw-bold mb-1">Users</h1>
-                        <p className="text-muted mb-0">Manage platform users and administrators</p>
+                        <h1 className="h3 fw-bold mb-1">{t('admin.users_title')}</h1>
+                        <p className="text-muted mb-0">{t('admin.users_subtitle')}</p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Link to="/admin" className="btn-custom bg-light border">Back to Dashboard</Link>
+                        <Link to="/admin" className="btn-custom bg-light border">{t('common.back')}</Link>
                     </div>
                 </div>
 
@@ -56,7 +58,7 @@ function AdminUsers() {
                 {/* Users List */}
                 <div className="section">
                     <div className="section-header">
-                        <div className="section-title">All Users</div>
+                        <div className="section-title">{t('admin.all_users')}</div>
                     </div>
                     <div className="p-0">
                         {loading ? (
@@ -65,21 +67,21 @@ function AdminUsers() {
                             </div>
                         ) : users.length === 0 ? (
                             <div className="text-center py-5 text-muted">
-                                <h5>No users found</h5>
+                                <h5>{t('admin.no_users')}</h5>
                             </div>
                         ) : (
                             <div className="table-responsive">
                                 <table className="table table-hover align-middle mb-0">
                                     <thead className="bg-light">
                                         <tr>
-                                            <th className="border-0 px-4 py-3">ID</th>
-                                            <th className="border-0 px-4 py-3">Name</th>
-                                            <th className="border-0 px-4 py-3">Email</th>
-                                            <th className="border-0 px-4 py-3">Role</th>
-                                            <th className="border-0 px-4 py-3">Balance</th>
-                                            <th className="border-0 px-4 py-3">Status</th>
-                                            <th className="border-0 px-4 py-3">Joined</th>
-                                            <th className="border-0 px-4 py-3">Actions</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_id')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_name')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_email')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_role')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_balance')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_status')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.user_joined')}</th>
+                                            <th className="border-0 px-4 py-3">{t('common.actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -100,13 +102,13 @@ function AdminUsers() {
                                                 </td>
                                                 <td className="px-4">
                                                     {u.is_active ?
-                                                        <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Active</span> :
-                                                        <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Inactive</span>
+                                                        <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">{t('admin.user_active')}</span> :
+                                                        <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">{t('admin.user_inactive')}</span>
                                                     }
                                                 </td>
                                                 <td className="px-4 text-muted">{new Date(u.created_at).toLocaleDateString()}</td>
                                                 <td className="px-4">
-                                                    <Link to={`/admin/users/edit/${u.id}`} className="btn-custom btn-sm bg-light border">Edit</Link>
+                                                    <Link to={`/admin/users/edit/${u.id}`} className="btn-custom btn-sm bg-light border">{t('common.edit')}</Link>
                                                 </td>
                                             </tr>
                                         ))}

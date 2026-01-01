@@ -1,14 +1,17 @@
+import { useLanguage } from '../context/LanguageContext';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminWallet() {
+    const { t } = useLanguage();
+
     return (
         <div className="min-vh-100">
             <AdminNavbar />
             <div className="main-container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h1 className="h3 fw-bold mb-1">Wallet Management</h1>
-                        <p className="text-muted mb-0">Review transactions and manage platform funds</p>
+                        <h1 className="h3 fw-bold mb-1">{t('admin.wallet_title')}</h1>
+                        <p className="text-muted mb-0">{t('admin.wallet_subtitle')}</p>
                     </div>
                 </div>
 
@@ -19,10 +22,9 @@ function AdminWallet() {
                                 <i className="bi bi-wallet2"></i>
                             </span>
                         </div>
-                        <h2 className="h4 fw-bold mb-2">Coming Soon</h2>
+                        <h2 className="h4 fw-bold mb-2">{t('admin.wallet_coming_soon')}</h2>
                         <p className="text-muted mb-0" style={{ maxWidth: '500px', margin: '0 auto' }}>
-                            Global transaction history and bulk top-up management features are currently under development.
-                            Please use the <strong>Users</strong> page to manage individual user wallets.
+                            {t('admin.wallet_description')}
                         </p>
                     </div>
                 </div>

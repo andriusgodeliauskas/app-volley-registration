@@ -181,7 +181,7 @@ function Dashboard() {
                 }
             }
         } catch (err) {
-            setError(err.message || `Failed to ${type}. Please try again.`);
+            setError(err.message || (type === 'register' ? t('dash.error_register') : t('dash.error_cancel')));
         } finally {
             setRegistering(prev => ({ ...prev, [eventId]: false }));
         }
@@ -228,7 +228,7 @@ function Dashboard() {
                                 <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
                             </div>
                             <div className="modal-body">
-                                <p className="mb-0">Are you sure you want to {confirmModal.type === 'register' ? 'register for' : 'cancel your registration for'} <br /><strong>{confirmModal.eventTitle}</strong>?</p>
+                                <p className="mb-0">{t('event.confirm_action', { action: confirmModal.type === 'register' ? t('event.action_register') : t('event.action_cancel'), title: confirmModal.eventTitle }).replace('{action}', confirmModal.type === 'register' ? t('event.action_register') : t('event.action_cancel')).replace('{title}', confirmModal.eventTitle)}</p>
                             </div>
                             <div className="modal-footer border-0 pt-0">
                                 <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>{t('common.no')}</button>
@@ -372,7 +372,7 @@ function Dashboard() {
 
                 {/* Quick Actions */}
                 <div className="quick-actions-section">
-                    <h2 className="quick-actions-title">⚡ Quick Actions</h2>
+                    <h2 className="quick-actions-title">{t('admin.quick_actions')}</h2>
                     <div className="action-buttons">
                         <Link to="/events" className="action-btn">📅 {t('dash.view_all')}</Link>
                         <Link to="/wallet" className="action-btn">💳 {t('wallet.topup_title')}</Link>

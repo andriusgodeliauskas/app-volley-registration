@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminTopups() {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [topups, setTopups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -44,8 +46,8 @@ function AdminTopups() {
             <div className="main-container">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
                     <div>
-                        <h1 className="h3 fw-bold mb-1">Top-ups History</h1>
-                        <p className="text-muted mb-0">View all manual wallet top-ups</p>
+                        <h1 className="h3 fw-bold mb-1">{t('admin.topups_title')}</h1>
+                        <p className="text-muted mb-0">{t('admin.topups_subtitle')}</p>
                     </div>
                 </div>
 
@@ -58,7 +60,7 @@ function AdminTopups() {
 
                 <div className="section">
                     <div className="section-header">
-                        <div className="section-title">Recent Transactions</div>
+                        <div className="section-title">{t('admin.recent_transactions')}</div>
                     </div>
                     <div className="p-0">
                         {loading ? (
@@ -67,19 +69,19 @@ function AdminTopups() {
                             </div>
                         ) : topups.length === 0 ? (
                             <div className="text-center py-5 text-muted">
-                                <h5>No top-ups found</h5>
+                                <h5>{t('admin.no_topups')}</h5>
                             </div>
                         ) : (
                             <div className="table-responsive">
                                 <table className="table table-hover align-middle mb-0">
                                     <thead className="bg-light">
                                         <tr>
-                                            <th className="border-0 px-4 py-3">ID</th>
-                                            <th className="border-0 px-4 py-3">Date</th>
-                                            <th className="border-0 px-4 py-3">User</th>
-                                            <th className="border-0 px-4 py-3">Email</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.topup_id')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.topup_date')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.topup_user')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.topup_email')}</th>
                                             <th className="border-0 px-4 py-3">Admin</th>
-                                            <th className="border-0 px-4 py-3 text-end">Amount</th>
+                                            <th className="border-0 px-4 py-3 text-end">{t('wallet.amount')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>

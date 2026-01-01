@@ -168,6 +168,165 @@ export const translations = {
         'common.no': 'No',
         'common.add': 'Add',
         'common.view': 'View',
+
+        // Footer
+        'footer.copyright': '© 2025 Volley Registration App. All rights reserved.',
+
+        // Form Placeholders
+        'placeholder.email': 'you@example.com',
+        'placeholder.first_name': 'John',
+        'placeholder.last_name': 'Doe',
+        'placeholder.password': 'At least 6 characters',
+        'placeholder.confirm_password': 'Re-enter your password',
+        'placeholder.event_title': 'e.g., Friday Night Volleyball',
+        'placeholder.location': 'e.g., Sports Hall, Vilnius',
+        'placeholder.description': 'Additional details about the event...',
+
+        // Validation Messages
+        'validation.name_min': 'Name must be at least 2 characters',
+        'validation.surname_min': 'Surname must be at least 2 characters',
+        'validation.email_invalid': 'Please enter a valid email address',
+        'validation.password_min': 'Password must be at least 6 characters',
+        'validation.passwords_mismatch': 'Passwords do not match',
+
+        // Registration Page
+        'register.success': 'Registration successful! Please log in.',
+        'register.creating': 'Creating account...',
+        'register.divider': 'or',
+        'register.terms': 'By creating an account, you agree to our Terms of Service.',
+
+        // Profile Page
+        'profile.failed_load': 'Failed to load profile data',
+        'profile.update_success': 'Profile updated successfully',
+        'profile.update_failed': 'Failed to update profile',
+        'profile.error_occurred': 'An error occurred',
+        'profile.select_avatar_below': 'Select an avatar below',
+        'profile.email_readonly': 'Email cannot be changed.',
+        'profile.choose_avatar': 'Choose Avatar',
+        'profile.saving': 'Saving...',
+
+        // Event Details
+        'event.failed_load': 'Failed to load event details',
+        'event.failed_register': 'Failed to register.',
+        'event.failed_cancel': 'Failed to cancel registration.',
+        'event.confirm_action': 'Are you sure you want to {action} <br /><strong>{title}</strong>?',
+        'event.action_register': 'register for',
+        'event.action_cancel': 'cancel your registration for',
+
+        // Children Page
+        'children.coming_soon': 'This feature is coming soon!',
+
+        // Admin Navigation
+        'admin.app_title': 'Volley Admin',
+        'admin.nav_dashboard': 'Dashboard',
+        'admin.nav_users': 'Users',
+        'admin.nav_groups': 'Groups',
+        'admin.nav_events': 'Events',
+        'admin.nav_rent': 'Rent',
+        'admin.nav_topups': 'Top Ups',
+        'admin.nav_wallet': 'Wallet',
+        'admin.user_view': 'User View',
+        'admin.logout': 'Logout',
+
+        // Admin Dashboard
+        'admin.dashboard_title': 'Admin Dashboard',
+        'admin.dashboard_subtitle': 'Manage users, events, and platform settings.',
+        'admin.stats_users': 'Users',
+        'admin.stats_groups': 'Groups',
+        'admin.stats_events': 'Events',
+        'admin.stats_wallet': 'Wallet',
+        'admin.total_earnings': 'Total Earnings',
+        'admin.total_topups': 'Total Top Ups',
+        'admin.total_rent_cost': 'Total Rent Cost',
+        'admin.quick_actions': '⚡ Quick Actions',
+        'admin.manage_users': 'Manage Users',
+        'admin.manage_events': 'Manage Events',
+        'admin.process_topups': 'Process Top-ups',
+        'admin.recent_activity': '📊 Recent Activity',
+        'admin.activity_feed': 'Activity feed will be displayed here...',
+
+        // Admin Users
+        'admin.users_title': 'Users',
+        'admin.users_subtitle': 'Manage platform users and administrators',
+        'admin.all_users': 'All Users',
+        'admin.no_users': 'No users found',
+        'admin.user_id': 'ID',
+        'admin.user_name': 'Name',
+        'admin.user_email': 'Email',
+        'admin.user_role': 'Role',
+        'admin.user_balance': 'Balance',
+        'admin.user_status': 'Status',
+        'admin.user_joined': 'Joined',
+        'admin.user_active': 'Active',
+        'admin.user_inactive': 'Inactive',
+        'admin.failed_load_users': 'Failed to load users',
+
+        // Admin Events
+        'admin.events_title': 'Events',
+        'admin.events_subtitle': 'Manage volleyball events',
+        'admin.create_event': 'Create Event',
+        'admin.all_events': 'All Events',
+        'admin.no_events': 'No events yet',
+        'admin.no_events_subtitle': 'Create your first event to start accepting registrations.',
+        'admin.no_groups_warning': 'No groups found! You need to create a group first before creating events.',
+        'admin.event_id': 'ID',
+        'admin.event_title': 'Title',
+        'admin.event_group': 'Group',
+        'admin.event_datetime': 'Date & Time',
+        'admin.event_location': 'Location',
+        'admin.event_spots': 'Spots',
+        'admin.event_price': 'Price',
+        'admin.event_status': 'Status',
+        'admin.event_almost_full': 'Almost full',
+        'admin.event_full': 'Full',
+        'admin.event_create_success': 'Event created successfully!',
+        'admin.event_create_failed': 'Failed to create event',
+
+        // Create Event Form
+        'admin.create_event_title': 'Create New Event',
+        'admin.form_group': 'Group *',
+        'admin.form_select_group': 'Select a group...',
+        'admin.form_event_title': 'Event Title *',
+        'admin.form_icon': 'Icon',
+        'admin.form_datetime': 'Date & Time *',
+        'admin.form_max_players': 'Max Players',
+        'admin.form_courts': 'Courts',
+        'admin.form_price_person': 'Price per Person (€)',
+        'admin.form_rent_total': 'Rent Price Total (€)',
+        'admin.form_rent_tooltip': 'Total to pay to venue',
+        'admin.form_creating': 'Creating...',
+
+        // Admin Groups
+        'admin.groups_title': 'Groups',
+        'admin.groups_subtitle': 'Manage volleyball groups/clubs',
+        'admin.create_group': 'Create Group',
+        'admin.group_create_success': 'Group created successfully!',
+        'admin.group_create_failed': 'Failed to create group',
+
+        // Admin Wallet
+        'admin.wallet_title': 'Wallet Management',
+        'admin.wallet_subtitle': 'Review transactions and manage platform funds',
+        'admin.wallet_coming_soon': 'Coming Soon',
+        'admin.wallet_description': 'Global transaction history and bulk top-up management features are currently under development. Please use the Users page to manage individual user wallets.',
+
+        // Admin Top-ups
+        'admin.topups_title': 'Top-ups History',
+        'admin.topups_subtitle': 'View all manual wallet top-ups',
+        'admin.recent_transactions': 'Recent Transactions',
+        'admin.no_topups': 'No top-ups found',
+        'admin.topup_id': 'ID',
+        'admin.topup_date': 'Date',
+        'admin.topup_user': 'User',
+        'admin.topup_email': 'Email',
+
+        // Admin Rent
+        'admin.rent_title': 'Rent Costs',
+        'admin.rent_subtitle': 'Track venue rent expenses for ended events',
+        'admin.rent_access_denied': 'Access denied. Super Admin privileges required.',
+
+        // Admin Event Edit
+        'admin.event_finalize_confirm': 'Are you sure you want to finalize this event? This will charge all registered users and close the event.',
+        'admin.event_finalized': 'Event finalized! Charged {count} users. Total: €{amount}',
     },
     lt: {
         // Navigation
@@ -338,5 +497,164 @@ export const translations = {
         'common.no': 'Ne',
         'common.add': 'Pridėti',
         'common.view': 'Žiūrėti',
+
+        // Footer
+        'footer.copyright': '© 2025 Tinklinio Registracijos Programa. Visos teisės saugomos.',
+
+        // Form Placeholders
+        'placeholder.email': 'jusu@email.lt',
+        'placeholder.first_name': 'Jonas',
+        'placeholder.last_name': 'Jonaitis',
+        'placeholder.password': 'Mažiausiai 6 simboliai',
+        'placeholder.confirm_password': 'Įveskite slaptažodį dar kartą',
+        'placeholder.event_title': 'pvz., Penktadienio vakaro tinklinis',
+        'placeholder.location': 'pvz., Sporto salė, Vilnius',
+        'placeholder.description': 'Papildoma informacija apie renginį...',
+
+        // Validation Messages
+        'validation.name_min': 'Vardas turi būti bent 2 simbolių',
+        'validation.surname_min': 'Pavardė turi būti bent 2 simbolių',
+        'validation.email_invalid': 'Prašome įvesti teisingą el. pašto adresą',
+        'validation.password_min': 'Slaptažodis turi būti bent 6 simbolių',
+        'validation.passwords_mismatch': 'Slaptažodžiai nesutampa',
+
+        // Registration Page
+        'register.success': 'Registracija sėkminga! Prašome prisijungti.',
+        'register.creating': 'Kuriama paskyra...',
+        'register.divider': 'arba',
+        'register.terms': 'Kurdami paskyrą, sutinkate su mūsų Naudojimo sąlygomis.',
+
+        // Profile Page
+        'profile.failed_load': 'Nepavyko užkrauti profilio duomenų',
+        'profile.update_success': 'Profilis sėkmingai atnaujintas',
+        'profile.update_failed': 'Nepavyko atnaujinti profilio',
+        'profile.error_occurred': 'Įvyko klaida',
+        'profile.select_avatar_below': 'Pasirinkite avatarą žemiau',
+        'profile.email_readonly': 'El. paštas negali būti keičiamas.',
+        'profile.choose_avatar': 'Pasirinkti Avatarą',
+        'profile.saving': 'Išsaugoma...',
+
+        // Event Details
+        'event.failed_load': 'Nepavyko užkrauti renginio informacijos',
+        'event.failed_register': 'Nepavyko užsiregistruoti.',
+        'event.failed_cancel': 'Nepavyko atšaukti registracijos.',
+        'event.confirm_action': 'Ar tikrai norite {action} <br /><strong>{title}</strong>?',
+        'event.action_register': 'užsiregistruoti į',
+        'event.action_cancel': 'atšaukti registraciją į',
+
+        // Children Page
+        'children.coming_soon': 'Ši funkcija netrukus bus prieinama!',
+
+        // Admin Navigation
+        'admin.app_title': 'Tinklinio Admin',
+        'admin.nav_dashboard': 'Pagrindinis',
+        'admin.nav_users': 'Vartotojai',
+        'admin.nav_groups': 'Grupės',
+        'admin.nav_events': 'Renginiai',
+        'admin.nav_rent': 'Nuoma',
+        'admin.nav_topups': 'Papildymai',
+        'admin.nav_wallet': 'Piniginė',
+        'admin.user_view': 'Vartotojo Vaizdas',
+        'admin.logout': 'Atsijungti',
+
+        // Admin Dashboard
+        'admin.dashboard_title': 'Admin Panelė',
+        'admin.dashboard_subtitle': 'Valdykite vartotojus, renginius ir platformos nustatymus.',
+        'admin.stats_users': 'Vartotojai',
+        'admin.stats_groups': 'Grupės',
+        'admin.stats_events': 'Renginiai',
+        'admin.stats_wallet': 'Piniginė',
+        'admin.total_earnings': 'Bendros Pajamos',
+        'admin.total_topups': 'Viso Papildymų',
+        'admin.total_rent_cost': 'Bendra Nuomos Kaina',
+        'admin.quick_actions': '⚡ Greiti Veiksmai',
+        'admin.manage_users': 'Valdyti Vartotojus',
+        'admin.manage_events': 'Valdyti Renginius',
+        'admin.process_topups': 'Apdoroti Papildymus',
+        'admin.recent_activity': '📊 Naujausia Veikla',
+        'admin.activity_feed': 'Veiklos srautas bus rodomas čia...',
+
+        // Admin Users
+        'admin.users_title': 'Vartotojai',
+        'admin.users_subtitle': 'Valdykite platformos vartotojus ir administratorius',
+        'admin.all_users': 'Visi Vartotojai',
+        'admin.no_users': 'Vartotojų nerasta',
+        'admin.user_id': 'ID',
+        'admin.user_name': 'Vardas',
+        'admin.user_email': 'El. paštas',
+        'admin.user_role': 'Rolė',
+        'admin.user_balance': 'Likutis',
+        'admin.user_status': 'Būsena',
+        'admin.user_joined': 'Prisijungė',
+        'admin.user_active': 'Aktyvus',
+        'admin.user_inactive': 'Neaktyvus',
+        'admin.failed_load_users': 'Nepavyko užkrauti vartotojų',
+
+        // Admin Events
+        'admin.events_title': 'Renginiai',
+        'admin.events_subtitle': 'Valdykite tinklinio renginius',
+        'admin.create_event': 'Sukurti Renginį',
+        'admin.all_events': 'Visi Renginiai',
+        'admin.no_events': 'Renginių dar nėra',
+        'admin.no_events_subtitle': 'Sukurkite pirmą renginį, kad pradėtumėte priimti registracijas.',
+        'admin.no_groups_warning': 'Grupių nerasta! Pirmiausia turite sukurti grupę prieš kurdami renginius.',
+        'admin.event_id': 'ID',
+        'admin.event_title': 'Pavadinimas',
+        'admin.event_group': 'Grupė',
+        'admin.event_datetime': 'Data ir Laikas',
+        'admin.event_location': 'Vieta',
+        'admin.event_spots': 'Vietos',
+        'admin.event_price': 'Kaina',
+        'admin.event_status': 'Būsena',
+        'admin.event_almost_full': 'Beveik pilna',
+        'admin.event_full': 'Pilna',
+        'admin.event_create_success': 'Renginys sėkmingai sukurtas!',
+        'admin.event_create_failed': 'Nepavyko sukurti renginio',
+
+        // Create Event Form
+        'admin.create_event_title': 'Sukurti Naują Renginį',
+        'admin.form_group': 'Grupė *',
+        'admin.form_select_group': 'Pasirinkite grupę...',
+        'admin.form_event_title': 'Renginio Pavadinimas *',
+        'admin.form_icon': 'Ikonėlė',
+        'admin.form_datetime': 'Data ir Laikas *',
+        'admin.form_max_players': 'Maks. Žaidėjų',
+        'admin.form_courts': 'Aikštelės',
+        'admin.form_price_person': 'Kaina Asmeniui (€)',
+        'admin.form_rent_total': 'Bendra Nuomos Kaina (€)',
+        'admin.form_rent_tooltip': 'Viso mokėti salės savininkui',
+        'admin.form_creating': 'Kuriama...',
+
+        // Admin Groups
+        'admin.groups_title': 'Grupės',
+        'admin.groups_subtitle': 'Valdykite tinklinio grupes/klubus',
+        'admin.create_group': 'Sukurti Grupę',
+        'admin.group_create_success': 'Grupė sėkmingai sukurta!',
+        'admin.group_create_failed': 'Nepavyko sukurti grupės',
+
+        // Admin Wallet
+        'admin.wallet_title': 'Piniginės Valdymas',
+        'admin.wallet_subtitle': 'Peržiūrėkite operacijas ir valdykite platformos lėšas',
+        'admin.wallet_coming_soon': 'Netrukus',
+        'admin.wallet_description': 'Visuotinė operacijų istorija ir masinio papildymo valdymo funkcijos šiuo metu kuriamos. Prašome naudoti Vartotojų puslapį, kad valdytumėte individualių vartotojų pinigines.',
+
+        // Admin Top-ups
+        'admin.topups_title': 'Papildymų Istorija',
+        'admin.topups_subtitle': 'Peržiūrėti visus rankinius piniginės papildymus',
+        'admin.recent_transactions': 'Naujausi Sandoriai',
+        'admin.no_topups': 'Papildymų nerasta',
+        'admin.topup_id': 'ID',
+        'admin.topup_date': 'Data',
+        'admin.topup_user': 'Vartotojas',
+        'admin.topup_email': 'El. paštas',
+
+        // Admin Rent
+        'admin.rent_title': 'Nuomos Išlaidos',
+        'admin.rent_subtitle': 'Sekti salės nuomos išlaidas pasibaigusiems renginiams',
+        'admin.rent_access_denied': 'Prieiga uždrausta. Reikalingos Super Admin teisės.',
+
+        // Admin Event Edit
+        'admin.event_finalize_confirm': 'Ar tikrai norite užbaigti šį renginį? Tai nuskaičiuos lėšas visiems užsiregistravusiems vartotojams ir uždarys renginį.',
+        'admin.event_finalized': 'Renginys užbaigtas! Nuskaičiuota {count} vartotojams. Viso: €{amount}',
     }
 };

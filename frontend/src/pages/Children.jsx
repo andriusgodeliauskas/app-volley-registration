@@ -11,7 +11,7 @@ function Children() {
             <div className="main-container">
                 <div className="section text-center py-5">
                     <h1>{t('children.title')}</h1>
-                    <p className="lead text-muted">This feature is coming soon!</p>
+                    <p className="lead text-muted">{t('children.coming_soon')}</p>
                     <Link to="/dashboard" className="btn-custom bg-primary text-white border-primary">{t('common.back')}</Link>
                 </div>
             </div>

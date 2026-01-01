@@ -25,11 +25,11 @@ function EventDetails() {
             if (response.success) {
                 setData(response.data);
             } else {
-                setError(response.message || 'Failed to load event details');
+                setError(response.message || t('event.failed_load'));
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            setError('An error occurred while loading data.');
+            setError(t('profile.error_occurred'));
         } finally {
             setLoading(false);
         }
@@ -84,7 +84,7 @@ function EventDetails() {
                     setSuccessMessage(t('dash.registration_success'));
                     fetchDetails(); // Reload data
                 } else {
-                    setError(response.message || 'Failed to register.');
+                    setError(response.message || t('event.failed_register'));
                 }
             } else if (type === 'cancel') {
                 const response = await del(`${API_ENDPOINTS.REGISTER_EVENT}?event_id=${id}`);
@@ -98,11 +98,11 @@ function EventDetails() {
                     setSuccessMessage(t('dash.cancellation_success'));
                     fetchDetails(); // Reload data
                 } else {
-                    setError(response.message || 'Failed to cancel registration.');
+                    setError(response.message || t('event.failed_cancel'));
                 }
             }
         } catch (err) {
-            setError(err.message || `Failed to ${type}.`);
+            setError(err.message || (type === 'register' ? t('event.failed_register') : t('event.failed_cancel')));
         } finally {
             setProcessing(false);
         }
@@ -161,11 +161,11 @@ function EventDetails() {
                                 <button type="button" className="btn-close" onClick={() => setConfirmModal({ show: false })}></button>
                             </div>
                             <div className="modal-body">
-                                <p className="mb-0">Are you sure you want to {confirmModal.type === 'register' ? 'register for' : 'cancel your registration for'} <br /><strong>{confirmModal.eventTitle}</strong>?</p>
+                                <p className="mb-0">{t('event.confirm_action', { action: confirmModal.type === 'register' ? t('event.action_register') : t('event.action_cancel'), title: confirmModal.eventTitle }).replace('{action}', confirmModal.type === 'register' ? t('event.action_register') : t('event.action_cancel')).replace('{title}', confirmModal.eventTitle)}</p>
                             </div>
                             <div className="modal-footer border-0 pt-0">
-                                <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>No</button>
-                                <button type="button" className={`btn-custom ${confirmModal.type === 'register' ? 'bg-primary text-white border-primary' : 'btn-danger-custom text-white bg-danger border-danger'} px-4`} onClick={handleConfirmAction}>Yes</button>
+                                <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>{t('common.no')}</button>
+                                <button type="button" className={`btn-custom ${confirmModal.type === 'register' ? 'bg-primary text-white border-primary' : 'btn-danger-custom text-white bg-danger border-danger'} px-4`} onClick={handleConfirmAction}>{t('common.yes')}</button>
                             </div>
                         </div>
                     </div>

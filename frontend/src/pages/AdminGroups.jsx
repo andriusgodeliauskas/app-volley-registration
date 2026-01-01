@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminGroups() {
     const { user, logout } = useAuth();
+    const { t } = useLanguage();
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -47,14 +49,14 @@ function AdminGroups() {
         try {
             const response = await post(API_ENDPOINTS.GROUPS, newGroup);
             if (response.success) {
-                setSuccess('Group created successfully!');
+                setSuccess(t('admin.group_create_success'));
                 setShowCreateModal(false);
                 setNewGroup({ name: '', description: '' });
                 fetchGroups();
                 setTimeout(() => setSuccess(''), 3000);
             }
         } catch (err) {
-            setError(err.message || 'Failed to create group');
+            setError(err.message || t('admin.group_create_failed'));
         } finally {
             setCreating(false);
         }
@@ -67,16 +69,16 @@ function AdminGroups() {
             <div className="main-container">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
                     <div>
-                        <h1 className="h3 fw-bold mb-1">Groups</h1>
-                        <p className="text-muted mb-0">Manage volleyball groups/clubs</p>
+                        <h1 className="h3 fw-bold mb-1">{t('admin.groups_title')}</h1>
+                        <p className="text-muted mb-0">{t('admin.groups_subtitle')}</p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Link to="/admin" className="btn-custom bg-light border">Back</Link>
+                        <Link to="/admin" className="btn-custom bg-light border">{t('common.back')}</Link>
                         <button
                             className="btn-custom bg-warning text-dark border-warning"
                             onClick={() => setShowCreateModal(true)}
                         >
-                            <i className="bi bi-plus-lg me-1"></i> Create Group
+                            <i className="bi bi-plus-lg me-1"></i> {t('admin.create_group')}
                         </button>
                     </div>
                 </div>

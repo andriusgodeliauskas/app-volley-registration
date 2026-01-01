@@ -21,23 +21,23 @@ function Register() {
         const errors = {};
 
         if (firstName.trim().length < 2) {
-            errors.firstName = 'Name must be at least 2 characters';
+            errors.firstName = t('validation.name_min');
         }
 
         if (lastName.trim().length < 2) {
-            errors.lastName = 'Surname must be at least 2 characters';
+            errors.lastName = t('validation.surname_min');
         }
 
         if (!email.includes('@')) {
-            errors.email = 'Please enter a valid email address';
+            errors.email = t('validation.email_invalid');
         }
 
         if (password.length < 6) {
-            errors.password = 'Password must be at least 6 characters';
+            errors.password = t('validation.password_min');
         }
 
         if (password !== confirmPassword) {
-            errors.confirmPassword = 'Passwords do not match';
+            errors.confirmPassword = t('validation.passwords_mismatch');
         }
 
         setValidationErrors(errors);
@@ -60,7 +60,7 @@ function Register() {
 
             // Show success and redirect to login
             navigate('/login', {
-                state: { message: 'Registration successful! Please log in.' }
+                state: { message: t('register.success') }
             });
         } catch (err) {
             console.error('Registration failed:', err.message);
@@ -118,7 +118,7 @@ function Register() {
                                                 type="text"
                                                 className={`form-control border-start-0 ps-0 ${validationErrors.firstName ? 'is-invalid' : ''}`}
                                                 id="firstName"
-                                                placeholder="John"
+                                                placeholder={t('placeholder.first_name')}
                                                 value={firstName}
                                                 onChange={(e) => setFirstName(e.target.value)}
                                                 required
@@ -143,7 +143,7 @@ function Register() {
                                                 type="text"
                                                 className={`form-control border-start-0 ps-0 ${validationErrors.lastName ? 'is-invalid' : ''}`}
                                                 id="lastName"
-                                                placeholder="Doe"
+                                                placeholder={t('placeholder.last_name')}
                                                 value={lastName}
                                                 onChange={(e) => setLastName(e.target.value)}
                                                 required
@@ -168,7 +168,7 @@ function Register() {
                                                 type="email"
                                                 className={`form-control border-start-0 ps-0 ${validationErrors.email ? 'is-invalid' : ''}`}
                                                 id="email"
-                                                placeholder="you@example.com"
+                                                placeholder={t('placeholder.email')}
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                                 required
@@ -193,7 +193,7 @@ function Register() {
                                                 type={showPassword ? 'text' : 'password'}
                                                 className={`form-control border-start-0 border-end-0 ps-0 ${validationErrors.password ? 'is-invalid' : ''}`}
                                                 id="password"
-                                                placeholder="At least 6 characters"
+                                                placeholder={t('placeholder.password')}
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
@@ -237,7 +237,7 @@ function Register() {
                                                 type={showPassword ? 'text' : 'password'}
                                                 className={`form-control border-start-0 ps-0 ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
                                                 id="confirmPassword"
-                                                placeholder="Re-enter your password"
+                                                placeholder={t('placeholder.confirm_password')}
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                                 required
@@ -258,7 +258,7 @@ function Register() {
                                         {isSubmitting ? (
                                             <>
                                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                Creating account...
+                                                {t('register.creating')}
                                             </>
                                         ) : (
                                             t('auth.register_button')
@@ -269,7 +269,7 @@ function Register() {
                                 {/* Divider */}
                                 <div className="d-flex align-items-center my-4">
                                     <hr className="flex-grow-1" />
-                                    <span className="px-3 text-muted small">or</span>
+                                    <span className="px-3 text-muted small">{t('register.divider')}</span>
                                     <hr className="flex-grow-1" />
                                 </div>
 
@@ -285,7 +285,7 @@ function Register() {
 
                         {/* Footer */}
                         <p className="text-center text-muted small mt-4">
-                            By creating an account, you agree to our Terms of Service.
+                            {t('register.terms')}
                         </p>
 
                     </div>

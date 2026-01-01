@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminEvents() {
     const { user, logout } = useAuth();
+    const { t } = useLanguage();
     const [events, setEvents] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -60,6 +62,32 @@ function AdminEvents() {
         }
     };
 
+    const handleDuplicateEvent = (event) => {
+        // Find the next number for this event's description
+        const eventCopies = events.filter(e =>
+            e.title === event.title &&
+            e.location === event.location
+        );
+        const nextNumber = eventCopies.length + 1;
+
+        // Prepare duplicated event data
+        const duplicatedEvent = {
+            group_id: event.group_id,
+            title: event.title,
+            description: event.description ? `${event.description} #${nextNumber}` : `#${nextNumber}`,
+            date_time: '', // Leave empty for admin to set
+            location: event.location,
+            max_players: event.max_players,
+            court_count: event.court_count,
+            price_per_person: event.price_per_person,
+            rent_price: event.rent_price || 0.00,
+            icon: event.icon || '🏐'
+        };
+
+        setNewEvent(duplicatedEvent);
+        setShowCreateModal(true);
+    };
+
     const handleCreateEvent = async (e) => {
         e.preventDefault();
         setCreating(true);
@@ -68,7 +96,7 @@ function AdminEvents() {
         try {
             const response = await post(API_ENDPOINTS.EVENTS, newEvent);
             if (response.success) {
-                setSuccess('Event created successfully!');
+                setSuccess(t('admin.event_create_success'));
                 setShowCreateModal(false);
                 setNewEvent({
                     group_id: groups[0]?.id || '',
@@ -86,7 +114,7 @@ function AdminEvents() {
                 setTimeout(() => setSuccess(''), 3000);
             }
         } catch (err) {
-            setError(err.message || 'Failed to create event');
+            setError(err.message || t('admin.event_create_failed'));
         } finally {
             setCreating(false);
         }
@@ -111,17 +139,17 @@ function AdminEvents() {
             <div className="main-container">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
                     <div>
-                        <h1 className="h3 fw-bold mb-1">Events</h1>
-                        <p className="text-muted mb-0">Manage volleyball events</p>
+                        <h1 className="h3 fw-bold mb-1">{t('admin.events_title')}</h1>
+                        <p className="text-muted mb-0">{t('admin.events_subtitle')}</p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Link to="/admin" className="btn-custom bg-light border">Back</Link>
+                        <Link to="/admin" className="btn-custom bg-light border">{t('common.back')}</Link>
                         <button
                             className="btn-custom bg-warning text-dark border-warning"
                             onClick={() => setShowCreateModal(true)}
                             disabled={groups.length === 0}
                         >
-                            <i className="bi bi-plus-lg me-1"></i> Create Event
+                            <i className="bi bi-plus-lg me-1"></i> {t('admin.create_event')}
                         </button>
                     </div>
                 </div>
@@ -142,8 +170,7 @@ function AdminEvents() {
                 {groups.length === 0 && !loading && (
                     <div className="alert-custom bg-warning bg-opacity-10 border-warning text-dark mb-4">
                         <i className="bi bi-exclamation-circle-fill alert-custom-icon"></i>
-                        <div>
-                            <strong>No groups found!</strong> You need to <Link to="/admin/groups" className="text-dark fw-bold text-decoration-underline">create a group</Link> first before creating events.
+                        <div dangerouslySetInnerHTML={{ __html: t('admin.no_groups_warning').replace('create a group', `<a href="/admin/groups" class="text-dark fw-bold text-decoration-underline">${t('admin.create_group')}</a>`) }}>
                         </div>
                     </div>
                 )}
@@ -151,7 +178,7 @@ function AdminEvents() {
                 {/* Events List */}
                 <div className="section">
                     <div className="section-header">
-                        <div className="section-title">All Events</div>
+                        <div className="section-title">{t('admin.all_events')}</div>
                     </div>
                     <div className="p-0">
                         {loading ? (
@@ -160,23 +187,23 @@ function AdminEvents() {
                             </div>
                         ) : events.length === 0 ? (
                             <div className="text-center py-5 text-muted">
-                                <h5>No events yet</h5>
-                                <p className="mb-0">Create your first event to start accepting registrations.</p>
+                                <h5>{t('admin.no_events')}</h5>
+                                <p className="mb-0">{t('admin.no_events_subtitle')}</p>
                             </div>
                         ) : (
                             <div className="table-responsive">
                                 <table className="table table-hover align-middle mb-0">
                                     <thead className="bg-light">
                                         <tr>
-                                            <th className="border-0 px-4 py-3">ID</th>
-                                            <th className="border-0 px-4 py-3">Title</th>
-                                            <th className="border-0 px-4 py-3">Group</th>
-                                            <th className="border-0 px-4 py-3">Date & Time</th>
-                                            <th className="border-0 px-4 py-3">Location</th>
-                                            <th className="border-0 px-4 py-3">Spots</th>
-                                            <th className="border-0 px-4 py-3">Price</th>
-                                            <th className="border-0 px-4 py-3">Status</th>
-                                            <th className="border-0 px-4 py-3">Actions</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_id')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_title')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_group')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_datetime')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_location')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_spots')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_price')}</th>
+                                            <th className="border-0 px-4 py-3">{t('admin.event_status')}</th>
+                                            <th className="border-0 px-4 py-3">{t('common.actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -190,10 +217,10 @@ function AdminEvents() {
                                                 <td className="px-4">
                                                     {event.registered_count}/{event.max_players}
                                                     {event.spots_available <= 2 && event.spots_available > 0 && (
-                                                        <span className="badge bg-warning text-dark ms-1">Almost full</span>
+                                                        <span className="badge bg-warning text-dark ms-1">{t('admin.event_almost_full')}</span>
                                                     )}
                                                     {event.spots_available <= 0 && (
-                                                        <span className="badge bg-danger ms-1">Full</span>
+                                                        <span className="badge bg-danger ms-1">{t('admin.event_full')}</span>
                                                     )}
                                                 </td>
                                                 <td className="px-4 fw-bold">€{parseFloat(event.price_per_person).toFixed(2)}</td>
@@ -206,9 +233,18 @@ function AdminEvents() {
                                                     </span>
                                                 </td>
                                                 <td className="px-4">
-                                                    <Link to={`/admin/events/edit/${event.id}`} className="btn-custom btn-sm bg-light border">
-                                                        Edit
-                                                    </Link>
+                                                    <div className="d-flex gap-2">
+                                                        <Link to={`/admin/events/edit/${event.id}`} className="btn-custom btn-sm bg-light border">
+                                                            {t('common.edit')}
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDuplicateEvent(event)}
+                                                            className="btn-custom btn-sm bg-primary text-white border-primary"
+                                                            title={t('common.view')}
+                                                        >
+                                                            <i className="bi bi-files"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -226,7 +262,7 @@ function AdminEvents() {
                     <div className="modal-dialog modal-dialog-centered modal-lg">
                         <div className="modal-content border-0 shadow rounded-4">
                             <div className="modal-header border-0 pb-0">
-                                <h5 className="modal-title fw-bold">Create New Event</h5>
+                                <h5 className="modal-title fw-bold">{t('admin.create_event_title')}</h5>
                                 <button
                                     type="button"
                                     className="btn-close"
@@ -237,7 +273,7 @@ function AdminEvents() {
                                 <div className="modal-body">
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Group *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_group')}</label>
                                             <select
                                                 className="form-select"
                                                 value={newEvent.group_id}
@@ -250,19 +286,19 @@ function AdminEvents() {
                                             </select>
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Event Title *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_event_title')}</label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 value={newEvent.title}
                                                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                                                placeholder="e.g., Friday Night Volleyball"
+                                                placeholder={t('placeholder.event_title')}
                                                 required
                                             />
                                         </div>
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label text-muted small fw-bold text-uppercase">Icon</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_icon')}</label>
                                         <div className="d-flex gap-2 flex-wrap bg-light p-2 rounded border">
                                             {ICONS.map(icon => (
                                                 <button
@@ -278,7 +314,7 @@ function AdminEvents() {
                                     </div>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Date & Time *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_datetime')}</label>
                                             <input
                                                 type="datetime-local"
                                                 className="form-control"
@@ -288,20 +324,20 @@ function AdminEvents() {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Location *</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('event.location')} *</label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 value={newEvent.location}
                                                 onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-                                                placeholder="e.g., Sports Hall, Vilnius"
+                                                placeholder={t('placeholder.location')}
                                                 required
                                             />
                                         </div>
                                     </div>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Max Players</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_max_players')}</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -312,7 +348,7 @@ function AdminEvents() {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Courts</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_courts')}</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -325,7 +361,7 @@ function AdminEvents() {
                                     </div>
                                     <div className="row">
                                         <div className={user?.role === 'super_admin' ? "col-md-6 mb-3" : "col-md-12 mb-3"}>
-                                            <label className="form-label text-muted small fw-bold text-uppercase">Price per Person (€)</label>
+                                            <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_price_person')}</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -337,7 +373,7 @@ function AdminEvents() {
                                         </div>
                                         {user?.role === 'super_admin' && (
                                             <div className="col-md-6 mb-3">
-                                                <label className="form-label text-muted small fw-bold text-uppercase">Rent Price Total (€)</label>
+                                                <label className="form-label text-muted small fw-bold text-uppercase">{t('admin.form_rent_total')}</label>
                                                 <input
                                                     type="number"
                                                     className="form-control"
@@ -345,18 +381,18 @@ function AdminEvents() {
                                                     onChange={(e) => setNewEvent({ ...newEvent, rent_price: parseFloat(e.target.value) })}
                                                     min="0"
                                                     step="0.01"
-                                                    placeholder="Total to pay to venue"
+                                                    placeholder={t('admin.form_rent_tooltip')}
                                                 />
                                             </div>
                                         )}
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label text-muted small fw-bold text-uppercase">Description</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">{t('event.description')}</label>
                                         <textarea
                                             className="form-control"
                                             value={newEvent.description}
                                             onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                                            placeholder="Additional details about the event..."
+                                            placeholder={t('placeholder.description')}
                                             rows="3"
                                         ></textarea>
                                     </div>
@@ -367,14 +403,14 @@ function AdminEvents() {
                                         className="btn-custom bg-light border"
                                         onClick={() => setShowCreateModal(false)}
                                     >
-                                        Cancel
+                                        {t('common.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         className="btn-custom bg-warning text-dark border-warning"
                                         disabled={creating}
                                     >
-                                        {creating ? 'Creating...' : 'Create Event'}
+                                        {creating ? t('admin.form_creating') : t('admin.create_event')}
                                     </button>
                                 </div>
                             </form>
