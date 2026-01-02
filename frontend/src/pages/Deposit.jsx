@@ -30,7 +30,7 @@ export default function Deposit() {
     };
 
     const handlePayDeposit = () => {
-        const depositAmount = 50.00;
+        const depositAmount = 45.00;
         if (depositAmount > parseFloat(user?.balance || 0)) {
             alert(t('deposit.insufficient_balance'));
             return;
@@ -132,7 +132,7 @@ export default function Deposit() {
                                     <div className="card border-primary">
                                         <div className="card-body text-center py-4">
                                             <div className="text-muted mb-2">{t('deposit.amount_label')}</div>
-                                            <div className="display-5 fw-bold text-primary">€50</div>
+                                            <div className="display-5 fw-bold text-primary">€45</div>
                                         </div>
                                     </div>
                                 </div>
@@ -147,14 +147,14 @@ export default function Deposit() {
                                     <button
                                         className="btn btn-primary w-100 py-3"
                                         onClick={handlePayDeposit}
-                                        disabled={parseFloat(user?.balance || 0) < 50}
+                                        disabled={parseFloat(user?.balance || 0) < 45}
                                     >
                                         <i className="bi bi-credit-card me-2"></i>
                                         {t('deposit.pay_button')}
                                     </button>
                                 )}
 
-                                {parseFloat(user?.balance || 0) < 50 && !hasActiveDeposit && (
+                                {parseFloat(user?.balance || 0) < 45 && !hasActiveDeposit && (
                                     <div className="alert alert-warning mt-3" role="alert">
                                         <i className="bi bi-exclamation-triangle-fill me-2"></i>
                                         {t('deposit.insufficient_balance')}

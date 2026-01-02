@@ -3,7 +3,7 @@
  * Volley Registration App - Create Deposit API
  *
  * Endpoints:
- * - POST: Create a new deposit (deduct 50 EUR from user balance)
+ * - POST: Create a new deposit (deduct 45 EUR from user balance)
  */
 
 require_once __DIR__ . '/auth.php';
@@ -29,7 +29,7 @@ function handleCreateDeposit(array $currentUser): void
     $pdo = getDbConnection();
 
     // Fixed deposit amount
-    $amount = 50.00;
+    $amount = 45.00;
 
     try {
         // Start transaction
@@ -59,7 +59,7 @@ function handleCreateDeposit(array $currentUser): void
 
         if ($currentBalance < $amount) {
             $pdo->rollBack();
-            sendError('Insufficient balance. You need at least 50 EUR to pay a deposit.', 400);
+            sendError('Insufficient balance. You need at least 45 EUR to pay a deposit.', 400);
         }
 
         // Check max_depositors limit for user's groups
