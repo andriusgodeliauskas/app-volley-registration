@@ -212,7 +212,7 @@ export const translations = {
         'deposit.amount_label': 'Deposit Amount',
         'deposit.pay_button': 'Pay Deposit',
         'deposit.already_paid': 'You have an active deposit',
-        'deposit.insufficient_balance': 'Insufficient balance. You need at least €50 to pay a deposit.',
+        'deposit.insufficient_balance': 'Insufficient balance. You need at least €45 to pay a deposit.',
         'deposit.history_title': 'Your Deposit History',
         'deposit.no_deposits': 'No deposits yet',
         'deposit.date': 'Date',
@@ -222,7 +222,7 @@ export const translations = {
         'deposit.status_refunded': 'Refunded',
         'deposit.refunded_at': 'Refunded',
         'deposit.confirm_title': 'Confirm Deposit Payment',
-        'deposit.confirm_message': 'Are you sure you want to pay a €50 deposit? This will be deducted from your wallet balance.',
+        'deposit.confirm_message': 'Are you sure you want to pay a €45 deposit? This will be deducted from your wallet balance.',
         'deposit.payment_failed': 'Failed to process deposit payment. Please try again.',
 
         // Common
@@ -314,6 +314,18 @@ export const translations = {
         // Admin Dashboard
         'admin.dashboard_title': 'Admin Dashboard',
         'admin.dashboard_subtitle': 'Manage users, events, and platform settings.',
+
+        // Admin Events Occupancy
+        'admin.events_occupancy': 'Events Occupancy',
+        'admin.occupancy_subtitle': 'View event capacity and participant lists',
+        'admin.occupancy_total_spots': 'Total spots',
+        'admin.occupancy_taken': 'Taken',
+        'admin.occupancy_available': 'Available',
+        'admin.participants_list': 'Participants',
+        'admin.no_participants': 'No participants yet',
+        'admin.participant_number': '#',
+        'admin.participant_name': 'Name',
+        'admin.no_events_occupancy': 'No events found',
         'admin.stats_users': 'Users',
         'admin.stats_groups': 'Groups',
         'admin.stats_events': 'Events',
@@ -641,7 +653,7 @@ export const translations = {
         'deposit.amount_label': 'Depozito Suma',
         'deposit.pay_button': 'Sumokėti Depozitą',
         'deposit.already_paid': 'Turite aktyvų depozitą',
-        'deposit.insufficient_balance': 'Nepakanka lėšų. Reikia bent 50 EUR depozitui sumokėti.',
+        'deposit.insufficient_balance': 'Nepakanka lėšų. Reikia bent 45 EUR depozitui sumokėti.',
         'deposit.history_title': 'Jūsų Depozitų Istorija',
         'deposit.no_deposits': 'Depozitų dar nėra',
         'deposit.date': 'Data',
@@ -651,7 +663,7 @@ export const translations = {
         'deposit.status_refunded': 'Grąžinta',
         'deposit.refunded_at': 'Grąžinta',
         'deposit.confirm_title': 'Patvirtinti Depozito Mokėjimą',
-        'deposit.confirm_message': 'Ar tikrai norite sumokėti 50 EUR depozitą? Suma bus nuskaičiuota iš jūsų piniginės.',
+        'deposit.confirm_message': 'Ar tikrai norite sumokėti 45 EUR depozitą? Suma bus nuskaičiuota iš jūsų piniginės.',
         'deposit.payment_failed': 'Nepavyko apdoroti depozito mokėjimo. Bandykite dar kartą.',
 
         // Common
@@ -743,6 +755,18 @@ export const translations = {
         // Admin Dashboard
         'admin.dashboard_title': 'Admin Panelė',
         'admin.dashboard_subtitle': 'Valdykite vartotojus, renginius ir platformos nustatymus.',
+
+        // Admin Events Occupancy
+        'admin.events_occupancy': 'Renginių užimtumas',
+        'admin.occupancy_subtitle': 'Peržiūrėkite renginių užimtumą ir dalyvių sąrašus',
+        'admin.occupancy_total_spots': 'Viso vietų',
+        'admin.occupancy_taken': 'Užimta',
+        'admin.occupancy_available': 'Laisva',
+        'admin.participants_list': 'Dalyviai',
+        'admin.no_participants': 'Dar nėra dalyvių',
+        'admin.participant_number': 'Nr.',
+        'admin.participant_name': 'Vardas',
+        'admin.no_events_occupancy': 'Renginių nerasta',
         'admin.stats_users': 'Vartotojai',
         'admin.stats_groups': 'Grupės',
         'admin.stats_events': 'Renginiai',

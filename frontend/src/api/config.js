@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
   ADMIN_STATS: `${API_BASE_URL}/admin_stats.php`,
   ADMIN_TOPUPS: `${API_BASE_URL}/admin_topups.php`,
   ADMIN_RENT: `${API_BASE_URL}/admin_rent.php`,
+  ADMIN_EVENTS_OCCUPANCY: `${API_BASE_URL}/admin_events_occupancy.php`,
   EVENT_DETAILS: `${API_BASE_URL}/event_details.php`,
 
   // Events

@@ -15,6 +15,9 @@ function AdminDashboard() {
         pending_topups: 0
     });
     const [loading, setLoading] = useState(true);
+    const [eventsOccupancy, setEventsOccupancy] = useState([]);
+    const [occupancyLoading, setOccupancyLoading] = useState(true);
+    const [expandedEvents, setExpandedEvents] = useState({});
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -30,8 +33,46 @@ function AdminDashboard() {
             }
         };
 
+        const fetchEventsOccupancy = async () => {
+            try {
+                const response = await get(API_ENDPOINTS.ADMIN_EVENTS_OCCUPANCY);
+                if (response.success && response.data?.events) {
+                    // Filter only upcoming events and sort by date ASC (nearest first)
+                    const now = new Date();
+                    const upcomingEvents = response.data.events
+                        .filter(event => new Date(event.date_time) > now)
+                        .sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
+                    setEventsOccupancy(upcomingEvents);
+                }
+            } catch (error) {
+                console.error('Failed to fetch events occupancy:', error);
+            } finally {
+                setOccupancyLoading(false);
+            }
+        };
+
         fetchStats();
+        fetchEventsOccupancy();
     }, []);
+
+    const toggleEventExpansion = (eventId) => {
+        setExpandedEvents(prev => ({
+            ...prev,
+            [eventId]: !prev[eventId]
+        }));
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('lt-LT', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
     return (
         <div className="min-vh-100">
             <AdminNavbar />
@@ -48,6 +89,132 @@ function AdminDashboard() {
                         <Link to="/admin/groups" className="btn-custom bg-white border">{t('admin.stats_groups')}</Link>
                         <Link to="/admin/events" className="btn-custom bg-white border">{t('admin.stats_events')}</Link>
                         <Link to="/admin/wallet" className="btn-custom bg-white border">{t('admin.stats_wallet')}</Link>
+                    </div>
+                </div>
+
+                {/* Events Occupancy Section */}
+                <div className="section mb-4">
+                    <div className="section-header">
+                        <div className="section-title">{t('admin.events_occupancy')}</div>
+                        <p className="text-muted mb-0 small">{t('admin.occupancy_subtitle')}</p>
+                    </div>
+                    <div className="section-body">
+                        {occupancyLoading ? (
+                            <div className="text-center py-5">
+                                <div className="spinner-border text-primary"></div>
+                            </div>
+                        ) : eventsOccupancy.length === 0 ? (
+                            <div className="text-center py-4 text-muted">
+                                <p className="mb-0">{t('admin.no_events_occupancy')}</p>
+                            </div>
+                        ) : (
+                            <div className="row g-3">
+                                {eventsOccupancy.map(event => {
+                                    const percentage = event.max_players > 0
+                                        ? (event.registered_count / event.max_players * 100).toFixed(0)
+                                        : 0;
+                                    const isExpanded = expandedEvents[event.id];
+
+                                    return (
+                                        <div key={event.id} className="col-12 col-md-6 col-lg-4">
+                                            <div className="card border-0 shadow-sm h-100">
+                                                <div className="card-body">
+                                                    {/* Event Header */}
+                                                    <div className="d-flex align-items-start mb-3">
+                                                        <div className="fs-3 me-2">{event.icon || '🏐'}</div>
+                                                        <div className="flex-grow-1">
+                                                            <h6 className="mb-1 fw-bold">{event.title}</h6>
+                                                            <small className="text-muted d-block">
+                                                                📅 {formatDate(event.date_time)}
+                                                            </small>
+                                                            <small className="text-muted d-block">
+                                                                📍 {event.location}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Occupancy Stats */}
+                                                    <div className="mb-3">
+                                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                                            <span className="small fw-bold text-muted">
+                                                                {event.registered_count} / {event.max_players} {t('admin.occupancy_total_spots')}
+                                                            </span>
+                                                            <span className={`badge ${percentage >= 100 ? 'bg-danger' : percentage >= 80 ? 'bg-warning' : 'bg-success'}`}>
+                                                                {percentage}%
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Progress Bar */}
+                                                        <div className="progress" style={{ height: '24px', borderRadius: '12px' }}>
+                                                            <div
+                                                                className="progress-bar bg-danger"
+                                                                role="progressbar"
+                                                                style={{ width: `${percentage}%` }}
+                                                                aria-valuenow={percentage}
+                                                                aria-valuemin="0"
+                                                                aria-valuemax="100"
+                                                            >
+                                                                <small className="fw-bold">{t('admin.occupancy_taken')}</small>
+                                                            </div>
+                                                            {percentage < 100 && (
+                                                                <div
+                                                                    className="progress-bar bg-success"
+                                                                    role="progressbar"
+                                                                    style={{ width: `${100 - percentage}%` }}
+                                                                >
+                                                                    <small className="fw-bold">{t('admin.occupancy_available')}</small>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Participants Toggle */}
+                                                    {event.participants && event.participants.length > 0 && (
+                                                        <>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-primary w-100 mb-2"
+                                                                onClick={() => toggleEventExpansion(event.id)}
+                                                            >
+                                                                <i className={`bi ${isExpanded ? 'bi-chevron-up' : 'bi-chevron-down'} me-1`}></i>
+                                                                {t('admin.participants_list')} ({event.participants.length})
+                                                            </button>
+
+                                                            {/* Participants List */}
+                                                            {isExpanded && (
+                                                                <div className="table-responsive">
+                                                                    <table className="table table-sm table-hover mb-0">
+                                                                        <thead className="table-light">
+                                                                            <tr>
+                                                                                <th style={{ width: '40px' }}>{t('admin.participant_number')}</th>
+                                                                                <th>{t('admin.participant_name')}</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {event.participants.map(participant => (
+                                                                                <tr key={participant.id}>
+                                                                                    <td className="text-muted">{participant.number}</td>
+                                                                                    <td>{participant.name} {participant.surname}</td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                    {event.participants && event.participants.length === 0 && (
+                                                        <div className="text-center py-2">
+                                                            <small className="text-muted">{t('admin.no_participants')}</small>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </div>
 
