@@ -141,13 +141,22 @@ function AdminNavbar() {
                                 {t('admin.nav_topups')}
                             </Link>
                             {user?.role === 'super_admin' && (
-                                <Link
-                                    to="/admin/donations"
-                                    className={`mobile-menu-link ${isActive('/admin/donations')}`}
-                                    onClick={closeMobileMenu}
-                                >
-                                    {t('admin.nav_donations')}
-                                </Link>
+                                <>
+                                    <Link
+                                        to="/admin/deposits"
+                                        className={`mobile-menu-link ${isActive('/admin/deposits')}`}
+                                        onClick={closeMobileMenu}
+                                    >
+                                        {t('admin.nav_deposits')}
+                                    </Link>
+                                    <Link
+                                        to="/admin/donations"
+                                        className={`mobile-menu-link ${isActive('/admin/donations')}`}
+                                        onClick={closeMobileMenu}
+                                    >
+                                        {t('admin.nav_donations')}
+                                    </Link>
+                                </>
                             )}
                             <Link
                                 to="/admin/wallet"
