@@ -25,6 +25,7 @@ if (!isset($input['user_id'])) {
 
 $id = (int)$input['user_id'];
 $name = isset($input['name']) ? trim($input['name']) : null;
+$surname = isset($input['surname']) ? trim($input['surname']) : null;
 $email = isset($input['email']) ? trim($input['email']) : null;
 $role = isset($input['role']) ? $input['role'] : null;
 $balance = isset($input['balance']) ? (float)$input['balance'] : null;
@@ -34,6 +35,9 @@ $isActive = $isValidActive ? (int)$input['is_active'] : null;
 // Validation
 if ($name && strlen($name) < 2) {
     sendError('Name must be at least 2 characters', 400);
+}
+if ($surname && strlen($surname) < 2) {
+    sendError('Surname must be at least 2 characters', 400);
 }
 if ($email && !isValidEmail($email)) {
     sendError('Invalid email format', 400);
@@ -70,6 +74,10 @@ try {
     if ($name !== null) {
         $fields[] = 'name = ?';
         $params[] = $name;
+    }
+    if ($surname !== null) {
+        $fields[] = 'surname = ?';
+        $params[] = $surname;
     }
     if ($email !== null) {
         // Check email uniqueness if changed

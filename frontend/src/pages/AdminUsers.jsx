@@ -82,7 +82,7 @@ function AdminUsers() {
                                     </div>
                                     <div className="event-info">
                                         <div className="event-title">
-                                            {u.name}
+                                            {u.name} {u.surname}
                                             <span className={`badge rounded-pill ${u.role === 'super_admin' ? 'bg-danger' :
                                                 u.role === 'group_admin' ? 'bg-info' : 'bg-secondary'
                                                 }`}>
@@ -90,6 +90,8 @@ function AdminUsers() {
                                             </span>
                                         </div>
                                         <div className="event-details">
+                                            <div className="event-detail">👤 {u.name}</div>
+                                            <div className="event-detail">📝 {u.surname}</div>
                                             <div className="event-detail">📧 {u.email}</div>
                                             <div className="event-detail">
                                                 💰 <span className={`fw-bold ${u.balance < 0 ? 'text-danger' : 'text-success'}`}>

@@ -16,6 +16,7 @@ function AdminUserEdit() {
 
     const [formData, setFormData] = useState({
         name: '',
+        surname: '',
         email: '',
         role: 'user',
         balance: 0,
@@ -58,6 +59,7 @@ function AdminUserEdit() {
             if (response.success && response.data?.user) {
                 setFormData({
                     name: response.data.user.name,
+                    surname: response.data.user.surname || '',
                     email: response.data.user.email,
                     role: response.data.user.role,
                     balance: response.data.user.balance,
@@ -245,12 +247,25 @@ function AdminUserEdit() {
 
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
-                                        <label className="form-label text-muted small fw-bold text-uppercase">Full Name</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Name</label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             name="name"
                                             value={formData.name}
+                                            onChange={handleChange}
+                                            required
+                                            minLength="2"
+                                        />
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Surname</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="surname"
+                                            value={formData.surname}
                                             onChange={handleChange}
                                             required
                                             minLength="2"
