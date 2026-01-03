@@ -18,6 +18,7 @@ function AdminDeposits() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [loadingUsers, setLoadingUsers] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [newDeposit, setNewDeposit] = useState({
         user_id: '',
         amount: '50.00',
@@ -92,6 +93,7 @@ function AdminDeposits() {
     const handleCreateClick = () => {
         fetchUsers();
         setShowCreateModal(true);
+        setSearchTerm('');
     };
 
     const handleCreateDeposit = async (e) => {
@@ -114,6 +116,7 @@ function AdminDeposits() {
                 alert('✅ Deposit created successfully for ' + response.user_name);
                 setShowCreateModal(false);
                 setNewDeposit({ user_id: '', amount: '50.00', deposit_date: '' });
+                setSearchTerm('');
                 await fetchDeposits();
             } else {
                 alert('❌ Error: ' + (response.message || 'Failed to create deposit'));
@@ -389,19 +392,38 @@ function AdminDeposits() {
                                                 <div className="spinner-border spinner-border-sm"></div>
                                             </div>
                                         ) : (
-                                            <select
-                                                className="form-select"
-                                                value={newDeposit.user_id}
-                                                onChange={(e) => setNewDeposit({ ...newDeposit, user_id: e.target.value })}
-                                                required
-                                            >
-                                                <option value="">Select user...</option>
-                                                {users.map(u => (
-                                                    <option key={u.id} value={u.id}>
-                                                        {u.name} {u.surname} ({u.email})
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <>
+                                                <input
+                                                    type="text"
+                                                    className="form-control mb-2"
+                                                    placeholder="Ieškoti pagal vardą ar pavardę..."
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                />
+                                                <select
+                                                    className="form-select"
+                                                    value={newDeposit.user_id}
+                                                    onChange={(e) => setNewDeposit({ ...newDeposit, user_id: e.target.value })}
+                                                    required
+                                                    size="8"
+                                                >
+                                                    <option value="">Select user...</option>
+                                                    {users
+                                                        .filter(u => {
+                                                            if (!searchTerm) return true;
+                                                            const search = searchTerm.toLowerCase();
+                                                            return (
+                                                                (u.name && u.name.toLowerCase().includes(search)) ||
+                                                                (u.surname && u.surname.toLowerCase().includes(search))
+                                                            );
+                                                        })
+                                                        .map(u => (
+                                                            <option key={u.id} value={u.id}>
+                                                                {u.surname} {u.name}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                            </>
                                         )}
                                     </div>
                                     <div className="mb-3">

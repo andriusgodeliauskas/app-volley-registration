@@ -17,6 +17,7 @@ function AdminTopups() {
     const [showTopupModal, setShowTopupModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [usersLoading, setUsersLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [topUpData, setTopUpData] = useState({
         user_id: '',
         amount: '',
@@ -62,6 +63,7 @@ function AdminTopups() {
         fetchUsers();
         setError(null);
         setSuccessMessage('');
+        setSearchTerm('');
     };
 
     const handleCloseTopupModal = () => {
@@ -72,6 +74,7 @@ function AdminTopups() {
             description: '',
             created_at: ''
         });
+        setSearchTerm('');
     };
 
     const handleTopUp = async (e) => {
@@ -218,19 +221,38 @@ function AdminTopups() {
                                                     <div className="spinner-border spinner-border-sm text-primary"></div>
                                                 </div>
                                             ) : (
-                                                <select
-                                                    className="form-select"
-                                                    value={topUpData.user_id}
-                                                    onChange={(e) => setTopUpData({ ...topUpData, user_id: e.target.value })}
-                                                    required
-                                                >
-                                                    <option value="">{t('admin.select_user')}</option>
-                                                    {users.map(u => (
-                                                        <option key={u.id} value={u.id}>
-                                                            {u.name} ({u.email}) - €{u.balance.toFixed(2)}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control mb-2"
+                                                        placeholder="Ieškoti pagal vardą ar pavardę..."
+                                                        value={searchTerm}
+                                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                                    />
+                                                    <select
+                                                        className="form-select"
+                                                        value={topUpData.user_id}
+                                                        onChange={(e) => setTopUpData({ ...topUpData, user_id: e.target.value })}
+                                                        required
+                                                        size="8"
+                                                    >
+                                                        <option value="">{t('admin.select_user')}</option>
+                                                        {users
+                                                            .filter(u => {
+                                                                if (!searchTerm) return true;
+                                                                const search = searchTerm.toLowerCase();
+                                                                return (
+                                                                    (u.name && u.name.toLowerCase().includes(search)) ||
+                                                                    (u.surname && u.surname.toLowerCase().includes(search))
+                                                                );
+                                                            })
+                                                            .map(u => (
+                                                                <option key={u.id} value={u.id}>
+                                                                    {u.surname} {u.name}
+                                                                </option>
+                                                            ))}
+                                                    </select>
+                                                </>
                                             )}
                                         </div>
 
