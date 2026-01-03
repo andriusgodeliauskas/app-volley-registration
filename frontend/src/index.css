@@ -978,3 +978,13 @@ body {
   font-size: 1rem;
   transition: transform 0.2s ease;
 }
+
+/* ==========================================================================
+   Search Input Styles
+   ========================================================================== */
+/* Desktop: limit search width */
+@media (min-width: 769px) {
+  .input-group {
+    max-width: 400px !important;
+  }
+}

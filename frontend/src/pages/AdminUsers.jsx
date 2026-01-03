@@ -11,6 +11,7 @@ function AdminUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Fetch users
     useEffect(() => {
@@ -32,18 +33,52 @@ function AdminUsers() {
         }
     };
 
+    // Filter users based on search query
+    const filteredUsers = users.filter(u => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            u.name.toLowerCase().includes(query) ||
+            u.surname.toLowerCase().includes(query) ||
+            u.email.toLowerCase().includes(query)
+        );
+    });
+
     return (
         <div className="min-vh-100">
             <AdminNavbar />
 
             <div className="main-container">
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4 gap-3">
                     <div>
                         <h1 className="h3 fw-bold mb-1">{t('admin.users_title')}</h1>
                         <p className="text-muted mb-0">{t('admin.users_subtitle')}</p>
                     </div>
-                    <div className="d-flex gap-2">
-                        <Link to="/admin" className="btn-custom bg-light border">{t('common.back')}</Link>
+                    <div className="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 w-100 w-md-auto">
+                        <div className="input-group w-100" style={{ maxWidth: '100%' }}>
+                            <span className="input-group-text bg-light border-end-0">
+                                <i className="bi bi-search text-muted"></i>
+                            </span>
+                            <input
+                                type="text"
+                                className="form-control border-start-0"
+                                placeholder={t('admin.search_users') || 'Ieškoti pagal vardą, pavardę...'}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{ borderRight: searchQuery ? 'none' : '' }}
+                            />
+                            {searchQuery && (
+                                <button
+                                    className="btn btn-light border border-start-0"
+                                    type="button"
+                                    onClick={() => setSearchQuery('')}
+                                    title="Išvalyti"
+                                >
+                                    <i className="bi bi-x-lg"></i>
+                                </button>
+                            )}
+                        </div>
+                        <Link to="/admin" className="btn-custom bg-light border text-center" style={{ minWidth: 'auto' }}>{t('common.back')}</Link>
                     </div>
                 </div>
 
@@ -58,7 +93,14 @@ function AdminUsers() {
                 {/* Users List */}
                 <div className="section">
                     <div className="section-header">
-                        <div className="section-title">{t('admin.all_users')}</div>
+                        <div className="section-title">
+                            {t('admin.all_users')}
+                            {searchQuery && (
+                                <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 ms-2">
+                                    {filteredUsers.length} {filteredUsers.length === 1 ? 'rezultatas' : 'rezultatai'}
+                                </span>
+                            )}
+                        </div>
                     </div>
                     {loading ? (
                         <div className="text-center py-5">
@@ -68,9 +110,15 @@ function AdminUsers() {
                         <div className="text-center py-5 text-muted">
                             <h5>{t('admin.no_users')}</h5>
                         </div>
+                    ) : filteredUsers.length === 0 ? (
+                        <div className="text-center py-5 text-muted">
+                            <i className="bi bi-search fs-1 d-block mb-3"></i>
+                            <h5>Nerasta vartotojų pagal "{searchQuery}"</h5>
+                            <p className="mb-0">Pabandykite kitą paieškos užklausą</p>
+                        </div>
                     ) : (
                         <div className="d-flex flex-column gap-3">
-                            {users.map(u => (
+                            {filteredUsers.map(u => (
                                 <div key={u.id} className="event-card">
                                     <div className="event-icon">
                                         <img
