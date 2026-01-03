@@ -271,6 +271,9 @@ function AdminEvents() {
                                                     >
                                                         <i className="bi bi-files me-1"></i> {t('common.duplicate')}
                                                     </button>
+                                                    <Link to={`/event/${event.id}`} className="btn-custom bg-secondary text-white border-secondary">
+                                                        <i className="bi bi-eye me-1"></i> {t('common.more')}
+                                                    </Link>
                                                 </div>
                                             </div>
                                         ))}
@@ -336,6 +339,9 @@ function AdminEvents() {
                                                         >
                                                             <i className="bi bi-files me-1"></i> {t('common.duplicate')}
                                                         </button>
+                                                        <Link to={`/event/${event.id}`} className="btn-custom bg-secondary text-white border-secondary">
+                                                            <i className="bi bi-eye me-1"></i> {t('common.more')}
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             ))}

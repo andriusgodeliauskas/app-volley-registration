@@ -77,8 +77,8 @@ try {
     // 2. Fetch Attendees (registered users)
     // Order by registration time (created_at)
     $stmt = $pdo->prepare("
-        SELECT 
-            u.id, 
+        SELECT
+            u.id,
             CONCAT_WS(' ', u.name, u.surname) as name,
             u.avatar,
             r.created_at as registered_at
@@ -89,15 +89,34 @@ try {
     ");
     $stmt->execute([$eventId]);
     $attendees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     // Add indices to attendees for display (1, 2, 3...)
     foreach ($attendees as $key => $attendee) {
         $attendees[$key]['index'] = $key + 1;
     }
 
+    // 3. Fetch Registration History (all statuses)
+    // This includes registered, canceled, and waitlist users
+    $stmt = $pdo->prepare("
+        SELECT
+            u.id,
+            CONCAT_WS(' ', u.name, u.surname) as name,
+            u.avatar,
+            r.status,
+            r.created_at as registered_at,
+            r.updated_at as status_changed_at
+        FROM registrations r
+        JOIN users u ON r.user_id = u.id
+        WHERE r.event_id = ?
+        ORDER BY r.created_at ASC
+    ");
+    $stmt->execute([$eventId]);
+    $registrationHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     sendSuccess([
         'event' => $event,
-        'attendees' => $attendees
+        'attendees' => $attendees,
+        'registration_history' => $registrationHistory
     ]);
 
 } catch (PDOException $e) {

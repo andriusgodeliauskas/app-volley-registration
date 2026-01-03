@@ -147,10 +147,11 @@ function EventDetails() {
 
     if (!data) return null;
 
-    const { event, attendees } = data;
+    const { event, attendees, registration_history } = data;
     const spotsLeft = event.max_players - event.registered_count;
     const isFull = spotsLeft <= 0;
     const isRegistered = event.user_registered;
+    const isSuperAdmin = user?.role === 'super_admin';
 
     // Dates
     const eventDate = new Date(event.date_time);
@@ -434,6 +435,74 @@ function EventDetails() {
                                 )}
                             </div>
                         </div>
+
+                        {/* Registration History - Super Admin Only */}
+                        {isSuperAdmin && registration_history && registration_history.length > 0 && (
+                            <div className="section mt-4">
+                                <div className="section-header">
+                                    <div className="section-title">
+                                        📋 Registracijų Istorija
+                                        <span className="badge bg-secondary rounded-pill ms-2 fs-6 align-middle">
+                                            {registration_history.length}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="p-0">
+                                    <div className="table-responsive">
+                                        <table className="table table-hover mb-0">
+                                            <thead className="table-light">
+                                                <tr>
+                                                    <th>Vardas</th>
+                                                    <th>Statusas</th>
+                                                    <th>Užsiregistravo</th>
+                                                    <th>Paskutinis pakeitimas</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {registration_history.map((record) => {
+                                                    const regDate = new Date(record.registered_at);
+                                                    const changedDate = new Date(record.status_changed_at);
+                                                    const regDateStr = `${regDate.getFullYear()}-${String(regDate.getMonth() + 1).padStart(2, '0')}-${String(regDate.getDate()).padStart(2, '0')} ${String(regDate.getHours()).padStart(2, '0')}:${String(regDate.getMinutes()).padStart(2, '0')}`;
+                                                    const changedDateStr = `${changedDate.getFullYear()}-${String(changedDate.getMonth() + 1).padStart(2, '0')}-${String(changedDate.getDate()).padStart(2, '0')} ${String(changedDate.getHours()).padStart(2, '0')}:${String(changedDate.getMinutes()).padStart(2, '0')}`;
+
+                                                    let statusBadge = '';
+                                                    if (record.status === 'registered') {
+                                                        statusBadge = <span className="badge bg-success">Užsiregistravęs</span>;
+                                                    } else if (record.status === 'canceled') {
+                                                        statusBadge = <span className="badge bg-danger">Atsaukė</span>;
+                                                    } else if (record.status === 'waitlist') {
+                                                        statusBadge = <span className="badge bg-warning text-dark">Laukia</span>;
+                                                    }
+
+                                                    return (
+                                                        <tr key={record.id}>
+                                                            <td>
+                                                                <div className="d-flex align-items-center">
+                                                                    <img
+                                                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${record.avatar || 'Midnight'}`}
+                                                                        alt={record.name}
+                                                                        className="me-2 rounded-circle"
+                                                                        style={{ width: '32px', height: '32px' }}
+                                                                    />
+                                                                    <span className="fw-semibold">{record.name}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>{statusBadge}</td>
+                                                            <td><small className="text-muted">{regDateStr}</small></td>
+                                                            <td>
+                                                                <small className="text-muted">
+                                                                    {record.registered_at !== record.status_changed_at ? changedDateStr : '-'}
+                                                                </small>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
