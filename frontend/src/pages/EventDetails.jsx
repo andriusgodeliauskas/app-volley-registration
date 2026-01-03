@@ -215,7 +215,7 @@ function EventDetails() {
                 <div className="row g-3">
                     {/* Left Column: Event Details (First on mobile) */}
                     <div className="col-lg-5 order-1 event-details-column">
-                        <div className="section h-100">
+                        <div className="section">
                             <div className="section-header">
                                 <div className="w-100">
                                     <div className="d-flex justify-content-between align-items-center">
@@ -347,7 +347,7 @@ function EventDetails() {
 
                     {/* Right Column: Attendees List (Third on mobile, after button) */}
                     <div className="col-lg-7 order-3 order-lg-2">
-                        <div className="section h-100">
+                        <div className="section">
                             <div className="section-header">
                                 <div className="section-title">
                                     {t('event.registered_players')}
