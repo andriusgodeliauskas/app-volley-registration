@@ -436,8 +436,8 @@ function EventDetails() {
                             </div>
                         </div>
 
-                        {/* Registration History - Super Admin Only */}
-                        {isSuperAdmin && registration_history && registration_history.length > 0 && (
+                        {/* Registration History */}
+                        {registration_history && registration_history.length > 0 && (
                             <div className="section mt-4">
                                 <div className="section-header">
                                     <div className="section-title">
@@ -448,7 +448,8 @@ function EventDetails() {
                                     </div>
                                 </div>
                                 <div className="p-0">
-                                    <div className="table-responsive">
+                                    {/* Desktop Table View */}
+                                    <div className="table-responsive d-none d-md-block">
                                         <table className="table table-hover mb-0">
                                             <thead className="table-light">
                                                 <tr>
@@ -499,6 +500,52 @@ function EventDetails() {
                                                 })}
                                             </tbody>
                                         </table>
+                                    </div>
+
+                                    {/* Mobile Card View */}
+                                    <div className="d-md-none">
+                                        {registration_history.map((record) => {
+                                            const regDate = new Date(record.registered_at);
+                                            const changedDate = new Date(record.status_changed_at);
+                                            const regDateStr = `${regDate.getFullYear()}-${String(regDate.getMonth() + 1).padStart(2, '0')}-${String(regDate.getDate()).padStart(2, '0')} ${String(regDate.getHours()).padStart(2, '0')}:${String(regDate.getMinutes()).padStart(2, '0')}`;
+                                            const changedDateStr = `${changedDate.getFullYear()}-${String(changedDate.getMonth() + 1).padStart(2, '0')}-${String(changedDate.getDate()).padStart(2, '0')} ${String(changedDate.getHours()).padStart(2, '0')}:${String(changedDate.getMinutes()).padStart(2, '0')}`;
+
+                                            let statusBadge = '';
+                                            let statusClass = '';
+                                            if (record.status === 'registered') {
+                                                statusBadge = <span className="badge bg-success">Užsiregistravęs</span>;
+                                                statusClass = 'border-success';
+                                            } else if (record.status === 'canceled') {
+                                                statusBadge = <span className="badge bg-danger">Atsaukė</span>;
+                                                statusClass = 'border-danger';
+                                            } else if (record.status === 'waitlist') {
+                                                statusBadge = <span className="badge bg-warning text-dark">Laukia</span>;
+                                                statusClass = 'border-warning';
+                                            }
+
+                                            return (
+                                                <div key={record.id} className={`border-start border-3 ${statusClass} bg-white rounded mb-2 p-2`}>
+                                                    <div className="d-flex align-items-center mb-2">
+                                                        <img
+                                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${record.avatar || 'Midnight'}`}
+                                                            alt={record.name}
+                                                            className="me-2 rounded-circle"
+                                                            style={{ width: '32px', height: '32px' }}
+                                                        />
+                                                        <div className="flex-grow-1">
+                                                            <div className="fw-semibold">{record.name}</div>
+                                                            <div>{statusBadge}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="small text-muted">
+                                                        <div>📅 {regDateStr}</div>
+                                                        {record.registered_at !== record.status_changed_at && (
+                                                            <div>🔄 {changedDateStr}</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
