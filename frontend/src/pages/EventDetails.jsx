@@ -452,10 +452,10 @@ function EventDetails() {
                                         <table className="table table-hover mb-0">
                                             <thead className="table-light">
                                                 <tr>
-                                                    <th>Vardas</th>
-                                                    <th>Statusas</th>
-                                                    <th>Užsiregistravo</th>
-                                                    <th>Paskutinis pakeitimas</th>
+                                                    <th className="px-3 py-3">Vardas</th>
+                                                    <th className="px-3 py-3">Statusas</th>
+                                                    <th className="px-3 py-3">Užsiregistravo</th>
+                                                    <th className="px-3 py-3">Paskutinis pakeitimas</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -476,7 +476,7 @@ function EventDetails() {
 
                                                     return (
                                                         <tr key={record.id}>
-                                                            <td>
+                                                            <td className="px-3 py-2">
                                                                 <div className="d-flex align-items-center">
                                                                     <img
                                                                         src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${record.avatar || 'Midnight'}`}
@@ -487,9 +487,9 @@ function EventDetails() {
                                                                     <span className="fw-semibold">{record.name}</span>
                                                                 </div>
                                                             </td>
-                                                            <td>{statusBadge}</td>
-                                                            <td><small className="text-muted">{regDateStr}</small></td>
-                                                            <td>
+                                                            <td className="px-3 py-2">{statusBadge}</td>
+                                                            <td className="px-3 py-2"><small className="text-muted">{regDateStr}</small></td>
+                                                            <td className="px-3 py-2">
                                                                 <small className="text-muted">
                                                                     {record.registered_at !== record.status_changed_at ? changedDateStr : '-'}
                                                                 </small>

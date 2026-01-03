@@ -251,6 +251,7 @@ export const translations = {
         'common.add': 'Add',
         'common.view': 'View',
         'common.duplicate': 'Duplicate this event',
+        'common.more': 'More',
 
         // Footer
         'footer.copyright': '© 2025 Volley Registration App. All rights reserved.',
@@ -702,6 +703,7 @@ export const translations = {
         'common.add': 'Pridėti',
         'common.view': 'Žiūrėti',
         'common.duplicate': 'Dubliuoti renginį',
+        'common.more': 'Daugiau',
 
         // Footer
         'footer.copyright': '© 2025 Tinklinio Registracijos Programa. Visos teisės saugomos.',
