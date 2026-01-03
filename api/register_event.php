@@ -44,16 +44,21 @@ function handleRegister(array $currentUser): void
     
     // Determine who is being registered (self or child)
     $registerUserId = isset($input['user_id']) ? (int)$input['user_id'] : $currentUser['id'];
-    
-    // If registering someone else, verify it's their child
+
+    // If registering someone else, verify it's their child OR current user is super_admin
     if ($registerUserId !== $currentUser['id']) {
         $pdo = getDbConnection();
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND parent_id = ?");
-        $stmt->execute([$registerUserId, $currentUser['id']]);
-        
-        if (!$stmt->fetch()) {
-            sendError('You can only register yourself or your children', 403);
+
+        if ($currentUser['role'] !== 'super_admin') {
+            // Regular users can only register their children
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND parent_id = ?");
+            $stmt->execute([$registerUserId, $currentUser['id']]);
+
+            if (!$stmt->fetch()) {
+                sendError('You can only register yourself or your children', 403);
+            }
         }
+        // Super admin can register anyone - no check needed
     }
     
     $pdo = getDbConnection();
@@ -79,14 +84,14 @@ function handleRegister(array $currentUser): void
             sendError('Event not found', 404);
         }
         
-        // Check if event is open for registration
-        if ($event['status'] !== 'open') {
+        // Check if event is open for registration (skip for super admin)
+        if ($currentUser['role'] !== 'super_admin' && $event['status'] !== 'open') {
             $pdo->rollBack();
             sendError('Event is not open for registration', 400);
         }
-        
-        // Check if event is in the future
-        if (strtotime($event['date_time']) <= time()) {
+
+        // Check if event is in the future (skip for super admin)
+        if ($currentUser['role'] !== 'super_admin' && strtotime($event['date_time']) <= time()) {
             $pdo->rollBack();
             sendError('Cannot register for past events', 400);
         }
@@ -201,31 +206,36 @@ function handleRegister(array $currentUser): void
 
 /**
  * DELETE - Cancel registration
- * 
+ *
  * Query params:
  * - event_id: ID of the event
- * - user_id: (optional) ID of user to unregister (for children)
+ * - user_id: (optional) ID of user to unregister (for children or admin cancellation)
  */
 function handleCancelRegistration(array $currentUser): void
 {
     $eventId = isset($_GET['event_id']) ? (int)$_GET['event_id'] : null;
-    
+
     if (!$eventId) {
         sendError('event_id is required', 400);
     }
-    
+
     // Determine who to unregister
     $unregisterUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $currentUser['id'];
-    
-    // If unregistering someone else, verify it's their child
+
+    // If unregistering someone else, verify it's their child OR current user is super_admin
     if ($unregisterUserId !== $currentUser['id']) {
         $pdo = getDbConnection();
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND parent_id = ?");
-        $stmt->execute([$unregisterUserId, $currentUser['id']]);
-        
-        if (!$stmt->fetch()) {
-            sendError('You can only cancel registrations for yourself or your children', 403);
+
+        if ($currentUser['role'] !== 'super_admin') {
+            // Regular users can only cancel registrations for their children
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND parent_id = ?");
+            $stmt->execute([$unregisterUserId, $currentUser['id']]);
+
+            if (!$stmt->fetch()) {
+                sendError('You can only cancel registrations for yourself or your children', 403);
+            }
         }
+        // Super admin can cancel anyone's registration - no check needed
     }
     
     $pdo = getDbConnection();

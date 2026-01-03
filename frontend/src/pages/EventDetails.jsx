@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post, del } from '../api/config';
 import Navbar from '../components/Navbar';
 import Breadcrumb from '../components/Breadcrumb';
+import RegisterUserModal from '../components/RegisterUserModal';
 
 function EventDetails() {
     const { t } = useLanguage();
@@ -17,6 +18,8 @@ function EventDetails() {
     const [processing, setProcessing] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [detailsCollapsed, setDetailsCollapsed] = useState(true); // For mobile view
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+    const [adminCancelModal, setAdminCancelModal] = useState({ show: false, userId: null, userName: null });
 
     const fetchDetails = async () => {
         setLoading(true);
@@ -118,6 +121,43 @@ function EventDetails() {
         } finally {
             setProcessing(false);
         }
+    };
+
+    const openAdminCancelModal = (userId, userName) => {
+        setAdminCancelModal({
+            show: true,
+            userId: userId,
+            userName: userName
+        });
+    };
+
+    const handleAdminCancel = async () => {
+        const { userId } = adminCancelModal;
+        setAdminCancelModal({ show: false, userId: null, userName: null });
+
+        setProcessing(true);
+        setError(null);
+        setSuccessMessage('');
+
+        try {
+            const response = await del(`${API_ENDPOINTS.REGISTER_EVENT}?event_id=${id}&user_id=${userId}`);
+
+            if (response.success) {
+                setSuccessMessage(t('dash.cancellation_success'));
+                fetchDetails(); // Reload data
+            } else {
+                setError(response.message || t('event.failed_cancel'));
+            }
+        } catch (err) {
+            setError(err.message || t('event.failed_cancel'));
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleRegisterSuccess = () => {
+        setSuccessMessage(t('dash.registration_success'));
+        fetchDetails(); // Reload data
     };
 
     if (loading) {
@@ -300,6 +340,55 @@ function EventDetails() {
 
                                 {/* Action Buttons - Desktop Only */}
                                 <div className="d-none d-lg-grid gap-2">
+                                    {isSuperAdmin ? (
+                                        <button
+                                            className="btn-custom bg-primary text-white border-primary w-100"
+                                            onClick={() => setShowRegisterModal(true)}
+                                            disabled={processing}
+                                        >
+                                            <i className="bi bi-person-plus me-1"></i>
+                                            {t('admin.registerUser')}
+                                        </button>
+                                    ) : (
+                                        <>
+                                            {isRegistered ? (
+                                                <button
+                                                    className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
+                                                    onClick={openCancelModal}
+                                                    disabled={processing}
+                                                >
+                                                    {processing ? t('common.loading') : t('event.cancel_btn')}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    className={`btn-custom w-100 ${isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary'}`}
+                                                    onClick={openRegisterModal}
+                                                    disabled={processing}
+                                                >
+                                                    {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
+                                                </button>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Mobile: Action Button (Second on mobile, between details and attendees) */}
+                    <div className="col-12 d-lg-none order-2">
+                        <div className="d-grid gap-2">
+                            {isSuperAdmin ? (
+                                <button
+                                    className="btn-custom bg-primary text-white border-primary w-100"
+                                    onClick={() => setShowRegisterModal(true)}
+                                    disabled={processing}
+                                >
+                                    <i className="bi bi-person-plus me-1"></i>
+                                    {t('admin.registerUser')}
+                                </button>
+                            ) : (
+                                <>
                                     {isRegistered ? (
                                         <button
                                             className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
@@ -317,30 +406,7 @@ function EventDetails() {
                                             {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
                                         </button>
                                     )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Mobile: Action Button (Second on mobile, between details and attendees) */}
-                    <div className="col-12 d-lg-none order-2">
-                        <div className="d-grid gap-2">
-                            {isRegistered ? (
-                                <button
-                                    className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
-                                    onClick={openCancelModal}
-                                    disabled={processing}
-                                >
-                                    {processing ? t('common.loading') : t('event.cancel_btn')}
-                                </button>
-                            ) : (
-                                <button
-                                    className={`btn-custom w-100 ${isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary'}`}
-                                    onClick={openRegisterModal}
-                                    disabled={processing}
-                                >
-                                    {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
-                                </button>
+                                </>
                             )}
                         </div>
                     </div>
@@ -366,30 +432,41 @@ function EventDetails() {
                                         {/* Main List */}
                                         <div className="d-flex flex-column gap-2">
                                             {attendees.filter(a => a.index <= event.max_players).map((attendee) => (
-                                                <div key={attendee.id} className="px-2 pt-2 pb-3 bg-white border rounded-3 d-flex align-items-center">
-                                                    <div
-                                                        className="me-3 rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
-                                                        style={{ width: '32px', height: '32px' }}
-                                                    >
-                                                        {attendee.index}
-                                                    </div>
-                                                    <div className="d-flex align-items-center">
-                                                        <img
-                                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
-                                                            alt={attendee.name}
-                                                            className="me-3 rounded-circle shadow-sm bg-gray-100"
-                                                            style={{ width: '40px', height: '40px' }}
-                                                        />
-                                                        <div>
-                                                            <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
-                                                            <small className="text-muted">
-                                                                {(() => {
-                                                                    const d = new Date(attendee.registered_at);
-                                                                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-                                                                })()}
-                                                            </small>
+                                                <div key={attendee.id} className="px-2 pt-2 pb-3 bg-white border rounded-3 d-flex align-items-center justify-content-between">
+                                                    <div className="d-flex align-items-center flex-grow-1">
+                                                        <div
+                                                            className="me-3 rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
+                                                            style={{ width: '32px', height: '32px' }}
+                                                        >
+                                                            {attendee.index}
+                                                        </div>
+                                                        <div className="d-flex align-items-center">
+                                                            <img
+                                                                src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
+                                                                alt={attendee.name}
+                                                                className="me-3 rounded-circle shadow-sm bg-gray-100"
+                                                                style={{ width: '40px', height: '40px' }}
+                                                            />
+                                                            <div>
+                                                                <h6 className="mb-0 fw-semibold">{attendee.name}</h6>
+                                                                <small className="text-muted">
+                                                                    {(() => {
+                                                                        const d = new Date(attendee.registered_at);
+                                                                        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                                                                    })()}
+                                                                </small>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    {isSuperAdmin && (
+                                                        <button
+                                                            className="btn btn-sm btn-outline-danger ms-2"
+                                                            onClick={() => openAdminCancelModal(attendee.id, attendee.name)}
+                                                            disabled={processing}
+                                                        >
+                                                            <i className="bi bi-x-circle"></i>
+                                                        </button>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
@@ -402,30 +479,41 @@ function EventDetails() {
                                                 </div>
                                                 <div className="d-flex flex-column gap-2 opacity-75">
                                                     {attendees.filter(a => a.index > event.max_players).map((attendee) => (
-                                                        <div key={attendee.id} className="px-2 pt-2 pb-3 bg-light border border-warning rounded-3 d-flex align-items-center">
-                                                            <div
-                                                                className="me-3 rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center fw-bold text-dark"
-                                                                style={{ width: '32px', height: '32px' }}
-                                                            >
-                                                                {attendee.index}
-                                                            </div>
-                                                            <div className="d-flex align-items-center">
-                                                                <img
-                                                                    src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
-                                                                    alt={attendee.name}
-                                                                    className="me-3 rounded-circle shadow-sm bg-light opacity-75"
-                                                                    style={{ width: '40px', height: '40px', filter: 'grayscale(100%)' }}
-                                                                />
-                                                                <div>
-                                                                    <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
-                                                                    <small className="text-muted">
-                                                                        {t('event.waiting_since')}: {(() => {
-                                                                            const d = new Date(attendee.registered_at);
-                                                                            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-                                                                        })()}
-                                                                    </small>
+                                                        <div key={attendee.id} className="px-2 pt-2 pb-3 bg-light border border-warning rounded-3 d-flex align-items-center justify-content-between">
+                                                            <div className="d-flex align-items-center flex-grow-1">
+                                                                <div
+                                                                    className="me-3 rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center fw-bold text-dark"
+                                                                    style={{ width: '32px', height: '32px' }}
+                                                                >
+                                                                    {attendee.index}
+                                                                </div>
+                                                                <div className="d-flex align-items-center">
+                                                                    <img
+                                                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
+                                                                        alt={attendee.name}
+                                                                        className="me-3 rounded-circle shadow-sm bg-light opacity-75"
+                                                                        style={{ width: '40px', height: '40px', filter: 'grayscale(100%)' }}
+                                                                    />
+                                                                    <div>
+                                                                        <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
+                                                                        <small className="text-muted">
+                                                                            {t('event.waiting_since')}: {(() => {
+                                                                                const d = new Date(attendee.registered_at);
+                                                                                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                                                                            })()}
+                                                                        </small>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                            {isSuperAdmin && (
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-danger ms-2"
+                                                                    onClick={() => openAdminCancelModal(attendee.id, attendee.name)}
+                                                                    disabled={processing}
+                                                                >
+                                                                    <i className="bi bi-x-circle"></i>
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -457,6 +545,7 @@ function EventDetails() {
                                                     <th className="px-3 py-3">Statusas</th>
                                                     <th className="px-3 py-3">Užsiregistravo</th>
                                                     <th className="px-3 py-3">Paskutinis pakeitimas</th>
+                                                    {isSuperAdmin && <th className="px-3 py-3">{t('admin.registeredBy')}</th>}
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -495,6 +584,13 @@ function EventDetails() {
                                                                     {record.registered_at !== record.status_changed_at ? changedDateStr : '-'}
                                                                 </small>
                                                             </td>
+                                                            {isSuperAdmin && (
+                                                                <td className="px-3 py-2">
+                                                                    <small className="text-muted">
+                                                                        {record.registered_by_name || '-'}
+                                                                    </small>
+                                                                </td>
+                                                            )}
                                                         </tr>
                                                     );
                                                 })}
@@ -542,6 +638,9 @@ function EventDetails() {
                                                         {record.registered_at !== record.status_changed_at && (
                                                             <div>🔄 {changedDateStr}</div>
                                                         )}
+                                                        {isSuperAdmin && record.registered_by_name && (
+                                                            <div>👤 {t('admin.registeredBy')}: {record.registered_by_name}</div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             );
@@ -553,6 +652,37 @@ function EventDetails() {
                     </div>
                 </div>
             </div>
+
+            {/* Admin Cancel Confirmation Modal */}
+            {adminCancelModal.show && (
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content shadow border-0 rounded-4">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title">{t('admin.cancelRegistration')}</h5>
+                                <button type="button" className="btn-close" onClick={() => setAdminCancelModal({ show: false, userId: null, userName: null })}></button>
+                            </div>
+                            <div className="modal-body">
+                                <p className="mb-0">Ar tikrai norite atšaukti <strong>{adminCancelModal.userName}</strong> registraciją?</p>
+                            </div>
+                            <div className="modal-footer border-0 pt-0">
+                                <button type="button" className="btn-custom" onClick={() => setAdminCancelModal({ show: false, userId: null, userName: null })}>{t('common.cancel')}</button>
+                                <button type="button" className="btn-custom bg-danger text-white border-danger px-4" onClick={handleAdminCancel}>Taip</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Register User Modal (Super Admin) */}
+            {isSuperAdmin && (
+                <RegisterUserModal
+                    show={showRegisterModal}
+                    onHide={() => setShowRegisterModal(false)}
+                    eventId={parseInt(id)}
+                    onSuccess={handleRegisterSuccess}
+                />
+            )}
         </div>
     );
 }

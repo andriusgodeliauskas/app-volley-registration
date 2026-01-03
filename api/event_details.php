@@ -81,9 +81,12 @@ try {
             u.id,
             CONCAT_WS(' ', u.name, u.surname) as name,
             u.avatar,
-            r.created_at as registered_at
+            r.created_at as registered_at,
+            r.registered_by,
+            CONCAT_WS(' ', admin.name, admin.surname) as registered_by_name
         FROM registrations r
         JOIN users u ON r.user_id = u.id
+        LEFT JOIN users admin ON r.registered_by = admin.id
         WHERE r.event_id = ? AND r.status = 'registered'
         ORDER BY r.created_at ASC
     ");
@@ -104,9 +107,12 @@ try {
             u.avatar,
             r.status,
             r.created_at as registered_at,
-            r.updated_at as status_changed_at
+            r.updated_at as status_changed_at,
+            r.registered_by,
+            CONCAT_WS(' ', admin.name, admin.surname) as registered_by_name
         FROM registrations r
         JOIN users u ON r.user_id = u.id
+        LEFT JOIN users admin ON r.registered_by = admin.id
         WHERE r.event_id = ?
         ORDER BY r.created_at ASC
     ");

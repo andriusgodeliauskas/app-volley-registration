@@ -132,9 +132,9 @@ function handleAdminCreateDeposit(array $currentUser): void
         // Create transaction record
         $stmt = $pdo->prepare("
             INSERT INTO transactions (user_id, type, amount, balance_after, description, created_at)
-            VALUES (?, 'debit', ?, ?, 'Deposit payment (admin created)', NOW())
+            VALUES (?, 'deposit_payment', ?, ?, 'Deposit payment (admin created)', NOW())
         ");
-        $stmt->execute([$userId, $amount, $newBalance]);
+        $stmt->execute([$userId, -$amount, $newBalance]);
 
         // Create deposit record with custom date if provided
         if ($depositDate) {

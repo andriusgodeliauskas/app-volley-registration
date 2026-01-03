@@ -202,6 +202,13 @@ export const translations = {
         'admin.refund_failed': 'Failed to refund deposit',
         'admin.confirm_refund_title': 'Confirm Refund',
         'admin.confirm_refund_message': 'Are you sure you want to refund {amount} to {user}?',
+        'admin.registerUser': 'Register User',
+        'admin.searchUser': 'Search User',
+        'admin.searchByName': 'Type name or surname...',
+        'admin.noUsersAvailable': 'No users available to register',
+        'admin.register': 'Register',
+        'admin.cancelRegistration': 'Cancel Registration',
+        'admin.registeredBy': 'Registered by',
 
         // Deposit (User)
         'nav.deposit': 'Deposit',
@@ -654,6 +661,13 @@ export const translations = {
         'admin.refund_failed': 'Nepavyko grąžinti depozito',
         'admin.confirm_refund_title': 'Patvirtinti Grąžinimą',
         'admin.confirm_refund_message': 'Ar tikrai norite grąžinti {amount} vartotojui {user}?',
+        'admin.registerUser': 'Registruoti Vartotoją',
+        'admin.searchUser': 'Ieškoti Vartotojo',
+        'admin.searchByName': 'Įveskite vardą ar pavardę...',
+        'admin.noUsersAvailable': 'Nėra vartotojų, kuriuos galima registruoti',
+        'admin.register': 'Registruoti',
+        'admin.cancelRegistration': 'Atšaukti Registraciją',
+        'admin.registeredBy': 'Užregistravo',
 
         // Deposit (User)
         'nav.deposit': 'Depozitas',
