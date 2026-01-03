@@ -236,20 +236,23 @@ function AdminTopups() {
 
                                         <div className="mb-3">
                                             <label className="form-label text-muted small fw-bold text-uppercase">
-                                                {t('admin.topup_amount')}
+                                                Balance Adjustment (€)
                                             </label>
                                             <div className="input-group">
                                                 <span className="input-group-text bg-light text-muted">€</span>
                                                 <input
                                                     type="number"
                                                     step="0.01"
-                                                    min="0.01"
                                                     className="form-control"
                                                     value={topUpData.amount}
                                                     onChange={(e) => setTopUpData({ ...topUpData, amount: e.target.value })}
                                                     placeholder="0.00"
                                                     required
                                                 />
+                                            </div>
+                                            <div className="form-text text-muted small">
+                                                <i className="bi bi-info-circle me-1"></i>
+                                                Positive amount adds funds, negative amount deducts funds
                                             </div>
                                         </div>
 

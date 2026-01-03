@@ -129,11 +129,15 @@ function AdminUserEdit() {
             const response = await post(API_ENDPOINTS.ADMIN_TOPUP, payload);
 
             if (response.success) {
-                setSuccessMessage(`Successfully topped up wallet by €${payload.amount}`);
+                const message = payload.amount > 0
+                    ? `Successfully added €${payload.amount} to wallet`
+                    : `Successfully deducted €${Math.abs(payload.amount)} from wallet`;
+                setSuccessMessage(message);
                 setTopUpData({ amount: '', description: '', created_at: '' });
                 fetchUserDetails(); // Refresh balance
+                fetchTransactions(); // Refresh transaction history
             } else {
-                setError(response.message || 'Failed to top up wallet');
+                setError(response.message || 'Failed to adjust balance');
             }
         } catch (err) {
             setError(err.message || 'An error occurred during top up.');
@@ -500,19 +504,22 @@ function AdminUserEdit() {
 
                                 <form onSubmit={handleTopUp}>
                                     <div className="mb-3">
-                                        <label className="form-label text-muted small fw-bold text-uppercase">Top Up Amount (€)</label>
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Balance Adjustment (€)</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light text-muted">€</span>
                                             <input
                                                 type="number"
                                                 step="0.01"
-                                                min="0.01"
                                                 className="form-control"
                                                 value={topUpData.amount}
                                                 onChange={(e) => setTopUpData({ ...topUpData, amount: e.target.value })}
                                                 placeholder="0.00"
                                                 required
                                             />
+                                        </div>
+                                        <div className="form-text text-muted small">
+                                            <i className="bi bi-info-circle me-1"></i>
+                                            Positive amount adds funds, negative amount deducts funds
                                         </div>
                                     </div>
                                     <div className="mb-3">
@@ -540,7 +547,7 @@ function AdminUserEdit() {
                                         className="btn-custom bg-success text-white w-100"
                                         disabled={topUpLoading}
                                     >
-                                        {topUpLoading ? 'Processing...' : 'Add Funds'}
+                                        {topUpLoading ? 'Processing...' : 'Adjust Balance'}
                                     </button>
                                 </form>
                             </div>

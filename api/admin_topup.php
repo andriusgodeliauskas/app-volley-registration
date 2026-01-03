@@ -35,9 +35,9 @@ function handleTopUp(array $adminUser): void
     $userId = (int)$input['user_id'];
     $amount = (float)$input['amount'];
     $description = isset($input['description']) ? trim($input['description']) : 'Manual Top-up';
-    
-    if ($amount <= 0) {
-        sendError('Amount must be positive', 400);
+
+    if ($amount == 0) {
+        sendError('Amount cannot be zero', 400);
     }
     
     $pdo = getDbConnection();
@@ -70,11 +70,15 @@ function handleTopUp(array $adminUser): void
         $stmt->execute([$userId, $amount, $description, $adminUser['id'], $createdAt]);
         
         $pdo->commit();
-        
+
+        $message = $amount > 0
+            ? 'Wallet topped up successfully'
+            : 'Funds deducted successfully';
+
         sendSuccess([
             'new_balance' => $newBalance,
             'topup_amount' => $amount
-        ], 'Wallet topped up successfully', 201);
+        ], $message, 201);
         
     } catch (PDOException $e) {
         $pdo->rollBack();
