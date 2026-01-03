@@ -366,7 +366,7 @@ function EventDetails() {
                                         {/* Main List */}
                                         <div className="d-flex flex-column gap-2">
                                             {attendees.filter(a => a.index <= event.max_players).map((attendee) => (
-                                                <div key={attendee.id} className="p-2 pb-3 bg-white border rounded-3 d-flex align-items-center">
+                                                <div key={attendee.id} className="px-2 pt-2 pb-3 bg-white border rounded-3 d-flex align-items-center">
                                                     <div
                                                         className="me-3 rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-secondary"
                                                         style={{ width: '32px', height: '32px' }}
@@ -402,7 +402,7 @@ function EventDetails() {
                                                 </div>
                                                 <div className="d-flex flex-column gap-2 opacity-75">
                                                     {attendees.filter(a => a.index > event.max_players).map((attendee) => (
-                                                        <div key={attendee.id} className="p-2 pb-3 bg-light border border-warning rounded-3 d-flex align-items-center">
+                                                        <div key={attendee.id} className="px-2 pt-2 pb-3 bg-light border border-warning rounded-3 d-flex align-items-center">
                                                             <div
                                                                 className="me-3 rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center fw-bold text-dark"
                                                                 style={{ width: '32px', height: '32px' }}
@@ -524,7 +524,7 @@ function EventDetails() {
                                             }
 
                                             return (
-                                                <div key={record.id} className={`border-start border-3 ${statusClass} bg-white rounded mb-2 p-2 pb-3`}>
+                                                <div key={record.id} className={`border-start border-3 ${statusClass} bg-white rounded mb-2 px-2 pt-2 pb-3`}>
                                                     <div className="d-flex align-items-center mb-2">
                                                         <img
                                                             src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${record.avatar || 'Midnight'}`}
