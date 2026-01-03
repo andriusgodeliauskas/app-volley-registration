@@ -212,7 +212,7 @@ function EventDetails() {
                     <h2 className="fw-bold text-primary mb-3">{event.title}</h2>
                 </div>
 
-                <div className="row g-4">
+                <div className="row g-3">
                     {/* Left Column: Event Details (First on mobile) */}
                     <div className="col-lg-5 order-1 event-details-column">
                         <div className="section h-100">
