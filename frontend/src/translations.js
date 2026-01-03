@@ -340,6 +340,15 @@ export const translations = {
         'admin.recent_activity': '📊 Recent Activity',
         'admin.activity_feed': 'Activity feed will be displayed here...',
 
+        // Admin Negative Balance Users
+        'admin.negative_balance_users': 'Users with Negative Balance',
+        'admin.negative_balance_subtitle': 'View users with debt and total outstanding amount',
+        'admin.total_negative': 'Total Debt',
+        'admin.users_with_negative': 'users with debt',
+        'admin.user_with_negative': 'user with debt',
+        'admin.view_users_list': 'View Users',
+        'admin.no_negative_balance': 'No users with negative balance',
+
         // Admin Users
         'admin.users_title': 'Users',
         'admin.users_subtitle': 'Manage platform users and administrators',
@@ -781,6 +790,15 @@ export const translations = {
         'admin.process_topups': 'Apdoroti Papildymus',
         'admin.recent_activity': '📊 Naujausia Veikla',
         'admin.activity_feed': 'Veiklos srautas bus rodomas čia...',
+
+        // Admin Negative Balance Users
+        'admin.negative_balance_users': 'Vartotojai su minusu',
+        'admin.negative_balance_subtitle': 'Peržiūrėkite vartotojus su skolom ir bendrą skolos sumą',
+        'admin.total_negative': 'Bendra skola',
+        'admin.users_with_negative': 'vartotojai su skola',
+        'admin.user_with_negative': 'vartotojas su skola',
+        'admin.view_users_list': 'Žiūrėti vartotojus',
+        'admin.no_negative_balance': 'Nėra vartotojų su neigiamu balansu',
 
         // Admin Users
         'admin.users_title': 'Vartotojai',

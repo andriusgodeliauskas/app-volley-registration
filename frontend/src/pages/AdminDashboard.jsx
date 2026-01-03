@@ -18,6 +18,9 @@ function AdminDashboard() {
     const [eventsOccupancy, setEventsOccupancy] = useState([]);
     const [occupancyLoading, setOccupancyLoading] = useState(true);
     const [expandedEvents, setExpandedEvents] = useState({});
+    const [negativeBalanceUsers, setNegativeBalanceUsers] = useState([]);
+    const [negativeBalanceLoading, setNegativeBalanceLoading] = useState(true);
+    const [expandedNegative, setExpandedNegative] = useState(false);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -51,15 +54,37 @@ function AdminDashboard() {
             }
         };
 
+        const fetchNegativeBalanceUsers = async () => {
+            try {
+                const response = await get(API_ENDPOINTS.ADMIN_USERS_NEGATIVE_BALANCE);
+                if (response.success && response.data) {
+                    setNegativeBalanceUsers(response.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch negative balance users:', error);
+            } finally {
+                setNegativeBalanceLoading(false);
+            }
+        };
+
         fetchStats();
         fetchEventsOccupancy();
-    }, []);
+        if (user?.role === 'super_admin') {
+            fetchNegativeBalanceUsers();
+        } else {
+            setNegativeBalanceLoading(false);
+        }
+    }, [user]);
 
     const toggleEventExpansion = (eventId) => {
         setExpandedEvents(prev => ({
             ...prev,
             [eventId]: !prev[eventId]
         }));
+    };
+
+    const toggleNegativeExpansion = () => {
+        setExpandedNegative(prev => !prev);
     };
 
     const formatDate = (dateString) => {
@@ -217,6 +242,113 @@ function AdminDashboard() {
                         )}
                     </div>
                 </div>
+
+                {/* Negative Balance Users Section - Super Admin Only */}
+                {user?.role === 'super_admin' && (
+                    <div className="section mb-4">
+                        <div className="section-header">
+                            <div className="section-title">{t('admin.negative_balance_users')}</div>
+                            <p className="text-muted mb-0 small">{t('admin.negative_balance_subtitle')}</p>
+                        </div>
+                        <div className="section-body">
+                            {negativeBalanceLoading ? (
+                                <div className="text-center py-5">
+                                    <div className="spinner-border text-danger"></div>
+                                </div>
+                            ) : negativeBalanceUsers.count === 0 ? (
+                                <div className="text-center py-4 text-muted">
+                                    <p className="mb-0">{t('admin.no_negative_balance')}</p>
+                                </div>
+                            ) : (
+                                <div className="row g-3">
+                                    <div className="col-12 col-md-6 col-lg-4">
+                                        <div className="card border-0 shadow-sm h-100">
+                                            <div className="card-body">
+                                                {/* Header */}
+                                                <div className="d-flex align-items-start mb-3">
+                                                    <div className="fs-3 me-2">⚠️</div>
+                                                    <div className="flex-grow-1">
+                                                        <h6 className="mb-1 fw-bold">{t('admin.negative_balance_users')}</h6>
+                                                        <small className="text-muted d-block">
+                                                            💸 {t('admin.total_negative')}
+                                                        </small>
+                                                    </div>
+                                                </div>
+
+                                                {/* Stats */}
+                                                <div className="mb-3">
+                                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                                        <span className="small fw-bold text-muted">
+                                                            {negativeBalanceUsers.count} {negativeBalanceUsers.count === 1 ? t('admin.user_with_negative') : t('admin.users_with_negative')}
+                                                        </span>
+                                                        <span className="badge bg-danger">
+                                                            €{Math.abs(negativeBalanceUsers.total_negative).toFixed(2)}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Progress Bar */}
+                                                    <div className="progress" style={{ height: '24px', borderRadius: '12px' }}>
+                                                        <div
+                                                            className="progress-bar bg-danger"
+                                                            role="progressbar"
+                                                            style={{ width: '100%' }}
+                                                            aria-valuenow="100"
+                                                            aria-valuemin="0"
+                                                            aria-valuemax="100"
+                                                        >
+                                                            <small className="fw-bold">{t('admin.total_negative')}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Participants Toggle */}
+                                                {negativeBalanceUsers.users && negativeBalanceUsers.users.length > 0 && (
+                                                    <>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-danger w-100 mb-2"
+                                                            onClick={toggleNegativeExpansion}
+                                                        >
+                                                            <i className={`bi ${expandedNegative ? 'bi-chevron-up' : 'bi-chevron-down'} me-1`}></i>
+                                                            {t('admin.view_users_list')} ({negativeBalanceUsers.users.length})
+                                                        </button>
+
+                                                        {/* Users List */}
+                                                        {expandedNegative && (
+                                                            <div className="table-responsive">
+                                                                <table className="table table-sm table-hover mb-0">
+                                                                    <thead className="table-light">
+                                                                        <tr>
+                                                                            <th style={{ width: '40px' }}>#</th>
+                                                                            <th>{t('admin.user_name')}</th>
+                                                                            <th className="text-end">{t('admin.user_balance')}</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {negativeBalanceUsers.users.map((user, index) => (
+                                                                            <tr key={user.id}>
+                                                                                <td className="text-muted">{index + 1}</td>
+                                                                                <td className="fw-semibold">{user.name} {user.surname}</td>
+                                                                                <td className="text-end">
+                                                                                    <span className="badge bg-danger">
+                                                                                        €{user.balance.toFixed(2)}
+                                                                                    </span>
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 {/* Stats Cards */}
                 <div className="dashboard-cards mb-4">
