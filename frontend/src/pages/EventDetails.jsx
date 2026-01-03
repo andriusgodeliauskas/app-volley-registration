@@ -233,7 +233,7 @@ function EventDetails() {
                                 </div>
                             </div>
                             <div className={`p-0 event-details-content ${detailsCollapsed ? 'collapsed' : ''}`}>
-                                <div className="mb-4">
+                                <div className="mb-3">
                                     <div className="d-flex align-items-center mb-3">
                                         <div className="bg-primary bg-opacity-10 p-2 rounded me-3 text-primary">
                                             <i className="bi bi-calendar-event fs-5"></i>
@@ -272,7 +272,7 @@ function EventDetails() {
                                     </div>
                                 </div>
 
-                                <div className="p-3 bg-light rounded-3 mb-4">
+                                <div className="p-3 bg-light rounded-3 mb-3">
                                     <div className="d-flex justify-content-between align-items-center mb-2">
                                         <span className="text-muted">{t('event.status')}</span>
                                         <span className={`badge ${event.status === 'open' ? 'bg-success' : 'bg-secondary'}`}>
