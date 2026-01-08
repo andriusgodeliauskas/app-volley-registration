@@ -90,7 +90,14 @@ export function AuthProvider({ children }) {
                 throw new Error(response.message || 'Registration failed');
             }
         } catch (err) {
-            setError(err.message);
+            // Check if it's a duplicate email error
+            const errorMessage = err.message.toLowerCase();
+            if (errorMessage.includes('email') &&
+                (errorMessage.includes('already') || errorMessage.includes('exist'))) {
+                setError('EMAIL_ALREADY_EXISTS'); // Error code for translation
+            } else {
+                setError(err.message); // Original error message
+            }
             throw err;
         } finally {
             setLoading(false);
@@ -99,12 +106,22 @@ export function AuthProvider({ children }) {
 
     /**
      * Logout the current user
+     * Calls backend to clear httpOnly cookie
      */
-    const logout = () => {
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
+    const logout = async () => {
+        try {
+            // Call backend to clear httpOnly cookie
+            await post(API_ENDPOINTS.LOGOUT, {});
+        } catch (err) {
+            // Log error but don't fail logout
+            console.error('Logout API error:', err);
+        } finally {
+            // Always clear local state
+            setUser(null);
+            setToken(null);
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+        }
     };
 
     /**

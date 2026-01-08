@@ -69,12 +69,15 @@ export async function apiRequest(url, options = {}) {
     'Content-Type': 'application/json',
   };
 
+  // Keep Authorization header for backward compatibility
+  // Primary auth is now via httpOnly cookie
   if (token) {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
   const config = {
     ...options,
+    credentials: 'include', // Include httpOnly cookies in requests
     headers: {
       ...defaultHeaders,
       ...options.headers,

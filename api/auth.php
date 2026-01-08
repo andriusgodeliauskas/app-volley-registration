@@ -11,29 +11,36 @@
 
 require_once __DIR__ . '/db.php';
 
+// Note: CSRF protection now handled by httpOnly cookies with SameSite=Strict
+// No need for session-based CSRF tokens
+
 /**
  * Get the current authenticated user from the token
- * 
+ *
  * @return array|null User data or null if not authenticated
  */
 function getAuthUser(): ?array
 {
-    // Get token from Authorization header
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    
-    // Support both "Bearer <token>" and just "<token>"
-    $token = '';
-    if (preg_match('/Bearer\s+(.+)$/i', $authHeader, $matches)) {
-        $token = $matches[1];
-    } elseif (!empty($authHeader)) {
-        $token = $authHeader;
+    // Priority 1: Get token from httpOnly cookie (most secure)
+    $token = $_COOKIE['auth_token'] ?? '';
+
+    // Fallback: Authorization header (for API compatibility)
+    if (empty($token)) {
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+
+        // Support both "Bearer <token>" and just "<token>"
+        if (preg_match('/Bearer\s+(.+)$/i', $authHeader, $matches)) {
+            $token = $matches[1];
+        } elseif (!empty($authHeader)) {
+            $token = $authHeader;
+        }
     }
-    
-    // Also check for token in query string (for GET requests where headers might be tricky)
+
+    // Fallback: Query string (for GET requests - least secure, only for backward compatibility)
     if (empty($token) && isset($_GET['token'])) {
         $token = $_GET['token'];
     }
-    
+
     if (empty($token)) {
         return null;
     }
@@ -66,7 +73,7 @@ function getAuthUser(): ?array
         $user['id'] = (int) $user['id'];
         $user['parent_id'] = $user['parent_id'] ? (int) $user['parent_id'] : null;
         $user['is_active'] = (bool) $user['is_active'];
-        
+
         return $user;
         
     } catch (PDOException $e) {

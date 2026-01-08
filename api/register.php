@@ -46,9 +46,13 @@ if (!isValidEmail($email)) {
 }
 
 // Validate password strength
-if (strlen($password) < 6) {
-    sendError('Password must be at least 6 characters long', 400);
+$passwordErrors = validatePasswordStrength($password);
+if (!empty($passwordErrors)) {
+    sendError(implode('. ', $passwordErrors), 400);
 }
+
+// Rate limiting - 3 attempts per 60 minutes
+checkRateLimit($email, 'registration', 3, 60);
 
 try {
     $pdo = getDbConnection();
@@ -56,9 +60,9 @@ try {
     // Check if email already exists
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute([$email]);
-    
+
     if ($stmt->fetch()) {
-        sendError('Email is already registered', 409);
+        sendError('User with this email already exists. Please contact administrator.', 409);
     }
     
     // Hash password
@@ -72,9 +76,12 @@ try {
     ");
     
     $stmt->execute([$first_name, $last_name, $email, $passwordHash]);
-    
+
     $userId = (int) $pdo->lastInsertId();
-    
+
+    // Reset rate limit after successful registration
+    resetRateLimit($email, 'registration');
+
     // Return success response
     sendSuccess([
         'user' => [

@@ -267,7 +267,7 @@ export const translations = {
         'placeholder.email': 'you@example.com',
         'placeholder.first_name': 'John',
         'placeholder.last_name': 'Doe',
-        'placeholder.password': 'At least 6 characters',
+        'placeholder.password': 'Enter your password',
         'placeholder.confirm_password': 'Re-enter your password',
         'placeholder.event_title': 'e.g., Friday Night Volleyball',
         'placeholder.location': 'e.g., Sports Hall, Vilnius',
@@ -277,8 +277,11 @@ export const translations = {
         'validation.name_min': 'Name must be at least 2 characters',
         'validation.surname_min': 'Surname must be at least 2 characters',
         'validation.email_invalid': 'Please enter a valid email address',
-        'validation.password_min': 'Password must be at least 6 characters',
+        'validation.password_min': 'Password must be at least 12 characters',
+        'validation.password_strength': 'Password must contain uppercase, lowercase, number, and special character',
+        'validation.password_requirements': 'Minimum 12 characters, at least one uppercase letter, one number, and one special character (!@#$%^&*)',
         'validation.passwords_mismatch': 'Passwords do not match',
+        'validation.email_exists': 'A user with this email address already exists. Please contact the administrator.',
 
         // Registration Page
         'register.success': 'Registration successful! Please log in.',
@@ -726,7 +729,7 @@ export const translations = {
         'placeholder.email': 'jusu@email.lt',
         'placeholder.first_name': 'Jonas',
         'placeholder.last_name': 'Jonaitis',
-        'placeholder.password': 'Mažiausiai 6 simboliai',
+        'placeholder.password': 'Įveskite slaptažodį',
         'placeholder.confirm_password': 'Įveskite slaptažodį dar kartą',
         'placeholder.event_title': 'pvz., Penktadienio vakaro tinklinis',
         'placeholder.location': 'pvz., Sporto salė, Vilnius',
@@ -736,8 +739,11 @@ export const translations = {
         'validation.name_min': 'Vardas turi būti bent 2 simbolių',
         'validation.surname_min': 'Pavardė turi būti bent 2 simbolių',
         'validation.email_invalid': 'Prašome įvesti teisingą el. pašto adresą',
-        'validation.password_min': 'Slaptažodis turi būti bent 6 simbolių',
+        'validation.password_min': 'Slaptažodis turi būti bent 12 simbolių',
+        'validation.password_strength': 'Slaptažodis turi turėti didžiąsias, mažąsias raides, skaičių ir specialų simbolį',
+        'validation.password_requirements': 'Minimaliai 12 simbolių, bent viena didžioji raidė, vienas skaičius ir vienas specialus simbolis (!@#$%^&*)',
         'validation.passwords_mismatch': 'Slaptažodžiai nesutampa',
+        'validation.email_exists': 'Vartotojas su šiuo el. pašto adresu jau egzistuoja. Prašome kreiptis į administratorių.',
 
         // Registration Page
         'register.success': 'Registracija sėkminga! Prašome prisijungti.',

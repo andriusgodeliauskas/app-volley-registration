@@ -12,6 +12,7 @@
  */
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 // Only allow POST requests
 requirePost();
@@ -35,6 +36,9 @@ $password = $input['password'];
 if (!isValidEmail($email)) {
     sendError('Invalid email format', 400);
 }
+
+// Rate limiting - 5 attempts per 15 minutes
+checkRateLimit($email, 'login', 5, 15);
 
 try {
     $pdo = getDbConnection();
@@ -106,7 +110,21 @@ try {
         'avatar' => $user['avatar'] ?? 'Midnight',
         'children' => $children
     ];
-    
+
+    // Set httpOnly cookie for secure token storage (CSRF protection via SameSite=Strict)
+    $cookieOptions = [
+        'expires' => time() + (7 * 24 * 60 * 60), // 7 days
+        'path' => '/',
+        'domain' => '', // Works for both staging and production
+        'secure' => true, // HTTPS only
+        'httponly' => true, // Not accessible via JavaScript (XSS protection)
+        'samesite' => 'Strict' // CSRF protection - browser won't send cookie in cross-site requests
+    ];
+    setcookie('auth_token', $token, $cookieOptions);
+
+    // Reset rate limit after successful login
+    resetRateLimit($email, 'login');
+
     sendSuccess([
         'user' => $userData,
         'token' => $token,
