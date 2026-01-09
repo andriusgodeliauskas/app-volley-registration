@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Rules from './pages/Rules';
 import Dashboard from './pages/Dashboard';
 import EventDetails from './pages/EventDetails';
 import AllEvents from './pages/AllEvents';
@@ -35,6 +36,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/rules" element={<Rules />} />
 
             {/* Protected User Routes */}
             <Route

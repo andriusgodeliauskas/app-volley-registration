@@ -333,7 +333,10 @@ function Register() {
 
                         {/* Footer */}
                         <p className="text-center text-muted small mt-4">
-                            {t('register.terms')}
+                            {t('register.terms')}{' '}
+                            <a href="/rules" target="_blank" rel="noopener noreferrer" className="text-primary text-decoration-none">
+                                {t('register.terms_link')}
+                            </a>.
                         </p>
 
                     </div>

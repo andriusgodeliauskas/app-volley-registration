@@ -294,7 +294,12 @@ export const translations = {
         'register.success': 'Registration successful! Please log in.',
         'register.creating': 'Creating account...',
         'register.divider': 'or',
-        'register.terms': 'By creating an account, you agree to our Terms of Service.',
+        'register.terms': 'By creating an account, you agree to our',
+        'register.terms_link': 'Terms of Use',
+
+        // Rules Page
+        'rules.title': 'General Terms of Use',
+        'rules.last_updated': 'Last updated',
 
         // Profile Page
         'profile.failed_load': 'Failed to load profile data',
@@ -763,7 +768,12 @@ export const translations = {
         'register.success': 'Registracija sėkminga! Prašome prisijungti.',
         'register.creating': 'Kuriama paskyra...',
         'register.divider': 'arba',
-        'register.terms': 'Kurdami paskyrą, sutinkate su mūsų Naudojimo sąlygomis.',
+        'register.terms': 'Kurdami paskyrą, sutinkate su mūsų',
+        'register.terms_link': 'Naudojimo sąlygomis',
+
+        // Rules Page
+        'rules.title': 'Bendrosios naudojimosi taisyklės',
+        'rules.last_updated': 'Paskutinis atnaujinimas',
 
         // Profile Page
         'profile.failed_load': 'Nepavyko užkrauti profilio duomenų',
