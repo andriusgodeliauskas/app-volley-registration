@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(cat:*)",
+      "Bash(pwsh:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File prepare-deploy-staging.ps1)",
+      "Bash(npm install)",
+      "Bash(powershell -File .scriptsdeploy-staging.ps1)",
+      "Bash(powershell -File:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}
