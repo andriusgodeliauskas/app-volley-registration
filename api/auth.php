@@ -47,35 +47,63 @@ function getAuthUser(): ?array
     
     try {
         $pdo = getDbConnection();
-        
+
         $stmt = $pdo->prepare("
-            SELECT id, name, email, role, balance, parent_id, is_active, token_expiry
-            FROM users 
+            SELECT id, name, email, role, balance, parent_id, is_active, token_expiry, last_activity
+            FROM users
             WHERE auth_token = ? AND is_active = 1
         ");
         $stmt->execute([$token]);
-        
+
         $user = $stmt->fetch();
-        
+
         if (!$user) {
             return null;
         }
-        
-        // Check if token has expired
+
+        // Check if token has expired (max lifetime: 7 days)
         if ($user['token_expiry'] && strtotime($user['token_expiry']) < time()) {
             return null;
         }
-        
+
+        // Check for inactivity timeout (30 minutes)
+        // SECURITY: Session expires after 30 minutes of inactivity
+        if ($user['last_activity']) {
+            $lastActivity = strtotime($user['last_activity']);
+            $inactivityTimeout = 30 * 60; // 30 minutes in seconds
+
+            if ((time() - $lastActivity) > $inactivityTimeout) {
+                // Session expired due to inactivity - invalidate token
+                $stmt = $pdo->prepare("
+                    UPDATE users
+                    SET auth_token = NULL, token_expiry = NULL, last_activity = NULL
+                    WHERE id = ?
+                ");
+                $stmt->execute([$user['id']]);
+
+                return null;
+            }
+        }
+
+        // Update last_activity to current time (session is still active)
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET last_activity = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$user['id']]);
+
         // Remove sensitive fields
         unset($user['token_expiry']);
-        
+        unset($user['last_activity']);
+
         // Cast types
         $user['id'] = (int) $user['id'];
         $user['parent_id'] = $user['parent_id'] ? (int) $user['parent_id'] : null;
         $user['is_active'] = (bool) $user['is_active'];
 
         return $user;
-        
+
     } catch (PDOException $e) {
         return null;
     }

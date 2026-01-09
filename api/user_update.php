@@ -15,16 +15,30 @@ requirePost();
 $input = getJsonInput();
 $userId = $currentUser['id'];
 
-// Validate
+// Validate and sanitize inputs
 $name = trim($input['name'] ?? '');
 $surname = trim($input['surname'] ?? '');
 $avatar = trim($input['avatar'] ?? '');
 
-if (empty($name)) {
-    sendError('Name is required');
+// Validate name length (min 2, max 50 characters to prevent DoS)
+if (strlen($name) < 2 || strlen($name) > 50) {
+    sendError('Name must be between 2 and 50 characters', 400);
 }
-if (empty($surname)) {
-    sendError('Surname is required');
+if (strlen($surname) < 2 || strlen($surname) > 50) {
+    sendError('Surname must be between 2 and 50 characters', 400);
+}
+
+// Validate name format (only letters, spaces, hyphens, apostrophes)
+if (!preg_match("/^[a-zA-ZÀ-ž\s'-]+$/u", $name)) {
+    sendError('Name contains invalid characters', 400);
+}
+if (!preg_match("/^[a-zA-ZÀ-ž\s'-]+$/u", $surname)) {
+    sendError('Surname contains invalid characters', 400);
+}
+
+// Validate avatar (max 20 characters, alphanumeric only)
+if (!empty($avatar) && (strlen($avatar) > 20 || !preg_match("/^[a-zA-Z0-9_-]+$/", $avatar))) {
+    sendError('Invalid avatar format', 400);
 }
 
 $pdo = getDbConnection();

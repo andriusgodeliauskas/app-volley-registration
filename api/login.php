@@ -72,18 +72,19 @@ try {
     $token = generateToken(32);
     $tokenExpiry = date('Y-m-d H:i:s', strtotime('+' . TOKEN_EXPIRY_HOURS . ' hours'));
     
-    // First, ensure the token column exists (for MVP, we'll add it if missing)
+    // First, ensure the token columns exist (for MVP, we'll add them if missing)
     try {
         $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS `auth_token` VARCHAR(64) NULL");
         $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS `token_expiry` DATETIME NULL");
+        $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS `last_activity` DATETIME NULL");
     } catch (PDOException $e) {
-        // Column might already exist, that's fine
+        // Columns might already exist, that's fine
     }
-    
-    // Store token in database
+
+    // Store token in database and set initial last_activity
     $stmt = $pdo->prepare("
-        UPDATE users 
-        SET auth_token = ?, token_expiry = ?
+        UPDATE users
+        SET auth_token = ?, token_expiry = ?, last_activity = NOW()
         WHERE id = ?
     ");
     $stmt->execute([$token, $tokenExpiry, $user['id']]);

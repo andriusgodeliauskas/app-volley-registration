@@ -45,6 +45,54 @@ function handleCors(): void
 // Apply CORS headers immediately
 handleCors();
 
+// =====================================================
+// SECURITY HEADERS
+// =====================================================
+
+/**
+ * Apply security headers to all API responses
+ */
+function applySecurityHeaders(): void
+{
+    // Prevent clickjacking attacks
+    header("X-Frame-Options: DENY");
+
+    // Prevent MIME type sniffing
+    header("X-Content-Type-Options: nosniff");
+
+    // Enable browser XSS protection
+    header("X-XSS-Protection: 1; mode=block");
+
+    // Force HTTPS (only in production)
+    if (APP_ENV === 'production') {
+        header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+    }
+
+    // Content Security Policy
+    // Note: 'unsafe-inline' needed for React inline styles, review and tighten as needed
+    $csp = implode('; ', [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // React needs eval for dev
+        "style-src 'self' 'unsafe-inline'", // Bootstrap inline styles
+        "img-src 'self' data: https:", // Allow data: URLs for avatars, https: for external images
+        "font-src 'self' data:", // Allow data: URLs for fonts
+        "connect-src 'self'", // API calls only to same origin
+        "frame-ancestors 'none'", // Same as X-Frame-Options
+        "base-uri 'self'",
+        "form-action 'self'"
+    ]);
+    header("Content-Security-Policy: $csp");
+
+    // Referrer Policy - don't leak URLs to external sites
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+
+    // Permissions Policy - disable unnecessary browser features
+    header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
+}
+
+// Apply security headers immediately
+applySecurityHeaders();
+
 // Set JSON content type for all API responses
 header("Content-Type: application/json; charset=UTF-8");
 

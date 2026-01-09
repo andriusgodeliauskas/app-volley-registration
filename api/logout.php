@@ -20,11 +20,12 @@ if ($currentUser !== null) {
     try {
         $pdo = getDbConnection();
 
-        // Invalidate token in database
+        // Invalidate token in database and clear last_activity
         $stmt = $pdo->prepare("
             UPDATE users
             SET auth_token = NULL,
-                token_expiry = NULL
+                token_expiry = NULL,
+                last_activity = NULL
             WHERE id = ?
         ");
         $stmt->execute([$currentUser['id']]);

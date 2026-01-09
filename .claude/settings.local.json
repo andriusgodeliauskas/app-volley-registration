@@ -12,7 +12,10 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(npm run dev:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File ./prepare-deploy-staging.ps1)"
     ]
   }
 }
