@@ -278,8 +278,8 @@ export const translations = {
         'validation.surname_min': 'Surname must be at least 2 characters',
         'validation.email_invalid': 'Please enter a valid email address',
         'validation.password_min': 'Password must be at least 12 characters',
-        'validation.password_strength': 'Password must contain uppercase, lowercase, number, and special character',
-        'validation.password_requirements': 'Minimum 12 characters, at least one uppercase letter, one number, and one special character (!@#$%^&*)',
+        'validation.password_strength': 'Password must contain uppercase, lowercase, and number',
+        'validation.password_requirements': 'Minimum 12 characters, at least one uppercase letter, one lowercase letter, and one number',
         'validation.passwords_mismatch': 'Passwords do not match',
         'validation.email_exists': 'A user with this email address already exists. Please contact the administrator.',
 
@@ -747,8 +747,8 @@ export const translations = {
         'validation.surname_min': 'Pavardė turi būti bent 2 simbolių',
         'validation.email_invalid': 'Prašome įvesti teisingą el. pašto adresą',
         'validation.password_min': 'Slaptažodis turi būti bent 12 simbolių',
-        'validation.password_strength': 'Slaptažodis turi turėti didžiąsias, mažąsias raides, skaičių ir specialų simbolį',
-        'validation.password_requirements': 'Minimaliai 12 simbolių, bent viena didžioji raidė, vienas skaičius ir vienas specialus simbolis (!@#$%^&*)',
+        'validation.password_strength': 'Slaptažodis turi turėti didžiąsias, mažąsias raides ir skaičių',
+        'validation.password_requirements': 'Minimaliai 12 simbolių, bent viena didžioji raidė, viena mažoji raidė ir vienas skaičius',
         'validation.passwords_mismatch': 'Slaptažodžiai nesutampa',
         'validation.email_exists': 'Vartotojas su šiuo el. pašto adresu jau egzistuoja. Prašome kreiptis į administratorių.',
 

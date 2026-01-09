@@ -60,11 +60,11 @@ function Register() {
             errors.email = t('validation.email_invalid');
         }
 
-        // Password strength validation (12+ chars, uppercase, lowercase, number, special char)
+        // Password strength validation (12+ chars, uppercase, lowercase, number)
         if (password.length < 12) {
             errors.password = t('validation.password_min');
         } else {
-            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$/;
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,}$/;
             if (!passwordPattern.test(password)) {
                 errors.password = t('validation.password_strength');
             }

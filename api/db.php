@@ -348,10 +348,8 @@ function validatePasswordStrength(string $password): array
         $errors[] = 'Password must contain at least one number';
     }
 
-    // Require at least one special character
-    if (!preg_match('/[^A-Za-z0-9]/', $password)) {
-        $errors[] = 'Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)';
-    }
+    // Note: Special characters are no longer required (NIST 2017+ recommendations)
+    // Password length (12+ chars) + complexity (upper, lower, digit) = sufficient security
 
     // Check for common weak passwords
     $commonPasswords = [
