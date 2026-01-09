@@ -120,6 +120,35 @@ function handleGetEventsOccupancy($pdo, $currentUser) {
             }
 
             $event['participants'] = $participantsList;
+
+            // Get waitlist for this event
+            $waitlistStmt = $pdo->prepare("
+                SELECT
+                    u.id,
+                    u.name,
+                    u.surname,
+                    r.created_at as registration_date
+                FROM registrations r
+                JOIN users u ON r.user_id = u.id
+                WHERE r.event_id = ? AND r.status = 'waitlist'
+                ORDER BY r.created_at ASC
+            ");
+            $waitlistStmt->execute([$event['id']]);
+            $waitlist = $waitlistStmt->fetchAll();
+
+            // Add row number to each waitlist user (starting after max_players)
+            $waitlistList = [];
+            foreach ($waitlist as $index => $waitlistUser) {
+                $waitlistList[] = [
+                    'number' => $event['max_players'] + $index + 1,
+                    'id' => (int)$waitlistUser['id'],
+                    'name' => $waitlistUser['name'],
+                    'surname' => $waitlistUser['surname'],
+                    'registration_date' => $waitlistUser['registration_date']
+                ];
+            }
+
+            $event['waitlist'] = $waitlistList;
         }
 
         sendSuccess(['events' => $events]);

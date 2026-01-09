@@ -206,24 +206,56 @@ function AdminDashboard() {
 
                                                             {/* Participants List */}
                                                             {isExpanded && (
-                                                                <div className="table-responsive">
-                                                                    <table className="table table-sm table-hover mb-0">
-                                                                        <thead className="table-light">
-                                                                            <tr>
-                                                                                <th style={{ width: '40px' }}>{t('admin.participant_number')}</th>
-                                                                                <th>{t('admin.participant_name')}</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {event.participants.map(participant => (
-                                                                                <tr key={participant.id}>
-                                                                                    <td className="text-muted">{participant.number}</td>
-                                                                                    <td>{participant.name} {participant.surname}</td>
+                                                                <>
+                                                                    <div className="table-responsive">
+                                                                        <table className="table table-sm table-hover mb-0">
+                                                                            <thead className="table-light">
+                                                                                <tr>
+                                                                                    <th style={{ width: '40px' }}>{t('admin.participant_number')}</th>
+                                                                                    <th>{t('admin.participant_name')}</th>
                                                                                 </tr>
-                                                                            ))}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {event.participants.map(participant => (
+                                                                                    <tr key={participant.id}>
+                                                                                        <td className="text-muted">{participant.number}</td>
+                                                                                        <td>{participant.name} {participant.surname}</td>
+                                                                                    </tr>
+                                                                                ))}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+
+                                                                    {/* Waitlist Section */}
+                                                                    {event.waitlist && event.waitlist.length > 0 && (
+                                                                        <>
+                                                                            <div className="mt-3 mb-2">
+                                                                                <small className="fw-bold text-uppercase text-warning">
+                                                                                    {t('event.waitlist_queue')}
+                                                                                    <span className="badge bg-warning text-dark ms-2">{event.waitlist.length}</span>
+                                                                                </small>
+                                                                            </div>
+                                                                            <div className="table-responsive">
+                                                                                <table className="table table-sm table-hover mb-0">
+                                                                                    <thead className="table-warning">
+                                                                                        <tr>
+                                                                                            <th style={{ width: '40px' }}>#</th>
+                                                                                            <th>{t('admin.participant_name')}</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        {event.waitlist.map(waitlistUser => (
+                                                                                            <tr key={waitlistUser.id} className="table-warning bg-opacity-25">
+                                                                                                <td className="text-muted">{waitlistUser.number}</td>
+                                                                                                <td className="text-muted">{waitlistUser.name} {waitlistUser.surname}</td>
+                                                                                            </tr>
+                                                                                        ))}
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </>
+                                                                    )}
+                                                                </>
                                                             )}
                                                         </>
                                                     )}
