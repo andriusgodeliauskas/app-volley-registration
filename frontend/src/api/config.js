@@ -92,8 +92,20 @@ export async function apiRequest(url, options = {}) {
     if (response.status === 401) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Session expired. Please log in again.');
+
+      // Only redirect if NOT already on login/register page
+      // This allows error to be displayed first
+      const currentPath = window.location.pathname;
+      const isAuthPage = currentPath === '/login' || currentPath === '/register';
+
+      if (!isAuthPage) {
+        // Delay redirect to allow error to be shown
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 100);
+      }
+
+      throw new Error(data.message || 'Session expired. Please log in again.');
     }
 
     if (!response.ok) {

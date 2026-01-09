@@ -40,7 +40,6 @@ export function AuthProvider({ children }) {
      * @returns {Promise<object>} User data
      */
     const login = async (email, password) => {
-        setError(null);
         setLoading(true);
 
         try {
@@ -78,7 +77,6 @@ export function AuthProvider({ children }) {
      * @returns {Promise<object>} User data
      */
     const register = async (firstName, lastName, email, password) => {
-        setError(null);
         setLoading(true);
 
         try {

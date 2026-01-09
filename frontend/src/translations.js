@@ -283,6 +283,13 @@ export const translations = {
         'validation.passwords_mismatch': 'Passwords do not match',
         'validation.email_exists': 'A user with this email address already exists. Please contact the administrator.',
 
+        // Error Messages
+        'error.invalid_credentials': 'Invalid email or password',
+        'error.rate_limit': 'Too many attempts. Please try again later.',
+        'error.account_pending': 'Account pending approval. Please wait for administrator confirmation.',
+        'error.session_expired': 'Session expired. Please log in again.',
+        'error.login_failed': 'Login failed. Please try again.',
+
         // Registration Page
         'register.success': 'Registration successful! Please log in.',
         'register.creating': 'Creating account...',
@@ -744,6 +751,13 @@ export const translations = {
         'validation.password_requirements': 'Minimaliai 12 simbolių, bent viena didžioji raidė, vienas skaičius ir vienas specialus simbolis (!@#$%^&*)',
         'validation.passwords_mismatch': 'Slaptažodžiai nesutampa',
         'validation.email_exists': 'Vartotojas su šiuo el. pašto adresu jau egzistuoja. Prašome kreiptis į administratorių.',
+
+        // Error Messages
+        'error.invalid_credentials': 'Neteisingas el. paštas arba slaptažodis',
+        'error.rate_limit': 'Per daug bandymų. Bandykite vėliau.',
+        'error.account_pending': 'Paskyra laukia patvirtinimo. Prašome palaukti administratoriaus patvirtinimo.',
+        'error.session_expired': 'Sesija baigėsi. Prašome prisijungti iš naujo.',
+        'error.login_failed': 'Prisijungti nepavyko. Bandykite dar kartą.',
 
         // Registration Page
         'register.success': 'Registracija sėkminga! Prašome prisijungti.',
