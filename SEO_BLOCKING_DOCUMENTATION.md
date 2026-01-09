@@ -214,7 +214,7 @@ curl -A "Googlebot" https://volley.godeliauskas.com
 
 **Expected:** "Page is blocked by robots.txt" or "noindex detected"
 
-**Status:** ⏳ To be verified after deployment (takes 24-48 hours)
+**Status:** ✅ Deployed to production (2026-01-09) - Verification pending (24-48 hours)
 
 ---
 
@@ -357,4 +357,6 @@ site:volley.godeliauskas.com
 ---
 
 **Last Updated:** 2026-01-09
-**Next Review:** After production deployment + 2 weeks
+**Production Deployment:** 2026-01-09 ✅
+**Next Review:** 2026-01-23 (2 weeks after deployment)
+**Production Verification:** All 4 layers confirmed working on volley.godeliauskas.com
