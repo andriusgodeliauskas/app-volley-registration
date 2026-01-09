@@ -98,6 +98,29 @@ try {
         $attendees[$key]['index'] = $key + 1;
     }
 
+    // 2b. Fetch Waitlist Users (status = 'waitlist')
+    $stmt = $pdo->prepare("
+        SELECT
+            u.id,
+            CONCAT_WS(' ', u.name, u.surname) as name,
+            u.avatar,
+            r.created_at as registered_at,
+            r.registered_by,
+            CONCAT_WS(' ', admin.name, admin.surname) as registered_by_name
+        FROM registrations r
+        JOIN users u ON r.user_id = u.id
+        LEFT JOIN users admin ON r.registered_by = admin.id
+        WHERE r.event_id = ? AND r.status = 'waitlist'
+        ORDER BY r.created_at ASC
+    ");
+    $stmt->execute([$eventId]);
+    $waitlist = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Add indices to waitlist for display (starting after max_players)
+    foreach ($waitlist as $key => $waitlistUser) {
+        $waitlist[$key]['index'] = (int)$event['max_players'] + $key + 1;
+    }
+
     // 3. Fetch Registration History (all statuses)
     // This includes registered, canceled, and waitlist users
     $stmt = $pdo->prepare("
@@ -122,6 +145,7 @@ try {
     sendSuccess([
         'event' => $event,
         'attendees' => $attendees,
+        'waitlist' => $waitlist,
         'registration_history' => $registrationHistory
     ]);
 

@@ -187,7 +187,7 @@ function EventDetails() {
 
     if (!data) return null;
 
-    const { event, attendees, registration_history } = data;
+    const { event, attendees, waitlist, registration_history } = data;
     const spotsLeft = event.max_players - event.registered_count;
     const isFull = spotsLeft <= 0;
     const isRegistered = event.user_registered;
@@ -429,9 +429,9 @@ function EventDetails() {
                                     </div>
                                 ) : (
                                     <>
-                                        {/* Main List */}
+                                        {/* Main List - Registered Players */}
                                         <div className="d-flex flex-column gap-2">
-                                            {attendees.filter(a => a.index <= event.max_players).map((attendee) => (
+                                            {attendees.map((attendee) => (
                                                 <div key={attendee.id} className="px-2 pt-2 pb-3 bg-white border rounded-3 d-flex align-items-center justify-content-between">
                                                     <div className="d-flex align-items-center flex-grow-1">
                                                         <div
@@ -471,34 +471,37 @@ function EventDetails() {
                                             ))}
                                         </div>
 
-                                        {/* Waitlist */}
-                                        {attendees.some(a => a.index > event.max_players) && (
+                                        {/* Waitlist Section */}
+                                        {waitlist && waitlist.length > 0 && (
                                             <>
                                                 <div className="px-1 py-3">
-                                                    <small className="fw-bold text-uppercase text-warning">{t('event.waitlist')}</small>
+                                                    <small className="fw-bold text-uppercase text-warning">
+                                                        {t('event.waitlist_queue')}
+                                                        <span className="badge bg-warning text-dark ms-2">{waitlist.length}</span>
+                                                    </small>
                                                 </div>
                                                 <div className="d-flex flex-column gap-2 opacity-75">
-                                                    {attendees.filter(a => a.index > event.max_players).map((attendee) => (
-                                                        <div key={attendee.id} className="px-2 pt-2 pb-3 bg-light border border-warning rounded-3 d-flex align-items-center justify-content-between">
+                                                    {waitlist.map((waitlistUser) => (
+                                                        <div key={waitlistUser.id} className="px-2 pt-2 pb-3 bg-light border border-warning rounded-3 d-flex align-items-center justify-content-between">
                                                             <div className="d-flex align-items-center flex-grow-1">
                                                                 <div
                                                                     className="me-3 rounded-circle bg-warning bg-opacity-25 d-flex align-items-center justify-content-center fw-bold text-dark"
                                                                     style={{ width: '32px', height: '32px' }}
                                                                 >
-                                                                    {attendee.index}
+                                                                    {waitlistUser.index}
                                                                 </div>
                                                                 <div className="d-flex align-items-center">
                                                                     <img
-                                                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
-                                                                        alt={attendee.name}
+                                                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${waitlistUser.avatar || 'Midnight'}`}
+                                                                        alt={waitlistUser.name}
                                                                         className="me-3 rounded-circle shadow-sm bg-light opacity-75"
                                                                         style={{ width: '40px', height: '40px', filter: 'grayscale(100%)' }}
                                                                     />
                                                                     <div>
-                                                                        <h6 className="mb-0 fw-semibold text-muted">{attendee.name}</h6>
+                                                                        <h6 className="mb-0 fw-semibold text-muted">{waitlistUser.name}</h6>
                                                                         <small className="text-muted">
                                                                             {t('event.waiting_since')}: {(() => {
-                                                                                const d = new Date(attendee.registered_at);
+                                                                                const d = new Date(waitlistUser.registered_at);
                                                                                 return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
                                                                             })()}
                                                                         </small>
@@ -508,7 +511,7 @@ function EventDetails() {
                                                             {isSuperAdmin && (
                                                                 <button
                                                                     className="btn btn-sm btn-outline-danger ms-2"
-                                                                    onClick={() => openAdminCancelModal(attendee.id, attendee.name)}
+                                                                    onClick={() => openAdminCancelModal(waitlistUser.id, waitlistUser.name)}
                                                                     disabled={processing}
                                                                 >
                                                                     <i className="bi bi-x-circle"></i>
