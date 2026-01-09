@@ -10,9 +10,16 @@ A web application to manage volleyball game registrations, groups, payments, and
 ## Features
 - User Authentication (Login/Register)
 - Group & Event Management
+- **Automatic Waitlist Management** (with Deposit Priority)
+- **Separate Waitlist UI** (visible on event details)
 - Registration System (Register, Waitlist, Cancel)
-- Wallet System (Top-up, Balance Tracking)
+- Wallet System (Top-up, Balance Tracking, Deposits)
 - Role-based Access (Super Admin, Group Admin, User)
+
+### 📚 Feature Documentation
+- **[WAITLIST_FEATURE_README.md](WAITLIST_FEATURE_README.md)** - Waitlist management system
+- **[DEPOSIT_FEATURE_README.md](DEPOSIT_FEATURE_README.md)** - Deposit system
+- **[SUPPORT_FEATURE_DEPLOYMENT.md](SUPPORT_FEATURE_DEPLOYMENT.md)** - Support/donation feature
 
 ## Setup & Installation
 
