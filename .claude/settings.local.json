@@ -15,7 +15,8 @@
       "Bash(npm run build:*)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(powershell.exe -ExecutionPolicy Bypass -File ./prepare-deploy-staging.ps1)"
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File ./prepare-deploy-staging.ps1)",
+      "Bash(powershell.exe -Command \"Remove-Item -Path ''deploy-staging\\\\test_auth.php'', ''deploy-staging\\\\clear_cache.php'', ''deploy-staging\\\\check_auth_code.php'', ''deploy-staging\\\\force_reload.php'' -ErrorAction SilentlyContinue; Write-Host ''Test files deleted''\")"
     ]
   }
 }

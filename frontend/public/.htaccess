@@ -1,17 +1,24 @@
 # Volley Registration App - Apache Configuration
 # For SPA (Single Page Application) routing
+# PRIVATE APPLICATION - Search engine indexing blocked
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
-    
+
+    # Block search engine crawlers (Google, Bing, Yahoo, DuckDuckGo, etc.)
+    RewriteCond %{HTTP_USER_AGENT} (googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora|outbrain|pinterest|slackbot|vkShare|W3C_Validator|whatsapp) [NC,OR]
+    # Block AI scrapers and training bots
+    RewriteCond %{HTTP_USER_AGENT} (GPTBot|ChatGPT-User|CCBot|anthropic-ai|Claude-Web|cohere-ai|PerplexityBot|Omgilibot) [NC]
+    RewriteRule .* - [F,L]
+
     # Don't rewrite files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    
+
     # Don't rewrite API requests
     RewriteCond %{REQUEST_URI} !^/api/
-    
+
     # Rewrite everything else to index.html for React Router
     RewriteRule ^ index.html [L]
 </IfModule>
@@ -39,4 +46,9 @@
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set X-XSS-Protection "1; mode=block"
+    # Prevent search engine indexing
+    Header set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet"
 </IfModule>
+
+# Disable directory browsing
+Options -Indexes

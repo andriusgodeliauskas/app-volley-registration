@@ -88,6 +88,9 @@ function applySecurityHeaders(): void
 
     // Permissions Policy - disable unnecessary browser features
     header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
+
+    // Prevent search engine indexing of API endpoints
+    header("X-Robots-Tag: noindex, nofollow, noarchive, nosnippet");
 }
 
 // Apply security headers immediately
