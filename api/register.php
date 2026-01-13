@@ -78,7 +78,7 @@ try {
     $stmt->execute([$email]);
 
     if ($stmt->fetch()) {
-        sendError('User with this email already exists. Please contact administrator.', 409);
+        sendError('Email already exists', 409);
     }
     
     // Hash password
