@@ -8,6 +8,7 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [localError, setLocalError] = useState(null);
 
@@ -48,6 +49,17 @@ function Login() {
         }
     }, [localError]);
 
+    // Load saved email and rememberMe preference on component mount
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+
+        if (savedEmail && savedRememberMe) {
+            setEmail(savedEmail);
+            setRememberMe(true);
+        }
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation(); // Prevent event bubbling
@@ -61,7 +73,16 @@ function Login() {
         setIsSubmitting(true);
 
         try {
-            const user = await login(email, password);
+            const user = await login(email, password, rememberMe);
+
+            // Save or clear email based on rememberMe checkbox
+            if (rememberMe) {
+                localStorage.setItem('rememberedEmail', email);
+                localStorage.setItem('rememberMe', 'true');
+            } else {
+                localStorage.removeItem('rememberedEmail');
+                localStorage.removeItem('rememberMe');
+            }
 
             // Redirect based on role
             if (user.role === 'super_admin') {
@@ -185,6 +206,30 @@ function Login() {
                                                     </svg>
                                                 )}
                                             </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Remember Me Checkbox */}
+                                    <div className="mb-4">
+                                        <div className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="rememberMe"
+                                                checked={rememberMe}
+                                                onChange={(e) => {
+                                                    const checked = e.target.checked;
+                                                    setRememberMe(checked);
+                                                    // Clear saved email if unchecking
+                                                    if (!checked) {
+                                                        localStorage.removeItem('rememberedEmail');
+                                                        localStorage.removeItem('rememberMe');
+                                                    }
+                                                }}
+                                            />
+                                            <label className="form-check-label" htmlFor="rememberMe">
+                                                {t('auth.remember_me')}
+                                            </label>
                                         </div>
                                     </div>
 

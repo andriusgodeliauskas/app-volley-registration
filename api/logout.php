@@ -20,12 +20,14 @@ if ($currentUser !== null) {
     try {
         $pdo = getDbConnection();
 
-        // Invalidate token in database and clear last_activity
+        // Invalidate both tokens in database and clear last_activity
         $stmt = $pdo->prepare("
             UPDATE users
             SET auth_token = NULL,
                 token_expiry = NULL,
-                last_activity = NULL
+                last_activity = NULL,
+                remember_me_token = NULL,
+                remember_me_expiry = NULL
             WHERE id = ?
         ");
         $stmt->execute([$currentUser['id']]);
@@ -36,7 +38,7 @@ if ($currentUser !== null) {
     }
 }
 
-// Clear httpOnly cookie (most important - always do this)
+// Clear both httpOnly cookies (most important - always do this)
 $cookieOptions = [
     'expires' => time() - 3600, // Expire in the past
     'path' => '/',
@@ -46,6 +48,7 @@ $cookieOptions = [
     'samesite' => 'Strict'
 ];
 setcookie('auth_token', '', $cookieOptions);
+setcookie('remember_me_token', '', $cookieOptions);
 
 // Clear session if using PHP sessions
 if (session_status() === PHP_SESSION_ACTIVE) {

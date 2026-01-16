@@ -39,11 +39,11 @@ export function AuthProvider({ children }) {
      * @param {string} password 
      * @returns {Promise<object>} User data
      */
-    const login = async (email, password) => {
+    const login = async (email, password, rememberMe = false) => {
         setLoading(true);
 
         try {
-            const response = await post(API_ENDPOINTS.LOGIN, { email, password });
+            const response = await post(API_ENDPOINTS.LOGIN, { email, password, remember_me: rememberMe });
 
             if (response.success) {
                 const { user: userData, token: authToken } = response.data;
@@ -119,6 +119,9 @@ export function AuthProvider({ children }) {
             setToken(null);
             localStorage.removeItem('authToken');
             localStorage.removeItem('user');
+            // Clear saved email and remember me preference
+            localStorage.removeItem('rememberedEmail');
+            localStorage.removeItem('rememberMe');
         }
     };
 
