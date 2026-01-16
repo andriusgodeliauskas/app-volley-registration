@@ -12,11 +12,20 @@ function AdminUsers() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState(() => {
+        // Load from localStorage on initial render
+        return localStorage.getItem('adminUsersFilter') || 'all';
+    });
 
     // Fetch users
     useEffect(() => {
         fetchUsers();
     }, []);
+
+    // Save statusFilter to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('adminUsersFilter', statusFilter);
+    }, [statusFilter]);
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -33,8 +42,13 @@ function AdminUsers() {
         }
     };
 
-    // Filter users based on search query
+    // Filter users based on status and search query
     const filteredUsers = users.filter(u => {
+        // First filter by status
+        if (statusFilter === 'active' && !u.is_active) return false;
+        if (statusFilter === 'inactive' && u.is_active) return false;
+
+        // Then filter by search query
         if (!searchQuery.trim()) return true;
         const query = searchQuery.toLowerCase();
         return (
@@ -55,6 +69,16 @@ function AdminUsers() {
                         <p className="text-muted mb-0">{t('admin.users_subtitle')}</p>
                     </div>
                     <div className="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 w-100 w-md-auto">
+                        <select
+                            className="form-select w-100"
+                            style={{ maxWidth: '200px' }}
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">{t('admin.filter_all_users')}</option>
+                            <option value="active">{t('admin.filter_active_users')}</option>
+                            <option value="inactive">{t('admin.filter_inactive_users')}</option>
+                        </select>
                         <div className="input-group w-100" style={{ maxWidth: '100%' }}>
                             <span className="input-group-text bg-light border-end-0">
                                 <i className="bi bi-search text-muted"></i>
@@ -72,7 +96,7 @@ function AdminUsers() {
                                     className="btn btn-light border border-start-0"
                                     type="button"
                                     onClick={() => setSearchQuery('')}
-                                    title="Išvalyti"
+                                    title={t('common.clear')}
                                 >
                                     <i className="bi bi-x-lg"></i>
                                 </button>
@@ -97,7 +121,9 @@ function AdminUsers() {
                             {t('admin.all_users')}
                             {searchQuery && (
                                 <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 ms-2">
-                                    {filteredUsers.length} {filteredUsers.length === 1 ? 'rezultatas' : 'rezultatai'}
+                                    {filteredUsers.length === 1
+                                        ? t('admin.results_count_one').replace('{count}', filteredUsers.length)
+                                        : t('admin.results_count_many').replace('{count}', filteredUsers.length)}
                                 </span>
                             )}
                         </div>
@@ -113,8 +139,18 @@ function AdminUsers() {
                     ) : filteredUsers.length === 0 ? (
                         <div className="text-center py-5 text-muted">
                             <i className="bi bi-search fs-1 d-block mb-3"></i>
-                            <h5>Nerasta vartotojų pagal "{searchQuery}"</h5>
-                            <p className="mb-0">Pabandykite kitą paieškos užklausą</p>
+                            {searchQuery ? (
+                                <>
+                                    <h5>{t('admin.no_search_results').replace('{query}', searchQuery)}</h5>
+                                    <p className="mb-0">{t('admin.no_search_results_hint')}</p>
+                                </>
+                            ) : statusFilter === 'active' ? (
+                                <h5>{t('admin.no_active_users')}</h5>
+                            ) : statusFilter === 'inactive' ? (
+                                <h5>{t('admin.no_inactive_users')}</h5>
+                            ) : (
+                                <h5>{t('admin.no_users')}</h5>
+                            )}
                         </div>
                     ) : (
                         <div className="d-flex flex-column gap-3">

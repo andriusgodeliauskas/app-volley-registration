@@ -25,7 +25,9 @@
       "Bash(powershell -Command \"& { $ftpServer = ''ftp://ftp.godeliauskas.com''; $ftpUser = ''u612879542.staging-deploy''; $ftpPass = ''Volley2024!Staging''; $localFile = ''api/register_event.php''; $remoteFile = ''/domains/staging.godeliauskas.com/public_html/api/register_event.php''; $webclient = New-Object System.Net.WebClient; $webclient.Credentials = New-Object System.Net.NetworkCredential\\($ftpUser, $ftpPass\\); $uri = New-Object System.Uri\\($ftpServer + $remoteFile\\); $webclient.UploadFile\\($uri, $localFile\\); Write-Host ''Uploaded register_event.php to staging'' }\")",
       "Bash(powershell -ExecutionPolicy Bypass -File upload-register-event.ps1)",
       "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy-staging.ps1:*)",
-      "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy.ps1)"
+      "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File ./prepare-deploy-staging.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)"
     ]
   }
 }

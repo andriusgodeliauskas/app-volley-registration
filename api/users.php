@@ -33,7 +33,7 @@ function handleGetUsers($pdo) {
         $stmt = $pdo->query("
             SELECT id, name, surname, email, role, balance, is_active, created_at, parent_id
             FROM users
-            ORDER BY surname ASC, name ASC
+            ORDER BY is_active ASC, surname ASC, name ASC
         ");
         $users = $stmt->fetchAll();
 
