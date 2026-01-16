@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -8,19 +8,81 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [localError, setLocalError] = useState(null);
 
-    const { login, error, setError } = useAuth();
+    const { login } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
 
+    // Map backend error messages to translation keys
+    const translateError = (errorMessage) => {
+        const msg = errorMessage.toLowerCase();
+
+        if (msg.includes('invalid') && (msg.includes('email') || msg.includes('password'))) {
+            return t('error.invalid_credentials');
+        }
+        if (msg.includes('too many attempts') || msg.includes('blocked')) {
+            return t('error.rate_limit');
+        }
+        if (msg.includes('pending approval') || msg.includes('pending')) {
+            return t('error.account_pending');
+        }
+        if (msg.includes('session expired')) {
+            return t('error.session_expired');
+        }
+
+        // Return translated generic error or original message
+        return errorMessage;
+    };
+
+    // Auto-dismiss local error after 10 seconds
+    useEffect(() => {
+        if (localError) {
+            const timer = setTimeout(() => {
+                setLocalError(null);
+            }, 10000); // 10 seconds
+
+            // Cleanup timer if component unmounts or error changes
+            return () => clearTimeout(timer);
+        }
+    }, [localError]);
+
+    // Load saved email and rememberMe preference on component mount
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+
+        if (savedEmail && savedRememberMe) {
+            setEmail(savedEmail);
+            setRememberMe(true);
+        }
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null);
+        e.stopPropagation(); // Prevent event bubbling
+
+        // Prevent submit if already submitting or if there's an active error
+        if (isSubmitting || localError) {
+            return;
+        }
+
+        setLocalError(null); // Clear previous errors
         setIsSubmitting(true);
 
         try {
-            const user = await login(email, password);
+            const user = await login(email, password, rememberMe);
+
+            // Save or clear email based on rememberMe checkbox
+            if (rememberMe) {
+                localStorage.setItem('rememberedEmail', email);
+                localStorage.setItem('rememberMe', 'true');
+            } else {
+                localStorage.removeItem('rememberedEmail');
+                localStorage.removeItem('rememberMe');
+            }
 
             // Redirect based on role
             if (user.role === 'super_admin') {
@@ -31,8 +93,10 @@ function Login() {
                 navigate('/dashboard');
             }
         } catch (err) {
-            // Error is already set in context
-            console.error('Login failed:', err.message);
+            // Set local error that will persist for 10 seconds
+            const errorMsg = err.message || t('error.login_failed');
+            const translatedError = translateError(errorMsg);
+            setLocalError(translatedError);
         } finally {
             setIsSubmitting(false);
         }
@@ -65,18 +129,19 @@ function Login() {
                                 </div>
 
                                 {/* Error Alert */}
-                                {error && (
-                                    <div className="alert alert-danger d-flex align-items-center py-2" role="alert">
+                                {localError && (
+                                    <div className="alert alert-danger d-flex align-items-center py-2 fade show" role="alert">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="me-2 flex-shrink-0" viewBox="0 0 16 16">
                                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
                                             <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
                                         </svg>
-                                        <span>{error}</span>
+                                        <span className="flex-grow-1">{localError}</span>
+                                        <button type="button" className="btn-close m-0 p-0" onClick={() => setLocalError(null)} aria-label="Close"></button>
                                     </div>
                                 )}
 
                                 {/* Login Form */}
-                                <form onSubmit={handleSubmit}>
+                                <form onSubmit={handleSubmit} action="javascript:void(0)">
 
                                     {/* Email Field */}
                                     <div className="mb-3">
@@ -141,6 +206,30 @@ function Login() {
                                                     </svg>
                                                 )}
                                             </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Remember Me Checkbox */}
+                                    <div className="mb-4">
+                                        <div className="form-check">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="rememberMe"
+                                                checked={rememberMe}
+                                                onChange={(e) => {
+                                                    const checked = e.target.checked;
+                                                    setRememberMe(checked);
+                                                    // Clear saved email if unchecking
+                                                    if (!checked) {
+                                                        localStorage.removeItem('rememberedEmail');
+                                                        localStorage.removeItem('rememberMe');
+                                                    }
+                                                }}
+                                            />
+                                            <label className="form-check-label" htmlFor="rememberMe">
+                                                {t('auth.remember_me')}
+                                            </label>
                                         </div>
                                     </div>
 

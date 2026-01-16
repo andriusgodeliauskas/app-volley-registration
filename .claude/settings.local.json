@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(cat:*)",
+      "Bash(pwsh:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File prepare-deploy-staging.ps1)",
+      "Bash(npm install)",
+      "Bash(powershell -File .scriptsdeploy-staging.ps1)",
+      "Bash(powershell -File:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File ./prepare-deploy-staging.ps1)",
+      "Bash(powershell.exe -Command \"Remove-Item -Path ''deploy-staging\\\\test_auth.php'', ''deploy-staging\\\\clear_cache.php'', ''deploy-staging\\\\check_auth_code.php'', ''deploy-staging\\\\force_reload.php'' -ErrorAction SilentlyContinue; Write-Host ''Test files deleted''\")",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File ./prepare-deploy.ps1)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File \"C:\\\\Projects\\\\my-apps\\\\app-volley-registration\\\\prepare-deploy.ps1\")",
+      "Bash(dir /s /b)",
+      "Bash(findstr:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File \"C:\\\\Projects\\\\my-apps\\\\app-volley-registration\\\\prepare-deploy-staging.ps1\")",
+      "Bash(powershell -Command \"& { $ftpServer = ''ftp://ftp.godeliauskas.com''; $ftpUser = ''u612879542.staging-deploy''; $ftpPass = ''Volley2024!Staging''; $localFile = ''api/register_event.php''; $remoteFile = ''/domains/staging.godeliauskas.com/public_html/api/register_event.php''; $webclient = New-Object System.Net.WebClient; $webclient.Credentials = New-Object System.Net.NetworkCredential\\($ftpUser, $ftpPass\\); $uri = New-Object System.Uri\\($ftpServer + $remoteFile\\); $webclient.UploadFile\\($uri, $localFile\\); Write-Host ''Uploaded register_event.php to staging'' }\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File upload-register-event.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy-staging.ps1:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy.ps1)"
+    ]
+  }
+}

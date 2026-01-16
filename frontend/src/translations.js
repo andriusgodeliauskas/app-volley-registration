@@ -19,6 +19,7 @@ export const translations = {
         'auth.login_subtitle': 'Sign in to manage your volleyball games',
         'auth.email': 'Email Address',
         'auth.password': 'Password',
+        'auth.remember_me': 'Remember Me',
         'auth.login_button': 'Sign In',
         'auth.register_link': "Don't have an account? Sign up",
         'auth.register_title': 'Join Us',
@@ -80,6 +81,7 @@ export const translations = {
         'event.will_be_charged': 'You will be charged',
         'event.will_be_refunded': 'You will be refunded',
         'event.waiting_since': 'Waiting since',
+        'event.waitlist_queue': 'Registruoti į eilę',
         'event.all_events': 'All Events',
         'event.browse_register': 'Browse and register for upcoming volleyball games',
         'event.event_info': 'Event Information',
@@ -267,7 +269,7 @@ export const translations = {
         'placeholder.email': 'you@example.com',
         'placeholder.first_name': 'John',
         'placeholder.last_name': 'Doe',
-        'placeholder.password': 'At least 6 characters',
+        'placeholder.password': 'Enter your password',
         'placeholder.confirm_password': 'Re-enter your password',
         'placeholder.event_title': 'e.g., Friday Night Volleyball',
         'placeholder.location': 'e.g., Sports Hall, Vilnius',
@@ -277,14 +279,29 @@ export const translations = {
         'validation.name_min': 'Name must be at least 2 characters',
         'validation.surname_min': 'Surname must be at least 2 characters',
         'validation.email_invalid': 'Please enter a valid email address',
-        'validation.password_min': 'Password must be at least 6 characters',
+        'validation.password_min': 'Password must be at least 12 characters',
+        'validation.password_strength': 'Password must contain uppercase, lowercase, and number',
+        'validation.password_requirements': 'Minimum 12 characters, at least one uppercase letter, one lowercase letter, and one number',
         'validation.passwords_mismatch': 'Passwords do not match',
+        'validation.email_exists': 'A user with this email address already exists. Please contact the administrator.',
+
+        // Error Messages
+        'error.invalid_credentials': 'Invalid email or password',
+        'error.rate_limit': 'Too many attempts. Please try again later.',
+        'error.account_pending': 'Account pending approval. Please wait for administrator confirmation.',
+        'error.session_expired': 'Session expired. Please log in again.',
+        'error.login_failed': 'Login failed. Please try again.',
 
         // Registration Page
         'register.success': 'Registration successful! Please log in.',
         'register.creating': 'Creating account...',
         'register.divider': 'or',
-        'register.terms': 'By creating an account, you agree to our Terms of Service.',
+        'register.terms': 'By creating an account, you agree to our',
+        'register.terms_link': 'Terms of Use',
+
+        // Rules Page
+        'rules.title': 'General Terms of Use',
+        'rules.last_updated': 'Last updated',
 
         // Profile Page
         'profile.failed_load': 'Failed to load profile data',
@@ -475,6 +492,7 @@ export const translations = {
         'auth.login_subtitle': 'Prisijunkite, kad galėtumėte valdyti žaidimus',
         'auth.email': 'El. Paštas',
         'auth.password': 'Slaptažodis',
+        'auth.remember_me': 'Prisiminti mane',
         'auth.login_button': 'Prisijungti',
         'auth.register_link': 'Neturite paskyros? Registruokitės',
         'auth.register_title': 'Prisijunkite prie mūsų',
@@ -536,6 +554,7 @@ export const translations = {
         'event.will_be_charged': 'Jums bus nuskaičiuota',
         'event.will_be_refunded': 'Jums bus grąžinta',
         'event.waiting_since': 'Laukia nuo',
+        'event.waitlist_queue': 'Registruoti į eilę',
         'event.all_events': 'Visi Renginiai',
         'event.browse_register': 'Naršykite ir registruokitės į artimiausius renginius',
         'event.event_info': 'Renginio Informacija',
@@ -726,7 +745,7 @@ export const translations = {
         'placeholder.email': 'jusu@email.lt',
         'placeholder.first_name': 'Jonas',
         'placeholder.last_name': 'Jonaitis',
-        'placeholder.password': 'Mažiausiai 6 simboliai',
+        'placeholder.password': 'Įveskite slaptažodį',
         'placeholder.confirm_password': 'Įveskite slaptažodį dar kartą',
         'placeholder.event_title': 'pvz., Penktadienio vakaro tinklinis',
         'placeholder.location': 'pvz., Sporto salė, Vilnius',
@@ -736,14 +755,29 @@ export const translations = {
         'validation.name_min': 'Vardas turi būti bent 2 simbolių',
         'validation.surname_min': 'Pavardė turi būti bent 2 simbolių',
         'validation.email_invalid': 'Prašome įvesti teisingą el. pašto adresą',
-        'validation.password_min': 'Slaptažodis turi būti bent 6 simbolių',
+        'validation.password_min': 'Slaptažodis turi būti bent 12 simbolių',
+        'validation.password_strength': 'Slaptažodis turi turėti didžiąsias, mažąsias raides ir skaičių',
+        'validation.password_requirements': 'Minimaliai 12 simbolių, bent viena didžioji raidė, viena mažoji raidė ir vienas skaičius',
         'validation.passwords_mismatch': 'Slaptažodžiai nesutampa',
+        'validation.email_exists': 'Vartotojas su šiuo el. pašto adresu jau egzistuoja. Prašome kreiptis į administratorių.',
+
+        // Error Messages
+        'error.invalid_credentials': 'Neteisingas el. paštas arba slaptažodis',
+        'error.rate_limit': 'Per daug bandymų. Bandykite vėliau.',
+        'error.account_pending': 'Paskyra laukia patvirtinimo. Prašome palaukti administratoriaus patvirtinimo.',
+        'error.session_expired': 'Sesija baigėsi. Prašome prisijungti iš naujo.',
+        'error.login_failed': 'Prisijungti nepavyko. Bandykite dar kartą.',
 
         // Registration Page
         'register.success': 'Registracija sėkminga! Prašome prisijungti.',
         'register.creating': 'Kuriama paskyra...',
         'register.divider': 'arba',
-        'register.terms': 'Kurdami paskyrą, sutinkate su mūsų Naudojimo sąlygomis.',
+        'register.terms': 'Kurdami paskyrą, sutinkate su mūsų',
+        'register.terms_link': 'Naudojimo sąlygomis',
+
+        // Rules Page
+        'rules.title': 'Bendrosios naudojimosi taisyklės',
+        'rules.last_updated': 'Paskutinis atnaujinimas',
 
         // Profile Page
         'profile.failed_load': 'Nepavyko užkrauti profilio duomenų',

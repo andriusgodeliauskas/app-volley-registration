@@ -35,9 +35,25 @@ $last_name = trim($input['last_name']);
 $email = trim(strtolower($input['email']));
 $password = $input['password'];
 
-// Validate name length
-if (strlen($first_name) < 2 || strlen($last_name) < 2) {
-    sendError('Name and Surname must be at least 2 characters', 400);
+// Validate name length (min 2, max 50 characters to prevent DoS)
+if (strlen($first_name) < 2 || strlen($first_name) > 50) {
+    sendError('First name must be between 2 and 50 characters', 400);
+}
+if (strlen($last_name) < 2 || strlen($last_name) > 50) {
+    sendError('Last name must be between 2 and 50 characters', 400);
+}
+
+// Validate name format (only letters, spaces, hyphens, apostrophes)
+if (!preg_match("/^[a-zA-ZÀ-ž\s'-]+$/u", $first_name)) {
+    sendError('First name contains invalid characters', 400);
+}
+if (!preg_match("/^[a-zA-ZÀ-ž\s'-]+$/u", $last_name)) {
+    sendError('Last name contains invalid characters', 400);
+}
+
+// Validate email length (max 100 characters to prevent DoS)
+if (strlen($email) > 100) {
+    sendError('Email must not exceed 100 characters', 400);
 }
 
 // Validate email format
@@ -46,9 +62,13 @@ if (!isValidEmail($email)) {
 }
 
 // Validate password strength
-if (strlen($password) < 6) {
-    sendError('Password must be at least 6 characters long', 400);
+$passwordErrors = validatePasswordStrength($password);
+if (!empty($passwordErrors)) {
+    sendError(implode('. ', $passwordErrors), 400);
 }
+
+// Rate limiting - 3 attempts per 60 minutes
+checkRateLimit($email, 'registration', 3, 60);
 
 try {
     $pdo = getDbConnection();
@@ -56,9 +76,9 @@ try {
     // Check if email already exists
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute([$email]);
-    
+
     if ($stmt->fetch()) {
-        sendError('Email is already registered', 409);
+        sendError('Email already exists', 409);
     }
     
     // Hash password
@@ -72,9 +92,12 @@ try {
     ");
     
     $stmt->execute([$first_name, $last_name, $email, $passwordHash]);
-    
+
     $userId = (int) $pdo->lastInsertId();
-    
+
+    // Reset rate limit after successful registration
+    resetRateLimit($email, 'registration');
+
     // Return success response
     sendSuccess([
         'user' => [

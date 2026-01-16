@@ -102,6 +102,17 @@ function handleRegister(array $currentUser): void
         //     sendError('Event is full. No spots available.', 400);
         // }
         
+        // Check if user has an active deposit (check BEFORE registration logic)
+        $stmt = $pdo->prepare("
+            SELECT id, user_id, status, amount
+            FROM deposits
+            WHERE user_id = ? AND status = 'active'
+            LIMIT 1
+        ");
+        $stmt->execute([$registerUserId]);
+        $deposit = $stmt->fetch();
+        $hasDeposit = ($deposit !== false);
+
         // Check if already registered (or canceled)
         $stmt = $pdo->prepare("
             SELECT id, status FROM registrations
@@ -116,25 +127,73 @@ function handleRegister(array $currentUser): void
                 sendError('Already registered for this event', 400);
             }
 
-            // Re-register: Update status to registered
-            $stmt = $pdo->prepare("
-                UPDATE registrations
-                SET status = 'registered', registered_by = ?, created_at = CURRENT_TIMESTAMP
-                WHERE id = ?
-            ");
-            $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
+            // Re-registration: Check deposit priority before updating status
+            $registeredCount = (int)$event['registered_count'];
+            $maxPlayers = (int)$event['max_players'];
+
+            // If event is full, check deposit priority
+            if ($registeredCount >= $maxPlayers) {
+                if ($hasDeposit) {
+                    // Depositor has priority - find last registered user WITHOUT deposit and move to waitlist
+                    $stmt = $pdo->prepare("
+                        SELECT r.id, r.user_id, r.created_at
+                        FROM registrations r
+                        LEFT JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
+                        WHERE r.event_id = ? AND r.status = 'registered' AND d.id IS NULL
+                        ORDER BY r.created_at DESC
+                        LIMIT 1
+                    ");
+                    $stmt->execute([$eventId]);
+                    $lastNonDepositor = $stmt->fetch();
+
+                    if ($lastNonDepositor) {
+                        // Move the last non-depositor to waitlist
+                        $stmt = $pdo->prepare("
+                            UPDATE registrations
+                            SET status = 'waitlist'
+                            WHERE id = ?
+                        ");
+                        $stmt->execute([$lastNonDepositor['id']]);
+
+                        // Depositor gets 'registered' status
+                        $stmt = $pdo->prepare("
+                            UPDATE registrations
+                            SET status = 'registered', registered_by = ?
+                            WHERE id = ?
+                        ");
+                        $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
+                    } else {
+                        // All registered users have deposits, so keep in waitlist
+                        $stmt = $pdo->prepare("
+                            UPDATE registrations
+                            SET status = 'waitlist', registered_by = ?
+                            WHERE id = ?
+                        ");
+                        $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
+                    }
+                } else {
+                    // Non-depositor and event is full - stays in waitlist
+                    $stmt = $pdo->prepare("
+                        UPDATE registrations
+                        SET status = 'waitlist', registered_by = ?
+                        WHERE id = ?
+                    ");
+                    $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
+                }
+            } else {
+                // Event has space - simply update to registered
+                $stmt = $pdo->prepare("
+                    UPDATE registrations
+                    SET status = 'registered', registered_by = ?
+                    WHERE id = ?
+                ");
+                $stmt->execute([$currentUser['id'], $existingRegistration['id']]);
+            }
+
             $registrationId = $existingRegistration['id'];
 
         } else {
-            // Check if user has an active deposit
-            $stmt = $pdo->prepare("
-                SELECT COUNT(*) as has_deposit
-                FROM deposits
-                WHERE user_id = ? AND status = 'active'
-            ");
-            $stmt->execute([$registerUserId]);
-            $depositCheck = $stmt->fetch();
-            $hasDeposit = (int)$depositCheck['has_deposit'] > 0;
+            // NEW REGISTRATION: Deposit already checked above
 
             // Determine initial status based on capacity and deposit
             $registeredCount = (int)$event['registered_count'];
@@ -145,12 +204,13 @@ function handleRegister(array $currentUser): void
             if ($registeredCount >= $maxPlayers) {
                 if ($hasDeposit) {
                     // Depositor has priority - find last registered user WITHOUT deposit and move to waitlist
+                    // Use created_at to find truly the last person who registered (not by ID)
                     $stmt = $pdo->prepare("
-                        SELECT r.id, r.user_id
+                        SELECT r.id, r.user_id, r.created_at
                         FROM registrations r
                         LEFT JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
                         WHERE r.event_id = ? AND r.status = 'registered' AND d.id IS NULL
-                        ORDER BY r.id DESC
+                        ORDER BY r.created_at DESC
                         LIMIT 1
                     ");
                     $stmt->execute([$eventId]);
@@ -277,11 +337,48 @@ function handleCancelRegistration(array $currentUser): void
         // Update registration status
         $stmt = $pdo->prepare("UPDATE registrations SET status = 'canceled' WHERE id = ?");
         $stmt->execute([$registration['registration_id']]);
-        
+
         // No refund logic needed as no payment was taken upfront
 
+        // AUTOMATIC WAITLIST PROMOTION: Check if anyone is waiting and promote them
+        // This opens up 1 spot, so check if there are people on waitlist
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as waiting_count
+            FROM registrations
+            WHERE event_id = ? AND status = 'waitlist'
+        ");
+        $stmt->execute([$eventId]);
+        $waitingCount = (int)$stmt->fetch()['waiting_count'];
+
+        if ($waitingCount > 0) {
+            // PRIORITY 1: Try to promote someone WITH deposit first
+            $stmt = $pdo->prepare("
+                UPDATE registrations r
+                INNER JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
+                SET r.status = 'registered'
+                WHERE r.event_id = ? AND r.status = 'waitlist'
+                ORDER BY r.created_at ASC
+                LIMIT 1
+            ");
+            $stmt->execute([$eventId]);
+            $promotedWithDeposit = $stmt->rowCount();
+
+            // PRIORITY 2: If no depositor waiting, promote oldest non-depositor
+            if ($promotedWithDeposit === 0) {
+                $stmt = $pdo->prepare("
+                    UPDATE registrations r
+                    LEFT JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
+                    SET r.status = 'registered'
+                    WHERE r.event_id = ? AND r.status = 'waitlist' AND d.id IS NULL
+                    ORDER BY r.created_at ASC
+                    LIMIT 1
+                ");
+                $stmt->execute([$eventId]);
+            }
+        }
+
         $pdo->commit();
-        
+
         sendSuccess([], 'Registration cancelled successfully');
         
     } catch (PDOException $e) {
