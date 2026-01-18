@@ -158,6 +158,20 @@ export default function Wallet() {
         });
     };
 
+    // Helper to translate known transaction descriptions
+    const getTransactionDescription = (description) => {
+        if (!description) return '';
+
+        const map = {
+            'Automatic top-up via Paysera': 'wallet.tx_auto_paysera',
+            'Manual Top-up': 'wallet.tx_manual',
+            'Deposit refund': 'wallet.tx_deposit_refund'
+        };
+
+        const key = map[description];
+        return key ? t(key) : description;
+    };
+
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center vh-100">
@@ -364,7 +378,7 @@ export default function Wallet() {
                                                             <td>
                                                                 <div className="d-flex align-items-center">
                                                                     <div>
-                                                                        <div className="fw-medium">{tx.description}</div>
+                                                                        <div className="fw-medium">{getTransactionDescription(tx.description)}</div>
                                                                         {tx.event_name && (
                                                                             <small className="text-muted">{tx.event_name}</small>
                                                                         )}
@@ -388,7 +402,7 @@ export default function Wallet() {
                                                         <div className="d-flex justify-content-between align-items-start mb-2">
                                                             <div className="d-flex align-items-center">
                                                                 <div>
-                                                                    <div className="fw-medium">{tx.description}</div>
+                                                                    <div className="fw-medium">{getTransactionDescription(tx.description)}</div>
                                                                     {tx.event_name && (
                                                                         <small className="text-muted">{tx.event_name}</small>
                                                                     )}

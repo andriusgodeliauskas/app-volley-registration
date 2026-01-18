@@ -158,6 +158,9 @@ export const translations = {
         'wallet.topup_terms_link': 'top-up terms and conditions',
         'wallet.must_agree_terms': 'You must agree to the top-up terms and conditions.',
         'wallet.topup_success': 'Account topped up successfully!',
+        'wallet.tx_auto_paysera': 'Automatic top-up via Paysera',
+        'wallet.tx_manual': 'Manual Top-up',
+        'wallet.tx_deposit_refund': 'Deposit refund',
 
         // Top-up Terms
         'topup_terms.title': 'Top-up Terms and Conditions',
@@ -668,6 +671,9 @@ export const translations = {
         'wallet.topup_terms_link': 'papildymo taisyklėmis',
         'wallet.must_agree_terms': 'Turite sutikti su papildymo taisyklėmis.',
         'wallet.topup_success': 'Sąskaita papildyta sėkmingai!',
+        'wallet.tx_auto_paysera': 'Automatinis papildymas per Paysera',
+        'wallet.tx_manual': 'Rankinis papildymas',
+        'wallet.tx_deposit_refund': 'Depozito grąžinimas',
 
         // Top-up Terms
         'topup_terms.title': 'Papildymo taisyklės',
