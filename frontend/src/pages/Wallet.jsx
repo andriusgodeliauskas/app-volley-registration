@@ -274,7 +274,7 @@ export default function Wallet() {
                                 </div>
 
                                 <button
-                                    className="btn btn-primary w-100"
+                                    className="btn btn-primary w-100 mb-3"
                                     onClick={handleAutoTopup}
                                     disabled={topupLoading || !agreeToTerms}
                                 >
@@ -363,9 +363,6 @@ export default function Wallet() {
                                                             <td className="ps-4 small text-muted">{formatDate(tx.created_at)}</td>
                                                             <td>
                                                                 <div className="d-flex align-items-center">
-                                                                    <div className={`transaction-icon me-2 ${tx.amount > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}>
-                                                                        <i className={`bi ${tx.amount > 0 ? 'bi-arrow-down' : 'bi-arrow-up'}`}></i>
-                                                                    </div>
                                                                     <div>
                                                                         <div className="fw-medium">{tx.description}</div>
                                                                         {tx.event_name && (
@@ -390,9 +387,6 @@ export default function Wallet() {
                                                     <div className="card-body p-3">
                                                         <div className="d-flex justify-content-between align-items-start mb-2">
                                                             <div className="d-flex align-items-center">
-                                                                <div className={`transaction-icon me-2 ${tx.amount > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}>
-                                                                    <i className={`bi ${tx.amount > 0 ? 'bi-arrow-down' : 'bi-arrow-up'}`}></i>
-                                                                </div>
                                                                 <div>
                                                                     <div className="fw-medium">{tx.description}</div>
                                                                     {tx.event_name && (
@@ -400,7 +394,7 @@ export default function Wallet() {
                                                                     )}
                                                                 </div>
                                                             </div>
-                                                            <div className={`fw-bold ${tx.amount > 0 ? 'text-success' : 'text-danger'}`}>
+                                                            <div className={`fw-bold text-nowrap ${tx.amount > 0 ? 'text-success' : 'text-danger'}`}>
                                                                 {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
                                                             </div>
                                                         </div>
