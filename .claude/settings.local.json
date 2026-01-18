@@ -27,7 +27,8 @@
       "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy-staging.ps1:*)",
       "Bash(powershell -ExecutionPolicy Bypass -File prepare-deploy.ps1)",
       "Bash(powershell -ExecutionPolicy Bypass -File ./prepare-deploy-staging.ps1)",
-      "Bash(powershell -ExecutionPolicy Bypass -File:*)"
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(git push)"
     ]
   }
 }

@@ -13,6 +13,7 @@ export const translations = {
         'nav.event_details': 'Event Details',
         'nav.deposit': 'Deposit',
         'nav.support': 'Support',
+        'nav.topup_terms': 'Top-up Terms',
 
         // Auth
         'auth.login_title': 'Welcome Back',
@@ -144,6 +145,22 @@ export const translations = {
         'wallet.amount': 'Amount',
         'wallet.no_transactions': 'No transactions yet.',
         'wallet.copy_tooltip': 'Copy to clipboard',
+        'wallet.auto_topup_title': 'Automatic Top-up',
+        'wallet.auto_topup_description': 'Top up your wallet instantly using online banking.',
+        'wallet.bank_topup_title': 'Bank Transfer Top-up',
+        'wallet.amount_range': 'Amount from €1 to €1000',
+        'wallet.topup_now': 'Top up',
+        'wallet.processing': 'Processing...',
+        'wallet.invalid_amount': 'Invalid amount. Enter amount from €1 to €1000.',
+        'wallet.topup_failed': 'Failed to initiate payment. Please try again.',
+        'wallet.payment_cancelled': 'Payment cancelled.',
+        'wallet.agree_to': 'I agree to',
+        'wallet.topup_terms_link': 'top-up terms and conditions',
+        'wallet.must_agree_terms': 'You must agree to the top-up terms and conditions.',
+        'wallet.topup_success': 'Account topped up successfully!',
+
+        // Top-up Terms
+        'topup_terms.title': 'Top-up Terms and Conditions',
 
         // Support
         'nav.support': 'Support',
@@ -506,6 +523,7 @@ export const translations = {
         'nav.event_details': 'Renginio Informacija',
         'nav.deposit': 'Depozitas',
         'nav.support': 'Pagalba',
+        'nav.topup_terms': 'Papildymo taisyklės',
 
         // Auth
         'auth.login_title': 'Sveiki Sugrįžę',
@@ -637,6 +655,22 @@ export const translations = {
         'wallet.amount': 'Suma',
         'wallet.no_transactions': 'Operacijų dar nėra.',
         'wallet.copy_tooltip': 'Kopijuoti',
+        'wallet.auto_topup_title': 'Automatinis papildymas',
+        'wallet.auto_topup_description': 'Papildykite savo piniginę akimirksniu naudodami internetinę bankininkystę.',
+        'wallet.bank_topup_title': 'Bankinis papildymas',
+        'wallet.amount_range': 'Suma nuo €1 iki €1000',
+        'wallet.topup_now': 'Papildyti',
+        'wallet.processing': 'Apdorojama...',
+        'wallet.invalid_amount': 'Neteisinga suma. Įveskite sumą nuo €1 iki €1000.',
+        'wallet.topup_failed': 'Nepavyko inicijuoti mokėjimo. Bandykite dar kartą.',
+        'wallet.payment_cancelled': 'Mokėjimas atšauktas.',
+        'wallet.agree_to': 'Sutinku su',
+        'wallet.topup_terms_link': 'papildymo taisyklėmis',
+        'wallet.must_agree_terms': 'Turite sutikti su papildymo taisyklėmis.',
+        'wallet.topup_success': 'Sąskaita papildyta sėkmingai!',
+
+        // Top-up Terms
+        'topup_terms.title': 'Papildymo taisyklės',
 
         // Support
         'nav.support': 'Parama',

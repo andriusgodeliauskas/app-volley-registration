@@ -58,6 +58,12 @@ export const API_ENDPOINTS = {
   ADMIN_DEPOSITS: `${API_BASE_URL}/admin_deposits.php`,
   ADMIN_DEPOSIT_REFUND: `${API_BASE_URL}/admin_deposit_refund.php`,
   ADMIN_DEPOSIT_CREATE: `${API_BASE_URL}/admin_deposit_create.php`,
+
+  // Paysera Payment
+  PAYSERA_CHECKOUT: `${API_BASE_URL}/paysera_checkout.php`,
+  PAYSERA_ACCEPT: `${API_BASE_URL}/paysera_accept.php`,
+  PAYSERA_CANCEL: `${API_BASE_URL}/paysera_cancel.php`,
+  PAYSERA_CALLBACK: `${API_BASE_URL}/paysera_callback.php`,
 };
 
 /**

@@ -27,6 +27,7 @@ import AdminTopups from './pages/AdminTopups';
 import AdminRent from './pages/AdminRent';
 import AdminDonations from './pages/AdminDonations';
 import AdminDeposits from './pages/AdminDeposits';
+import TopUpTerms from './pages/TopUpTerms';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/rules" element={<Rules />} />
+            <Route path="/topup-terms" element={<TopUpTerms />} />
             <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
             {/* Protected User Routes */}
