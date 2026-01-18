@@ -29,6 +29,13 @@ export const translations = {
         'auth.confirm_password': 'Confirm Password',
         'auth.register_button': 'Create Account',
         'auth.login_link': 'Already have an account? Sign in',
+        'auth.or': 'or',
+        'auth.google_signin': 'Sign in with Google',
+        'auth.google_processing': 'Processing Google Sign-In',
+        'auth.google_please_wait': 'Please wait while we complete your authentication...',
+        'auth.set_password_title': 'Set Your Password',
+        'auth.set_password_description': 'Welcome! Please set a password for your account:',
+        'auth.set_password_button': 'Set Password',
 
         // Dashboard
         'dash.welcome': 'Welcome back',
@@ -292,6 +299,9 @@ export const translations = {
         'error.account_pending': 'Account pending approval. Please wait for administrator confirmation.',
         'error.session_expired': 'Session expired. Please log in again.',
         'error.login_failed': 'Login failed. Please try again.',
+        'error.google_auth_cancelled': 'Google sign-in was cancelled.',
+        'error.google_auth_failed': 'Google sign-in failed. Please try again.',
+        'error.password_set_failed': 'Failed to set password. Please try again.',
 
         // Registration Page
         'register.success': 'Registration successful! Please log in.',
@@ -512,6 +522,13 @@ export const translations = {
         'auth.confirm_password': 'Patvirtinti Slaptažodį',
         'auth.register_button': 'Sukurti Paskyrą',
         'auth.login_link': 'Jau turite paskyrą? Prisijunkite',
+        'auth.or': 'arba',
+        'auth.google_signin': 'Prisijungti su Google',
+        'auth.google_processing': 'Apdorojama Google Autentifikacija',
+        'auth.google_please_wait': 'Prašome palaukti, kol užbaigiame jūsų autentifikaciją...',
+        'auth.set_password_title': 'Nustatykite Slaptažodį',
+        'auth.set_password_description': 'Sveiki! Prašome nustatyti slaptažodį savo paskyrai:',
+        'auth.set_password_button': 'Nustatyti Slaptažodį',
 
         // Dashboard
         'dash.welcome': 'Sveiki',
@@ -778,6 +795,9 @@ export const translations = {
         'error.account_pending': 'Paskyra laukia patvirtinimo. Prašome palaukti administratoriaus patvirtinimo.',
         'error.session_expired': 'Sesija baigėsi. Prašome prisijungti iš naujo.',
         'error.login_failed': 'Prisijungti nepavyko. Bandykite dar kartą.',
+        'error.google_auth_cancelled': 'Google prisijungimas buvo atšauktas.',
+        'error.google_auth_failed': 'Google prisijungimas nepavyko. Bandykite dar kartą.',
+        'error.password_set_failed': 'Nepavyko nustatyti slaptažodžio. Bandykite dar kartą.',
 
         // Registration Page
         'register.success': 'Registracija sėkminga! Prašome prisijungti.',

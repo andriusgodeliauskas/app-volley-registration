@@ -54,10 +54,20 @@ npm run build            # Build for production
 
 ## Key Features
 - **User Management**: Registration, login, role-based access (Super Admin, Group Admin, User)
+- **Google OAuth**: Sign in with Google - users can authenticate via Google and set password for dual login options
 - **Event System**: Create events, manage registrations, waitlists
 - **Wallet System**: Balance top-up, payment tracking, deposits
 - **Group Management**: Create/join groups, group-specific events
 - **Admin Panel**: User management, event finalization, statistics
+- **Remember Me**: 30-day persistent login with secure tokens
+- **Session Timeout**: 30-minute inactivity logout for security
+- **Rate Limiting**: Brute force protection on login/registration
+
+## Admin Features
+- **Users List Filtering**: Filter users by status (All/Active/Inactive), with inactive users displayed first by default
+- **Events Occupancy**: View event capacity and participant lists
+- **Negative Balance Users**: Quick view of users with debt
+- **Waitlist Management**: Automatic waitlist with deposit priority
 
 ## Setup
 1. **Database**: Import `database.sql` into MySQL
@@ -69,6 +79,48 @@ npm run build            # Build for production
 - API uses JWT-like session tokens
 - All admin endpoints prefixed with `admin_`
 - Staging environment has separate config (`config-staging.php`)
+
+## Google OAuth Setup
+
+### Backend Files
+- `api/google-auth.php` - Handles Google OAuth callback, user creation/login
+- `api/set-password.php` - Allows Google users to set password for dual login
+- `api/google-config.php` - Returns public OAuth config (client_id, redirect_uri)
+
+### Frontend Files
+- `frontend/src/components/GoogleSignInButton.jsx` - Google sign-in button
+- `frontend/src/components/SetPasswordModal.jsx` - Password setup modal for new Google users
+- `frontend/src/pages/GoogleCallback.jsx` - OAuth callback handler
+
+### Database Migration
+Run `google_oauth_migration.sql` to add:
+- `oauth_provider` column (ENUM: 'email', 'google')
+- `oauth_google_id` column
+- `oauth_temp_tokens` table for password setup flow
+
+### Configuration
+1. **Google Cloud Console**: Add authorized redirect URIs:
+   - `https://volley.godeliauskas.com/auth/google/callback`
+   - `https://staging.godeliauskas.com/auth/google/callback`
+   - `http://localhost:5173/auth/google/callback`
+
+2. **secrets.php** (production) or **config-staging.php** (staging):
+   ```php
+   define('GOOGLE_CLIENT_ID', 'your_client_id.apps.googleusercontent.com');
+   define('GOOGLE_CLIENT_SECRET', 'your_client_secret');
+   ```
+
+3. **rate_limits table**: Must support VARCHAR or extended ENUM for attempt_type:
+   ```sql
+   ALTER TABLE rate_limits MODIFY COLUMN attempt_type VARCHAR(50) NOT NULL;
+   ```
+
+### OAuth Flow
+1. User clicks "Sign in with Google"
+2. Redirected to Google OAuth consent
+3. Google redirects back to `/auth/google/callback`
+4. If new user: Show password setup modal → create account
+5. If existing user: Login directly
 
 ## Development Guidelines
 

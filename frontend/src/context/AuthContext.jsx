@@ -160,6 +160,88 @@ export function AuthProvider({ children }) {
      */
     const isAdmin = ['super_admin', 'group_admin'].includes(user?.role);
 
+    /**
+     * Login with Google OAuth
+     * @param {string} code - Authorization code from Google OAuth
+     * @returns {Promise<object>} Response with user data or temp_token
+     */
+    const loginWithGoogle = async (code) => {
+        setLoading(true);
+
+        try {
+            const response = await post(API_ENDPOINTS.GOOGLE_AUTH, {
+                code,
+                redirect_uri: `${window.location.origin}/auth/google/callback`
+            });
+
+            if (response.success) {
+                if (response.data.requires_password) {
+                    // New user - return temp token for password setup
+                    return {
+                        requires_password: true,
+                        temp_token: response.data.temp_token,
+                        user: response.data.user
+                    };
+                } else {
+                    // Existing user - complete login
+                    const { user: userData, token: authToken } = response.data;
+
+                    setUser(userData);
+                    setToken(authToken);
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('user', JSON.stringify(userData));
+
+                    return {
+                        requires_password: false,
+                        user: userData
+                    };
+                }
+            } else {
+                throw new Error(response.message || 'Google authentication failed');
+            }
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    /**
+     * Complete Google registration by setting password
+     * @param {string} tempToken - Temporary token from Google auth
+     * @param {string} password - User's chosen password
+     * @returns {Promise<object>} User data
+     */
+    const completeGoogleRegistration = async (tempToken, password) => {
+        setLoading(true);
+
+        try {
+            const response = await post(API_ENDPOINTS.SET_PASSWORD, {
+                temp_token: tempToken,
+                password
+            });
+
+            if (response.success) {
+                const { user: userData, token: authToken } = response.data;
+
+                setUser(userData);
+                setToken(authToken);
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                return userData;
+            } else {
+                throw new Error(response.message || 'Failed to set password');
+            }
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Context value
     const value = {
         user,
@@ -170,6 +252,8 @@ export function AuthProvider({ children }) {
         isSuperAdmin,
         isAdmin,
         login,
+        loginWithGoogle,
+        completeGoogleRegistration,
         register,
         logout,
         updateUser,

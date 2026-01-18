@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import OrDivider from '../components/OrDivider';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 function Register() {
     const { t } = useLanguage();
@@ -314,15 +316,14 @@ function Register() {
                                     </button>
                                 </form>
 
-                                {/* Divider */}
-                                <div className="d-flex align-items-center my-4">
-                                    <hr className="flex-grow-1" />
-                                    <span className="px-3 text-muted small">{t('register.divider')}</span>
-                                    <hr className="flex-grow-1" />
-                                </div>
+                                {/* Or Divider */}
+                                <OrDivider />
+
+                                {/* Google Sign-In Button */}
+                                <GoogleSignInButton />
 
                                 {/* Login Link */}
-                                <p className="text-center mb-0">
+                                <p className="text-center mb-0 mt-4">
                                     <Link to="/login" className="fw-semibold text-decoration-none">
                                         {t('auth.login_link')}
                                     </Link>

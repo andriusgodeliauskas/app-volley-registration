@@ -6,6 +6,11 @@ export const API_ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/register.php`,
   LOGOUT: `${API_BASE_URL}/logout.php`,
 
+  // Google OAuth
+  GOOGLE_CONFIG: `${API_BASE_URL}/google-config.php`,
+  GOOGLE_AUTH: `${API_BASE_URL}/google-auth.php`,
+  SET_PASSWORD: `${API_BASE_URL}/set-password.php`,
+
   // Admin Endpoints
   ADMIN_USER_DETAILS: `${API_BASE_URL}/admin_user_details.php`,
   ADMIN_USER_UPDATE: `${API_BASE_URL}/admin_user_update.php`,

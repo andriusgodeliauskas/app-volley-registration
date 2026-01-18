@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import OrDivider from '../components/OrDivider';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -250,15 +252,14 @@ function Login() {
                                     </button>
                                 </form>
 
-                                {/* Divider */}
-                                <div className="d-flex align-items-center my-4">
-                                    <hr className="flex-grow-1" />
-                                    {/* <span className="px-3 text-muted small">or</span> */}
-                                    <hr className="flex-grow-1" />
-                                </div>
+                                {/* Or Divider */}
+                                <OrDivider />
+
+                                {/* Google Sign-In Button */}
+                                <GoogleSignInButton />
 
                                 {/* Register Link */}
-                                <p className="text-center mb-0">
+                                <p className="text-center mb-0 mt-4">
                                     <Link to="/register" className="fw-semibold text-decoration-none">
                                         {t('auth.register_link')}
                                     </Link>

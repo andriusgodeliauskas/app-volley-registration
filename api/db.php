@@ -342,10 +342,11 @@ function checkRateLimit(string $identifier, string $attemptType = 'login', int $
             $stmt->execute([$identifier, $attemptType]);
         }
     } else {
-        // Create new record
+        // Create new record (use ON DUPLICATE KEY UPDATE to handle race conditions)
         $stmt = $pdo->prepare("
             INSERT INTO rate_limits (identifier, attempt_type, attempts)
             VALUES (?, ?, 1)
+            ON DUPLICATE KEY UPDATE attempts = 1, last_attempt = NOW(), blocked_until = NULL
         ");
         $stmt->execute([$identifier, $attemptType]);
     }

@@ -1,6 +1,7 @@
 # Credentials & Security
 api/secrets.php
 api/config-staging.php
+google_registration/
 .env
 .env.local
 .DS_Store

@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Rules from './pages/Rules';
+import GoogleCallback from './pages/GoogleCallback';
 import Dashboard from './pages/Dashboard';
 import EventDetails from './pages/EventDetails';
 import AllEvents from './pages/AllEvents';
@@ -37,6 +38,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/rules" element={<Rules />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
             {/* Protected User Routes */}
             <Route
