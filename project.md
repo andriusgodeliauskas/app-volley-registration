@@ -2,6 +2,9 @@
 
 Tai yra tinklinio registracijos sistema. Projektas susideda iš PHP (API) ir frontend dalies.
 
+**Nauja funkcija (2026-01):** Integruota **Paysera** mokėjimų sistema automatiniam piniginės papildymui. Palaiko mokėjimus per bankus, automatiškai atnaujina balansą ir generuoja operacijų istoriją.
+
+
 ## Svarbi konfigūracija (Saugumas)
 
 Šiame projekte naudojami jautrūs prisijungimo duomenys prie duomenų bazės. Šie failai yra **ignoruojami** (`.gitignore`) ir neturi patekti į versijų kontrolės sistemą.
