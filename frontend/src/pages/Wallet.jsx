@@ -293,21 +293,21 @@ export default function Wallet() {
                             </div>
                         </div>
 
-                        {/* Mobile/Tablet spacing */}
-                        <div className="d-lg-none mb-4"></div>
+                        {/* Mobile/Tablet spacing - only below lg breakpoint */}
+                        <div className="d-block d-lg-none mb-4"></div>
 
                         {/* Bank Transfer Instructions - Collapsible */}
                         <div className="section">
                             <div
                                 className="section-header mb-3 d-flex justify-content-between align-items-center"
-                                style={{ cursor: 'pointer' }}
+                                style={{ cursor: 'pointer', flexWrap: 'nowrap', flexDirection: 'row', textAlign: 'left', gap: 0 }}
                                 onClick={() => setBankTransferCollapsed(!bankTransferCollapsed)}
                             >
                                 <div className="section-title">
                                     <i className="bi bi-bank me-2 text-primary"></i>
                                     {t('wallet.bank_topup_title')}
                                 </div>
-                                <i className={`bi bi-${bankTransferCollapsed ? 'plus' : 'dash'}-circle text-primary`} style={{ fontSize: '1.25rem' }}></i>
+                                <i className={`bi bi-${bankTransferCollapsed ? 'plus' : 'dash'}-circle text-primary`} style={{ fontSize: '1.25rem', flexShrink: 0, marginLeft: '8px' }}></i>
                             </div>
 
                             {!bankTransferCollapsed && (
