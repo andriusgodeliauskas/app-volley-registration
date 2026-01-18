@@ -215,7 +215,7 @@ export default function Wallet() {
                                 <div className="dash-card-icon">💰</div>
                             </div>
                             <div className="dash-card-body">
-                                <div className="balance-amount" style={{ fontSize: '4.5rem', fontWeight: '800', lineHeight: '1.1' }}>{formatCurrency(balance)}</div>
+                                <div className="balance-amount" style={{ fontSize: '3.5rem', fontWeight: '800', lineHeight: '1.1' }}>{formatCurrency(balance)}</div>
                             </div>
                         </div>
 
