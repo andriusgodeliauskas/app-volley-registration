@@ -26,6 +26,7 @@ function Dashboard() {
     const [error, setError] = useState(null);
     const [registering, setRegistering] = useState({}); // Track loading state per event
     const [successMessage, setSuccessMessage] = useState('');
+    const [userHasGroups, setUserHasGroups] = useState(true);
 
     /**
      * Fetch user's current balance from API
@@ -54,8 +55,15 @@ function Dashboard() {
         setEventsLoading(true);
         try {
             const response = await get(API_ENDPOINTS.EVENTS);
-            if (response.success && response.data?.events) {
-                setEvents(response.data.events);
+            if (response.success && response.data) {
+                // Check if user has groups
+                if (response.data.user_has_groups === false) {
+                    setUserHasGroups(false);
+                    setEvents([]);
+                } else if (response.data.events) {
+                    setUserHasGroups(true);
+                    setEvents(response.data.events);
+                }
             }
         } catch (err) {
             setError(t('dash.error_register'));
@@ -301,6 +309,17 @@ function Dashboard() {
 
                     {loading ? (
                         <div className="text-center py-5 text-muted">{t('common.loading')}</div>
+                    ) : !userHasGroups ? (
+                        <div className="alert alert-warning d-flex align-items-start" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="me-3 flex-shrink-0 mt-1" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                            </svg>
+                            <div>
+                                <h5 className="alert-heading mb-2">{t('events.no_group_title')}</h5>
+                                <p className="mb-0">{t('events.no_group_message')}</p>
+                            </div>
+                        </div>
                     ) : events.length === 0 ? (
                         <div className="text-center py-5 text-muted">{t('dash.no_events')}</div>
                     ) : (
