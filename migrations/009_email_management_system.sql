@@ -1,6 +1,7 @@
 -- Migration: Email Management System
 -- Created: 2026-01-19
 -- Description: Add email logging and negative balance notification tracking
+-- FIXED: Removed foreign key constraints for compatibility
 
 -- ============================================
 -- Table: email_logs
@@ -22,10 +23,7 @@ CREATE TABLE IF NOT EXISTS email_logs (
     INDEX idx_user_id (user_id),
     INDEX idx_email_type (email_type),
     INDEX idx_sent_at (sent_at),
-    INDEX idx_status (status),
-    
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (sent_by_admin_id) REFERENCES users(id) ON DELETE SET NULL
+    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='Email sending history for admin monitoring';
 
@@ -41,9 +39,7 @@ CREATE TABLE IF NOT EXISTS negative_balance_notifications (
     notification_sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     INDEX idx_user_id (user_id),
-    INDEX idx_sent_at (notification_sent_at),
-    
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    INDEX idx_sent_at (notification_sent_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='Track negative balance notifications to prevent duplicate emails';
 
@@ -58,3 +54,7 @@ SHOW TABLES LIKE 'negative_balance_notifications';
 -- Check table structure
 DESCRIBE email_logs;
 DESCRIBE negative_balance_notifications;
+
+-- Show sample data (should be empty initially)
+SELECT COUNT(*) as email_logs_count FROM email_logs;
+SELECT COUNT(*) as notifications_count FROM negative_balance_notifications;
