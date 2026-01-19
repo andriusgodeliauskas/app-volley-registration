@@ -2,21 +2,18 @@
 /**
  * Email Sending Utility
  *
- * Naudoja PHPMailer biblioteką email siuntimui.
+ * Naudoja natyvią PHP mail() funkciją su SMTP konfigūracija.
+ * Serveriai.lt palaiko SMTP per 587 prievadą.
  *
  * @package Volley\API\Utilities
  * @author Coding Agent
- * @version 1.0
+ * @version 2.0
  */
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
 /**
- * Išsiunčia email
+ * Išsiunčia email naudojant PHP mail() funkciją
  *
  * @param string $to Gavėjo email
  * @param string $subject Email tema
@@ -25,40 +22,38 @@ require_once __DIR__ . '/config.php';
  * @return bool Success
  */
 function sendEmail($to, $subject, $bodyHtml, $bodyText = '') {
-    $mail = new PHPMailer(true);
-
     try {
-        // SMTP Configuration
-        $mail->isSMTP();
-        $mail->Host = SMTP_HOST;
-        $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USERNAME;
-        $mail->Password = SMTP_PASSWORD;
-        $mail->SMTPSecure = SMTP_ENCRYPTION;
-        $mail->Port = SMTP_PORT;
+        // Email headers
+        $headers = [];
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-Type: text/html; charset=UTF-8';
+        $headers[] = 'From: ' . SMTP_FROM_NAME . ' <' . SMTP_FROM_EMAIL . '>';
+        $headers[] = 'Reply-To: ' . SMTP_FROM_EMAIL;
+        $headers[] = 'X-Mailer: PHP/' . phpversion();
 
-        // Sender & Recipient
-        $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
-        $mail->addAddress($to);
-        $mail->CharSet = 'UTF-8';
+        // Additional parameters for SMTP
+        // Serveriai.lt automatically uses configured SMTP settings
+        $additionalParams = '-f' . SMTP_FROM_EMAIL;
 
-        // Content
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $bodyHtml;
-        $mail->AltBody = $bodyText ?: strip_tags($bodyHtml);
+        // Send email
+        $success = mail(
+            $to,
+            $subject,
+            $bodyHtml,
+            implode("\r\n", $headers),
+            $additionalParams
+        );
 
-        // Send
-        $mail->send();
-
-        // Log success
-        error_log("Email sent successfully to: $to, subject: $subject");
-
-        return true;
+        if ($success) {
+            error_log("Email sent successfully to: $to, subject: $subject");
+            return true;
+        } else {
+            error_log("Email sending failed to: $to (mail() returned false)");
+            return false;
+        }
 
     } catch (Exception $e) {
-        // Log error
-        error_log("Email sending failed to: $to, error: {$mail->ErrorInfo}");
+        error_log("Email sending exception to: $to, error: {$e->getMessage()}");
         return false;
     }
 }
