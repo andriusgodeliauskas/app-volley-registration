@@ -22,31 +22,34 @@ switch ($method) {
 }
 
 /**
- * GET - Fetch all donations
+ * GET - Fetch current user's donations
  */
 function handleGetDonations(): void
 {
-    $pdo = getDbConnection();
-
     try {
-        // Fetch all donations with user info
+        $pdo = getDbConnection();
+
+        // Get current user ID from authentication
+        $userId = getUserIdFromToken();
+
+        // Fetch only current user's donations
         $stmt = $pdo->prepare("
-            SELECT d.id, d.user_id, d.amount, d.created_at,
-                   u.name as user_name, u.surname as user_surname
+            SELECT 
+                d.id, d.amount, d.created_at,
+                u.name as user_name, u.surname as user_surname
             FROM donations d
             INNER JOIN users u ON d.user_id = u.id
+            WHERE d.user_id = ?
             ORDER BY d.created_at DESC
-            LIMIT 100
         ");
-        $stmt->execute();
+        $stmt->execute([$userId]);
+
         $donations = $stmt->fetchAll();
 
         sendSuccess(['donations' => $donations]);
 
     } catch (PDOException $e) {
-        if (APP_ENV === 'development') {
-            sendError('Database error: ' . $e->getMessage(), 500);
-        }
+        error_log("Failed to fetch donations: " . $e->getMessage());
         sendError('Failed to fetch donations', 500);
     }
 }
