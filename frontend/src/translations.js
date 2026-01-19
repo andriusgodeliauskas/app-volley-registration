@@ -613,7 +613,7 @@ export const translations = {
 
         // Events
         'events.no_group_title': 'Laukiama aktyvacijos',
-        'events.no_group_message': 'Šiuo metu jūs renginių nematote. Administratorius patikrins jūsų duomenis ir aktyvuos pilnai jūsų paskyrą. Apie aktyvaciją būsite informuotas el. paštu.',
+        'events.no_group_message': 'Jūs kol kas nematote renginių, nes jūsų paskyrą pilnai turi aktyvuoti administratorius. Kai paskyra bus aktyvuota, jums informuosime el. paštu.',
         'event.details': 'Renginio Informacija',
         'event.date': 'Data ir Laikas',
         'event.location': 'Vieta',
