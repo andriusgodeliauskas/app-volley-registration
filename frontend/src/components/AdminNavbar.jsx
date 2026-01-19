@@ -41,6 +41,7 @@ function AdminNavbar() {
                     </>
                 )}
                 <Link to="/admin/wallet" className={`nav-link-custom ${isActive('/admin/wallet')}`}>{t('admin.nav_wallet')}</Link>
+                <Link to="/admin/messages" className={`nav-link-custom ${isActive('/admin/messages')}`}>{t('admin.nav_messages')}</Link>
             </div>
             <div className="user-section">
                 <div className="dropdown">
@@ -164,6 +165,13 @@ function AdminNavbar() {
                                 onClick={closeMobileMenu}
                             >
                                 {t('admin.nav_wallet')}
+                            </Link>
+                            <Link
+                                to="/admin/messages"
+                                className={`mobile-menu-link ${isActive('/admin/messages')}`}
+                                onClick={closeMobileMenu}
+                            >
+                                {t('admin.nav_messages')}
                             </Link>
                         </div>
 

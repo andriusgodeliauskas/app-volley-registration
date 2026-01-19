@@ -29,6 +29,7 @@ import AdminTopups from './pages/AdminTopups';
 import AdminRent from './pages/AdminRent';
 import AdminDonations from './pages/AdminDonations';
 import AdminDeposits from './pages/AdminDeposits';
+import AdminMessages from './pages/admin/Messages';
 import TopUpTerms from './pages/TopUpTerms';
 
 function App() {
@@ -198,6 +199,14 @@ function App() {
               element={
                 <ProtectedRoute roles={['super_admin']}>
                   <AdminDeposits />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/messages"
+              element={
+                <ProtectedRoute roles={['super_admin', 'group_admin']}>
+                  <AdminMessages />
                 </ProtectedRoute>
               }
             />

@@ -51,8 +51,15 @@ function sendAccountActivationEmail(int $userId, PDO $pdo = null): bool
         ? 'Paskyra aktyvuota' 
         : 'Account Activated';
 
-    // Send email
-    $emailSent = sendEmail($user['email'], $subject, $emailHtml);
+    // Send email with logging
+    $emailSent = sendEmail(
+        $user['email'], 
+        $subject, 
+        $emailHtml,
+        '',
+        'account_activation',
+        $userId
+    );
 
     if ($emailSent) {
         error_log("Account activation email sent to: {$user['email']} (user_id: $userId)");
