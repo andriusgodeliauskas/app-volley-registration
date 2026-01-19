@@ -11,6 +11,10 @@ export const API_ENDPOINTS = {
   GOOGLE_AUTH: `${API_BASE_URL}/google-auth.php`,
   SET_PASSWORD: `${API_BASE_URL}/set-password.php`,
 
+  // Password Reset
+  FORGOT_PASSWORD: `${API_BASE_URL}/forgot-password.php`,
+  RESET_PASSWORD: `${API_BASE_URL}/reset-password.php`,
+
   // Admin Endpoints
   ADMIN_USER_DETAILS: `${API_BASE_URL}/admin_user_details.php`,
   ADMIN_USER_UPDATE: `${API_BASE_URL}/admin_user_update.php`,

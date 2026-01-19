@@ -93,19 +93,47 @@ try {
     
     $stmt->execute([$first_name, $last_name, $email, $passwordHash]);
 
+
     $userId = (int) $pdo->lastInsertId();
+
+    // Generate auth token for immediate login (same as Google OAuth)
+    $token = generateToken(32);
+    $tokenExpiry = date('Y-m-d H:i:s', strtotime('+' . TOKEN_EXPIRY_HOURS . ' hours'));
+
+    $stmt = $pdo->prepare("
+        UPDATE users
+        SET auth_token = ?, token_expiry = ?, last_activity = NOW()
+        WHERE id = ?
+    ");
+    $stmt->execute([$token, $tokenExpiry, $userId]);
+
+    // Set httpOnly cookie for secure token storage
+    $cookieOptions = [
+        'expires' => 0, // Session cookie
+        'path' => '/',
+        'domain' => '',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict'
+    ];
+    setcookie('auth_token', $token, $cookieOptions);
 
     // Reset rate limit after successful registration
     resetRateLimit($email, 'registration');
 
-    // Return success response
+    // Return success response with token for immediate login
     sendSuccess([
+        'token' => $token,
         'user' => [
             'id' => $userId,
             'name' => $first_name,
             'surname' => $last_name,
             'email' => $email,
-            'role' => 'user'
+            'role' => 'user',
+            'balance' => '0.00',
+            'parent_id' => null,
+            'avatar' => 'Midnight',
+            'children' => []
         ]
     ], 'Registration successful', 201);
     

@@ -32,7 +32,32 @@ Copy-Item "frontend/dist/*" "deploy/" -Recurse -Force
 
 # Copy API
 # Exclude sensitive dev files or git files if any
-Get-ChildItem "api" -Exclude "*.git*", "*.swp" | Copy-Item -Destination "deploy/api" -Recurse -Force
+Get-ChildItem "api" -Exclude "*.git*", "*.swp", "secrets-staging.php" | Copy-Item -Destination "deploy/api" -Recurse -Force
+
+# 3.1. Verify production secrets.php is used
+Write-Host "Verifying PRODUCTION credentials..." -ForegroundColor Yellow
+$secretsPath = "deploy/api/secrets.php"
+if (Test-Path $secretsPath) {
+    $secretsContent = Get-Content $secretsPath -Raw
+    if ($secretsContent -match "PRODUCTION Environment Credentials") {
+        Write-Host "Production secrets.php verified." -ForegroundColor Green
+    } else {
+        Write-Warning "secrets.php may not be production version! Please verify."
+    }
+} else {
+    Write-Error "secrets.php not found in deploy/api!"
+}
+
+# 3.2. Copy vendor/ directory (Composer dependencies)
+Write-Host "Checking Composer dependencies..." -ForegroundColor Yellow
+if (Test-Path "vendor") {
+    Copy-Item "vendor" "deploy/" -Recurse -Force
+    Write-Host "Vendor directory copied (PHPMailer dependencies)." -ForegroundColor Green
+} else {
+    Write-Warning "vendor/ directory not found!"
+    Write-Warning "Run 'composer install' locally OR on the server after deployment"
+    Write-Warning "See COMPOSER_SETUP.md for instructions"
+}
 
 # 4. Remove Database Files (Requirement: No SQL files)
 Write-Host "Removing .sql files..." -ForegroundColor Yellow

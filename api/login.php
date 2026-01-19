@@ -59,11 +59,6 @@ try {
         sendError('Invalid email or password', 401);
     }
 
-    // Check if account is active
-    if (!$user['is_active']) {
-        sendError('Account pending approval. Please wait for administrator confirmation.', 403);
-    }
-
     // Verify password
     if (!password_verify($password, $user['password_hash'])) {
         sendError('Invalid email or password', 401);

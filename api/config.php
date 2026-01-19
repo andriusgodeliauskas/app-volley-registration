@@ -41,3 +41,13 @@ define('ALLOWED_ORIGINS', [
 
 // Token Settings
 define('TOKEN_EXPIRY_HOURS', 24 * 7); // 7 days
+
+// Application URL (for reset links)
+// Defaults defined here, but can be overridden in secrets.php
+if (!defined('APP_URL')) {
+    define('APP_URL', 'https://volley.godeliauskas.com');
+}
+
+// SMTP Configuration MUST be defined in secrets.php for security
+// DO NOT define SMTP credentials in this file (version controlled)
+// See secrets.example.php for required SMTP constants

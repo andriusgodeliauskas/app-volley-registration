@@ -43,6 +43,26 @@ if (Test-Path "api/config-staging.php") {
     Write-Warning "Please create api/config-staging.php from api/config-staging.example.php"
 }
 
+# 4.1. Replace secrets.php with secrets-staging.php
+if (Test-Path "api/secrets-staging.php") {
+    Copy-Item "api/secrets-staging.php" "deploy-staging/api/secrets.php" -Force
+    Write-Host "Staging secrets applied (DB, Google OAuth, Paysera, SMTP)." -ForegroundColor Green
+} else {
+    Write-Warning "api/secrets-staging.php not found! Using production secrets.php"
+    Write-Warning "Please create api/secrets-staging.php with staging credentials"
+}
+
+# 4.2. Copy vendor/ directory (Composer dependencies)
+Write-Host "Checking Composer dependencies..." -ForegroundColor Yellow
+if (Test-Path "vendor") {
+    Copy-Item "vendor" "deploy-staging/" -Recurse -Force
+    Write-Host "Vendor directory copied (PHPMailer dependencies)." -ForegroundColor Green
+} else {
+    Write-Warning "vendor/ directory not found!"
+    Write-Warning "Run 'composer install' locally OR on the server after deployment"
+    Write-Warning "See COMPOSER_SETUP.md for instructions"
+}
+
 # 5. Remove Database Files (Requirement: No SQL files)
 Write-Host "Removing .sql files..." -ForegroundColor Yellow
 Get-ChildItem "deploy-staging" -Include "*.sql" -Recurse | Remove-Item -Force

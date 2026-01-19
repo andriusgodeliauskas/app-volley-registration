@@ -168,11 +168,8 @@ function Login() {
                                     </div>
 
                                     {/* Password Field */}
-                                    <div className="mb-4">
-                                        <div className="d-flex justify-content-between align-items-center mb-1">
-                                            <label htmlFor="password" className="form-label fw-medium mb-0">{t('auth.password')}</label>
-                                            {/* <Link to="/forgot-password" className="text-decoration-none small">Forgot password?</Link> */}
-                                        </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="password" className="form-label fw-medium">{t('auth.password')}</label>
                                         <div className="input-group">
                                             <span className="input-group-text bg-light border-end-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="text-muted" viewBox="0 0 16 16">
@@ -208,6 +205,17 @@ function Login() {
                                                     </svg>
                                                 )}
                                             </button>
+                                        </div>
+
+                                        {/* Forgot Password Link */}
+                                        <div className="text-end mt-2">
+                                            <Link
+                                                to="/forgot-password"
+                                                className="text-decoration-none small"
+                                                style={{ color: '#0d6efd' }}
+                                            >
+                                                {t('auth.forgot_password')}
+                                            </Link>
                                         </div>
                                     </div>
 

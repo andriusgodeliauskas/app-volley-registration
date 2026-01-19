@@ -37,7 +37,26 @@ switch ($method) {
 function handleGetEvents(array $currentUser): void
 {
     $pdo = getDbConnection();
-    
+    $userId = $currentUser['id'];
+
+    // Check if user belongs to any group
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as group_count
+        FROM user_groups
+        WHERE user_id = ?
+    ");
+    $stmt->execute([$userId]);
+    $groupCheck = $stmt->fetch();
+    $userHasGroups = ($groupCheck['group_count'] > 0);
+
+    if (!$userHasGroups) {
+        // User doesn't belong to any group - return empty events
+        sendSuccess([
+            'user_has_groups' => false,
+            'events' => []
+        ]);
+    }
+
     // Parse query parameters
     $status = $_GET['status'] ?? 'open';
     $upcoming = filter_var($_GET['upcoming'] ?? 'true', FILTER_VALIDATE_BOOLEAN);
@@ -139,8 +158,11 @@ function handleGetEvents(array $currentUser): void
             $event['user_registered'] = (int)$event['user_registered'] > 0;
             $event['spots_available'] = $event['max_players'] - $event['registered_count'];
         }
-        
-        sendSuccess(['events' => $events]);
+
+        sendSuccess([
+            'user_has_groups' => true,
+            'events' => $events
+        ]);
         
     } catch (PDOException $e) {
         if (APP_ENV === 'development') {

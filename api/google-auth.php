@@ -187,11 +187,6 @@ try {
         // Existing user - update Google ID if needed
         // =====================================================
 
-        if (!$existingUser['is_active']) {
-            $pdo->rollBack();
-            sendError('Paskyra laukia patvirtinimo. Susisiekite su administratoriumi.', 403);
-        }
-
         // Update oauth_google_id if not set
         if (empty($existingUser['oauth_google_id'])) {
             $stmt = $pdo->prepare("
@@ -259,7 +254,7 @@ try {
 
     } else {
         // =====================================================
-        // New user - create account and temp token
+        // New user - create account and login immediately
         // =====================================================
 
         // Create new user with OAuth provider
@@ -273,17 +268,21 @@ try {
 
         $userId = (int) $pdo->lastInsertId();
 
-        // Generate temporary token for password setup (10 min validity)
-        $tempToken = generateToken(32);
-        $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+        // Generate auth token (NOT temp_token) - IMMEDIATE LOGIN
+        $token = generateToken(32);
+        $tokenExpiry = date('Y-m-d H:i:s', strtotime('+' . TOKEN_EXPIRY_HOURS . ' hours'));
 
         $stmt = $pdo->prepare("
-            INSERT INTO oauth_temp_tokens (token, user_id, expires_at)
-            VALUES (?, ?, ?)
+            UPDATE users
+            SET auth_token = ?, token_expiry = ?, last_activity = NOW()
+            WHERE id = ?
         ");
-        $stmt->execute([$tempToken, $userId, $expiresAt]);
+        $stmt->execute([$token, $tokenExpiry, $userId]);
 
-        // Build new user response
+        // Get children (sub-accounts) - should be empty for new users
+        $children = [];
+
+        // Build user response
         $userData = [
             'id' => $userId,
             'name' => $firstName,
@@ -293,22 +292,30 @@ try {
             'balance' => '0.00',
             'parent_id' => null,
             'avatar' => 'Midnight',
-            'children' => []
+            'children' => $children
         ];
+
+        // Set httpOnly cookie for secure token storage
+        $cookieOptions = [
+            'expires' => 0, // Session cookie
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ];
+        setcookie('auth_token', $token, $cookieOptions);
 
         $pdo->commit();
 
-        // Log new user registration
-        error_log("New Google OAuth user registered: user_id=$userId, email=$email");
-
-        // Reset rate limit after successful registration
+        error_log("New Google OAuth user registered and logged in immediately: user_id=$userId, email=$email");
         resetRateLimit($clientIp, 'google_auth');
 
         sendSuccess([
-            'requires_password' => true,
-            'temp_token' => $tempToken,
+            'requires_password' => false,  // CHANGED from true
+            'token' => $token,             // ADDED - immediate auth token
             'user' => $userData
-        ], 'Paskyra sukurta. Nustatykite slaptažodį.');
+        ], 'Sėkmingai užsiregistravote');
     }
 
 } catch (PDOException $e) {

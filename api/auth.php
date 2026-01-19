@@ -52,7 +52,7 @@ function getAuthUser(): ?array
         $stmt = $pdo->prepare("
             SELECT id, name, email, role, balance, parent_id, is_active, token_expiry, last_activity
             FROM users
-            WHERE auth_token = ? AND is_active = 1
+            WHERE auth_token = ?
         ");
         $stmt->execute([$token]);
 
@@ -126,7 +126,7 @@ function tryRememberMeToken(): ?array
         $stmt = $pdo->prepare("
             SELECT id, name, email, role, balance, parent_id, is_active, remember_me_expiry
             FROM users
-            WHERE remember_me_token = ? AND is_active = 1
+            WHERE remember_me_token = ?
         ");
         $stmt->execute([$rememberMeToken]);
 

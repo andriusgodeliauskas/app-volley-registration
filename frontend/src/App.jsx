@@ -8,6 +8,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Rules from './pages/Rules';
 import GoogleCallback from './pages/GoogleCallback';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import EventDetails from './pages/EventDetails';
 import AllEvents from './pages/AllEvents';
@@ -41,6 +43,8 @@ function App() {
             <Route path="/rules" element={<Rules />} />
             <Route path="/topup-terms" element={<TopUpTerms />} />
             <Route path="/auth/google/callback" element={<GoogleCallback />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected User Routes */}
             <Route

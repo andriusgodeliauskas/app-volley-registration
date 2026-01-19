@@ -37,6 +37,21 @@ export const translations = {
         'auth.set_password_title': 'Set Your Password',
         'auth.set_password_description': 'Welcome! Please set a password for your account:',
         'auth.set_password_button': 'Set Password',
+        'auth.forgot_password': 'Forgot password',
+        'auth.forgot_password_title': 'Password Reset',
+        'auth.forgot_password_description': 'Enter your email address and we\'ll send you a link to reset your password.',
+        'auth.forgot_password_success_title': 'Email Sent',
+        'auth.forgot_password_success_message': 'An email has been sent with instructions. If you don\'t see it, check your spam folder.',
+        'auth.reset_password_title': 'New Password',
+        'auth.reset_password_description': 'Enter a new password for your account.',
+        'auth.reset_password_success_title': 'Password Changed',
+        'auth.reset_password_success_message': 'Your password has been changed successfully. You can now log in.',
+        'auth.new_password': 'New Password',
+        'auth.send_reset_link': 'Send',
+        'auth.reset_password_button': 'Reset Password',
+        'auth.back_to_login': 'Back to Login',
+        'auth.request_new_link': 'Request new link',
+        'auth.redirecting_to_login': 'You will be redirected to login in 3 seconds...',
 
         // Dashboard
         'dash.welcome': 'Welcome back',
@@ -63,6 +78,8 @@ export const translations = {
         'dash.no_events': 'No events available',
 
         // Events
+        'events.no_group_title': 'Pending Activation',
+        'events.no_group_message': 'You currently don\'t see any events. An administrator needs to activate you. They have been informed of your registration and will activate you soon.',
         'event.details': 'Event Details',
         'event.date': 'Date & Time',
         'event.location': 'Location',
@@ -322,6 +339,10 @@ export const translations = {
         'error.google_auth_cancelled': 'Google sign-in was cancelled.',
         'error.google_auth_failed': 'Google sign-in failed. Please try again.',
         'error.password_set_failed': 'Failed to set password. Please try again.',
+        'error.rate_limit_password_reset': 'Too many password reset attempts. Try again in 1 hour.',
+        'error.reset_link_expired': 'Reset link has expired. Please initiate password reset again.',
+        'error.invalid_reset_link': 'Invalid reset link.',
+        'error.password_requirements': 'Password does not meet requirements',
 
         // Registration Page
         'register.success': 'Registration successful! Please log in.',
@@ -550,6 +571,21 @@ export const translations = {
         'auth.set_password_title': 'Nustatykite Slaptažodį',
         'auth.set_password_description': 'Sveiki! Prašome nustatyti slaptažodį savo paskyrai:',
         'auth.set_password_button': 'Nustatyti Slaptažodį',
+        'auth.forgot_password': 'Pamiršau slaptažodį',
+        'auth.forgot_password_title': 'Slaptažodžio priminimas',
+        'auth.forgot_password_description': 'Įveskite savo el. pašto adresą ir mes atsiųsime nuorodą slaptažodžio keitimui.',
+        'auth.forgot_password_success_title': 'Laiškas išsiųstas',
+        'auth.forgot_password_success_message': 'Jums išsiųstas laiškas su instrukcijomis. Jei nematote, patikrinkite spam aplanką.',
+        'auth.reset_password_title': 'Naujas slaptažodis',
+        'auth.reset_password_description': 'Įveskite naują slaptažodį savo paskyrai.',
+        'auth.reset_password_success_title': 'Slaptažodis pakeistas',
+        'auth.reset_password_success_message': 'Slaptažodis sėkmingai pakeistas. Galite jungtis.',
+        'auth.new_password': 'Naujas slaptažodis',
+        'auth.send_reset_link': 'Siųsti',
+        'auth.reset_password_button': 'Pakeisti slaptažodį',
+        'auth.back_to_login': 'Grįžti į prisijungimą',
+        'auth.request_new_link': 'Prašyti naujos nuorodos',
+        'auth.redirecting_to_login': 'Po 3 sekundžių būsite nukreipti į prisijungimą...',
 
         // Dashboard
         'dash.welcome': 'Sveiki',
@@ -576,6 +612,8 @@ export const translations = {
         'dash.no_events': 'Renginių nėra',
 
         // Events
+        'events.no_group_title': 'Laukiama aktyvacijos',
+        'events.no_group_message': 'Šiuo metu jūs renginių nematote. Administratorius patikrins jūsų duomenis ir aktyvuos pilnai jūsų paskyrą. Apie aktyvaciją būsite informuotas el. paštu.',
         'event.details': 'Renginio Informacija',
         'event.date': 'Data ir Laikas',
         'event.location': 'Vieta',
@@ -838,6 +876,10 @@ export const translations = {
         'error.google_auth_cancelled': 'Google prisijungimas buvo atšauktas.',
         'error.google_auth_failed': 'Google prisijungimas nepavyko. Bandykite dar kartą.',
         'error.password_set_failed': 'Nepavyko nustatyti slaptažodžio. Bandykite dar kartą.',
+        'error.rate_limit_password_reset': 'Per daug slaptažodžio keitimo bandymų. Bandykite po 1 val.',
+        'error.reset_link_expired': 'Nuoroda nebegalioja. Prašome inicijuoti slaptažodžio keitimą iš naujo.',
+        'error.invalid_reset_link': 'Netinkama nuoroda.',
+        'error.password_requirements': 'Slaptažodis neatitinka reikalavimų',
 
         // Registration Page
         'register.success': 'Registracija sėkminga! Prašome prisijungti.',

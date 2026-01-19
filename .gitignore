@@ -1,5 +1,6 @@
 # Credentials & Security
 api/secrets.php
+api/secrets-staging.php
 api/config-staging.php
 google_registration/
 .env

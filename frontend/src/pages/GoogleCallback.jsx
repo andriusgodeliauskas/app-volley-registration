@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import SetPasswordModal from '../components/SetPasswordModal';
 
 /**
  * GoogleCallback Component
@@ -17,9 +16,6 @@ function GoogleCallback() {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showPasswordModal, setShowPasswordModal] = useState(false);
-    const [tempToken, setTempToken] = useState(null);
-    const [userEmail, setUserEmail] = useState(null);
 
     useEffect(() => {
         const handleCallback = async () => {
@@ -44,29 +40,24 @@ function GoogleCallback() {
             const storedState = sessionStorage.getItem('oauth_state');
             sessionStorage.removeItem('oauth_state'); // Clear after use
 
-            // Log warning if state doesn't match, but continue anyway
-            // Google OAuth has its own CSRF protection mechanisms
+            // SECURITY: Enforce state validation to prevent CSRF attacks
             if (!state || !storedState || state !== storedState) {
-                console.warn('OAuth state mismatch - continuing anyway (Google provides CSRF protection)');
+                console.error('OAuth state validation failed - potential CSRF attack');
+                setError(t('error.csrf_validation_failed') || 'Security validation failed. Please try again.');
+                setLoading(false);
+                return; // CRITICAL: Stop execution
             }
 
             try {
                 const result = await loginWithGoogle(code);
 
-                if (result.requires_password) {
-                    // New user - needs to set password
-                    setTempToken(result.temp_token);
-                    setUserEmail(result.user.email);
-                    setShowPasswordModal(true);
-                    setLoading(false);
+                // Google OAuth users no longer need to set password
+                // Redirect directly based on role
+                const user = result.user;
+                if (user.role === 'super_admin' || user.role === 'group_admin') {
+                    navigate('/admin');
                 } else {
-                    // Existing user - redirect to dashboard
-                    const user = result.user;
-                    if (user.role === 'super_admin' || user.role === 'group_admin') {
-                        navigate('/admin');
-                    } else {
-                        navigate('/dashboard');
-                    }
+                    navigate('/dashboard');
                 }
             } catch (err) {
                 console.error('Google OAuth callback error:', err);
@@ -77,32 +68,6 @@ function GoogleCallback() {
 
         handleCallback();
     }, [searchParams, loginWithGoogle, navigate, t]);
-
-    const handlePasswordSubmit = async (password) => {
-        try {
-            const user = await completeGoogleRegistration(tempToken, password);
-
-            // Close modal
-            setShowPasswordModal(false);
-
-            // Redirect based on role
-            if (user.role === 'super_admin' || user.role === 'group_admin') {
-                navigate('/admin');
-            } else {
-                navigate('/dashboard');
-            }
-        } catch (err) {
-            console.error('Password submission error:', err);
-            setError(err.message || t('error.password_set_failed'));
-            setShowPasswordModal(false);
-        }
-    };
-
-    const handleModalClose = () => {
-        // User cancelled password setup - redirect to login
-        setShowPasswordModal(false);
-        navigate('/login');
-    };
 
     return (
         <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
@@ -144,14 +109,6 @@ function GoogleCallback() {
                     </div>
                 </div>
             </div>
-
-            {/* Set Password Modal */}
-            <SetPasswordModal
-                show={showPasswordModal}
-                onClose={handleModalClose}
-                onSubmit={handlePasswordSubmit}
-                userEmail={userEmail}
-            />
         </div>
     );
 }

@@ -1,0 +1,20 @@
+{
+    "name": "volley/registration-app",
+    "description": "Volleyball Event Management System",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "phpmailer/phpmailer": "^6.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Volley\\": "api/"
+        }
+    },
+    "config": {
+        "vendor-dir": "vendor",
+        "platform": {
+            "php": "7.4"
+        }
+    }
+}
