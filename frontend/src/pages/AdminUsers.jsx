@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { API_ENDPOINTS, get } from '../api/config';
+import { API_ENDPOINTS, get, post } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminUsers() {
@@ -12,6 +12,8 @@ function AdminUsers() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [sendingEmail, setSendingEmail] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
     const [statusFilter, setStatusFilter] = useState(() => {
         // Load from localStorage on initial render
         return localStorage.getItem('adminUsersFilter') || 'all';
@@ -57,6 +59,35 @@ function AdminUsers() {
             u.email.toLowerCase().includes(query)
         );
     });
+
+    // Send activation email
+    const handleSendActivationEmail = async (userId, userName) => {
+        if (!confirm(t('admin.confirm_send_activation_email').replace('{name}', userName))) {
+            return;
+        }
+
+        setSendingEmail(prev => ({ ...prev, [userId]: true }));
+        setError('');
+        setSuccessMessage('');
+
+        try {
+            const response = await post('/api/admin/send-email.php', {
+                user_id: userId,
+                email_type: 'account_activation'
+            });
+
+            if (response.success) {
+                setSuccessMessage(t('admin.email_sent_successfully'));
+                setTimeout(() => setSuccessMessage(''), 5000);
+            } else {
+                setError(response.message || t('admin.email_send_failed'));
+            }
+        } catch (err) {
+            setError(err.message || t('admin.email_send_failed'));
+        } finally {
+            setSendingEmail(prev => ({ ...prev, [userId]: false }));
+        }
+    };
 
     return (
         <div className="min-vh-100">
@@ -111,6 +142,14 @@ function AdminUsers() {
                     <div className="alert-custom bg-danger bg-opacity-10 border-danger text-danger mb-4">
                         <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
                         <div>{error}</div>
+                    </div>
+                )}
+
+                {/* Success Message */}
+                {successMessage && (
+                    <div className="alert-custom bg-success bg-opacity-10 border-success text-success mb-4">
+                        <i className="bi bi-check-circle-fill alert-custom-icon"></i>
+                        <div>{successMessage}</div>
                     </div>
                 )}
 
@@ -195,6 +234,23 @@ function AdminUsers() {
                                         <Link to={`/admin/users/edit/${u.id}`} className="btn-custom">
                                             {t('common.edit')}
                                         </Link>
+                                        {!u.is_active && (
+                                            <button
+                                                className="btn-custom btn-sm bg-primary bg-opacity-10 text-primary border-primary"
+                                                onClick={() => handleSendActivationEmail(u.id, `${u.name} ${u.surname}`)}
+                                                disabled={sendingEmail[u.id]}
+                                                title={t('admin.send_activation_email')}
+                                            >
+                                                {sendingEmail[u.id] ? (
+                                                    <span className="spinner-border spinner-border-sm"></span>
+                                                ) : (
+                                                    <>
+                                                        <i className="bi bi-envelope me-1"></i>
+                                                        {t('admin.send_activation_email')}
+                                                    </>
+                                                )}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
