@@ -1,5 +1,5 @@
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost/api';
+// API Configuration - automatically uses current domain (staging or production)
+const API_BASE_URL = window.location.origin + '/api';
 
 export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/login.php`,
