@@ -27,6 +27,14 @@ export default function Messages() {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    // Bulk email sending state
+    const [showDebtModal, setShowDebtModal] = useState(false);
+    const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+    const [usersForEmail, setUsersForEmail] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [loadingUsers, setLoadingUsers] = useState(false);
+    const [sendingBulk, setSendingBulk] = useState(false);
+
     // Fetch emails
     useEffect(() => {
         fetchEmails();
@@ -90,6 +98,113 @@ export default function Messages() {
             setErrorMessage(error.message || t('admin.email_send_failed'));
         } finally {
             setResending(null);
+        }
+    };
+
+    // Fetch users for bulk email
+    const fetchUsersForEmail = async (type) => {
+        setLoadingUsers(true);
+        try {
+            const response = await get('/api/users.php');
+            if (response.success && response.data?.users) {
+                let filteredUsers = [];
+                if (type === 'debt') {
+                    // Users with negative balance
+                    filteredUsers = response.data.users.filter(u => u.balance < 0);
+                } else if (type === 'registration') {
+                    // Inactive users
+                    filteredUsers = response.data.users.filter(u => !u.is_active);
+                }
+                setUsersForEmail(filteredUsers);
+                setSelectedUsers([]);
+            }
+        } catch (error) {
+            console.error('Failed to fetch users:', error);
+            setErrorMessage(t('admin.error_loading_emails'));
+        } finally {
+            setLoadingUsers(false);
+        }
+    };
+
+    // Open debt email modal
+    const handleOpenDebtModal = async () => {
+        setShowDebtModal(true);
+        await fetchUsersForEmail('debt');
+    };
+
+    // Open registration email modal
+    const handleOpenRegistrationModal = async () => {
+        setShowRegistrationModal(true);
+        await fetchUsersForEmail('registration');
+    };
+
+    // Toggle user selection
+    const toggleUserSelection = (userId) => {
+        setSelectedUsers(prev =>
+            prev.includes(userId)
+                ? prev.filter(id => id !== userId)
+                : [...prev, userId]
+        );
+    };
+
+    // Toggle all users
+    const toggleAllUsers = () => {
+        if (selectedUsers.length === usersForEmail.length) {
+            setSelectedUsers([]);
+        } else {
+            setSelectedUsers(usersForEmail.map(u => u.id));
+        }
+    };
+
+    // Send bulk emails
+    const handleSendBulkEmails = async (emailType) => {
+        if (selectedUsers.length === 0) {
+            setErrorMessage(t('admin.select_at_least_one'));
+            return;
+        }
+
+        if (!confirm(t('admin.confirm_send_emails').replace('{count}', selectedUsers.length))) {
+            return;
+        }
+
+        setSendingBulk(true);
+        setErrorMessage('');
+        setSuccessMessage('');
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const userId of selectedUsers) {
+            try {
+                const response = await post('/api/admin/send-email.php', {
+                    user_id: userId,
+                    email_type: emailType
+                });
+
+                if (response.success) {
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+            } catch (error) {
+                failCount++;
+            }
+        }
+
+        setSendingBulk(false);
+        setShowDebtModal(false);
+        setShowRegistrationModal(false);
+
+        const summary = t('admin.emails_sent_summary')
+            .replace('{success}', successCount)
+            .replace('{failed}', failCount);
+
+        if (successCount > 0) {
+            setSuccessMessage(summary);
+            fetchEmails(); // Refresh email list
+            setTimeout(() => setSuccessMessage(''), 5000);
+        } else {
+            setErrorMessage(summary);
         }
     };
 
@@ -157,6 +272,30 @@ export default function Messages() {
                             <button type="button" className="btn-close" onClick={() => setErrorMessage('')}></button>
                         </div>
                     )}
+
+                    {/* Bulk Email Sending Section */}
+                    <div className="mb-4">
+                        <div className="section-subtitle mb-3">
+                            <i className="bi bi-send me-2"></i>
+                            {t('admin.send_emails_section')}
+                        </div>
+                        <div className="d-flex gap-2 flex-wrap">
+                            <button
+                                className="btn btn-warning"
+                                onClick={handleOpenDebtModal}
+                            >
+                                <i className="bi bi-exclamation-triangle me-2"></i>
+                                {t('admin.send_debt_emails')}
+                            </button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleOpenRegistrationModal}
+                            >
+                                <i className="bi bi-envelope me-2"></i>
+                                {t('admin.send_registration_emails')}
+                            </button>
+                        </div>
+                    </div>
 
                     {/* Filters */}
                     <div className="row g-3 mb-4">
@@ -315,6 +454,186 @@ export default function Messages() {
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={() => setSelectedEmail(null)}>
                                     {t('common.close')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Debt Email Modal */}
+            {showDebtModal && (
+                <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    <i className="bi bi-exclamation-triangle text-warning me-2"></i>
+                                    {t('admin.users_with_debt')}
+                                </h5>
+                                <button type="button" className="btn-close" onClick={() => setShowDebtModal(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                {loadingUsers ? (
+                                    <div className="text-center py-4">
+                                        <div className="spinner-border text-primary"></div>
+                                    </div>
+                                ) : usersForEmail.length === 0 ? (
+                                    <div className="text-center py-4 text-muted">
+                                        <i className="bi bi-check-circle fs-1 opacity-25"></i>
+                                        <p className="mt-2">{t('admin.no_users_to_email')}</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="mb-3">
+                                            <div className="form-check">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    id="selectAll"
+                                                    checked={selectedUsers.length === usersForEmail.length}
+                                                    onChange={toggleAllUsers}
+                                                />
+                                                <label className="form-check-label fw-bold" htmlFor="selectAll">
+                                                    {t('admin.select_users')} ({selectedUsers.length}/{usersForEmail.length})
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="list-group">
+                                            {usersForEmail.map(user => (
+                                                <label key={user.id} className="list-group-item list-group-item-action">
+                                                    <div className="d-flex align-items-center">
+                                                        <input
+                                                            className="form-check-input me-3"
+                                                            type="checkbox"
+                                                            checked={selectedUsers.includes(user.id)}
+                                                            onChange={() => toggleUserSelection(user.id)}
+                                                        />
+                                                        <div className="flex-grow-1">
+                                                            <div className="fw-semibold">{user.name} {user.surname}</div>
+                                                            <div className="text-muted small">{user.email}</div>
+                                                        </div>
+                                                        <span className="badge bg-danger">
+                                                            €{user.balance.toFixed(2)}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowDebtModal(false)}>
+                                    {t('common.cancel')}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-warning"
+                                    onClick={() => handleSendBulkEmails('negative_balance')}
+                                    disabled={sendingBulk || selectedUsers.length === 0}
+                                >
+                                    {sendingBulk ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2"></span>
+                                            {t('admin.sending_emails')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-send me-2"></i>
+                                            {t('admin.send_to_selected')} ({selectedUsers.length})
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Registration Email Modal */}
+            {showRegistrationModal && (
+                <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    <i className="bi bi-envelope text-primary me-2"></i>
+                                    {t('admin.inactive_users')}
+                                </h5>
+                                <button type="button" className="btn-close" onClick={() => setShowRegistrationModal(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                {loadingUsers ? (
+                                    <div className="text-center py-4">
+                                        <div className="spinner-border text-primary"></div>
+                                    </div>
+                                ) : usersForEmail.length === 0 ? (
+                                    <div className="text-center py-4 text-muted">
+                                        <i className="bi bi-check-circle fs-1 opacity-25"></i>
+                                        <p className="mt-2">{t('admin.no_users_to_email')}</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="mb-3">
+                                            <div className="form-check">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    id="selectAllReg"
+                                                    checked={selectedUsers.length === usersForEmail.length}
+                                                    onChange={toggleAllUsers}
+                                                />
+                                                <label className="form-check-label fw-bold" htmlFor="selectAllReg">
+                                                    {t('admin.select_users')} ({selectedUsers.length}/{usersForEmail.length})
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="list-group">
+                                            {usersForEmail.map(user => (
+                                                <label key={user.id} className="list-group-item list-group-item-action">
+                                                    <div className="d-flex align-items-center">
+                                                        <input
+                                                            className="form-check-input me-3"
+                                                            type="checkbox"
+                                                            checked={selectedUsers.includes(user.id)}
+                                                            onChange={() => toggleUserSelection(user.id)}
+                                                        />
+                                                        <div className="flex-grow-1">
+                                                            <div className="fw-semibold">{user.name} {user.surname}</div>
+                                                            <div className="text-muted small">{user.email}</div>
+                                                        </div>
+                                                        <span className="badge bg-secondary">
+                                                            {t('admin.user_inactive')}
+                                                        </span>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowRegistrationModal(false)}>
+                                    {t('common.cancel')}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => handleSendBulkEmails('account_activation')}
+                                    disabled={sendingBulk || selectedUsers.length === 0}
+                                >
+                                    {sendingBulk ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2"></span>
+                                            {t('admin.sending_emails')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-send me-2"></i>
+                                            {t('admin.send_to_selected')} ({selectedUsers.length})
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>
