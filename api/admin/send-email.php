@@ -65,7 +65,7 @@ function handleSendEmail(): void
             WHERE sent_by_admin_id = ?
                 AND sent_at > NOW() - INTERVAL 1 HOUR
         ");
-        $stmt->execute([$_SESSION['user_id']]);
+        $stmt->execute([$currentUser['id']]);
         $count = $stmt->fetch()['count'];
 
         if ($count >= 10) {
