@@ -47,18 +47,13 @@ $message_text = str_replace('{balance}', number_format($balance, 2), $t['message
         <tr>
             <td style="padding: 20px 0;">
                 
-                <!-- Header -->
-                <h2 style="margin: 0 0 20px 0; font-size: 20px; font-weight: bold; color: #000000;">
-                    <?= htmlspecialchars($t['title'], ENT_QUOTES, 'UTF-8') ?>
-                </h2>
-                
                 <!-- Content -->
                 <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #000000;">
                     <?= htmlspecialchars($t['greeting'], ENT_QUOTES, 'UTF-8') ?><?= !empty($user_name) ? ' ' . htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8') : '' ?>,
                 </p>
                 
-                <!-- Balance Warning -->
-                <p style="margin: 0 0 15px 0; padding: 12px; background-color: #f5f5f5; border-left: 3px solid #000000; font-size: 14px; line-height: 1.5; color: #000000; font-weight: bold;">
+                <!-- Balance Message -->
+                <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #000000;">
                     <?= htmlspecialchars($message_text, ENT_QUOTES, 'UTF-8') ?>
                 </p>
 
@@ -81,11 +76,6 @@ $message_text = str_replace('{balance}', number_format($balance, 2), $t['message
                 <p style="margin: 20px 0 0 0; font-size: 14px; line-height: 1.5; color: #000000;">
                     <?= htmlspecialchars($t['wishes'], ENT_QUOTES, 'UTF-8') ?>,<br>
                     <?= htmlspecialchars($t['team'], ENT_QUOTES, 'UTF-8') ?>
-                </p>
-                
-                <!-- Footer -->
-                <p style="margin: 30px 0 0 0; padding-top: 20px; border-top: 1px solid #cccccc; font-size: 12px; line-height: 1.5; color: #666666;">
-                    <?= htmlspecialchars($t['footer_note'], ENT_QUOTES, 'UTF-8') ?>
                 </p>
                 
             </td>
