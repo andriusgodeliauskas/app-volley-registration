@@ -173,6 +173,7 @@ export default function Messages() {
 
         let successCount = 0;
         let failCount = 0;
+        let firstError = null;
 
         for (const userId of selectedUsers) {
             try {
@@ -185,9 +186,17 @@ export default function Messages() {
                     successCount++;
                 } else {
                     failCount++;
+                    if (!firstError) {
+                        firstError = response.message || 'Unknown error';
+                    }
                 }
             } catch (error) {
+                console.error('Email send error:', error);
                 failCount++;
+                // Store first error message for display
+                if (!firstError) {
+                    firstError = error.message || 'Unknown error';
+                }
             }
         }
 
@@ -204,7 +213,9 @@ export default function Messages() {
             fetchEmails(); // Refresh email list
             setTimeout(() => setSuccessMessage(''), 5000);
         } else {
-            setErrorMessage(summary);
+            // Show error with details if available
+            const errorMsg = firstError ? `${summary}. Error: ${firstError}` : summary;
+            setErrorMessage(errorMsg);
         }
     };
 

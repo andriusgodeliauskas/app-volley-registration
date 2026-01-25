@@ -12,6 +12,13 @@
  * }
  */
 
+// Suppress warnings in production (they break JSON output)
+// Errors are still logged to error_log
+if (!defined('APP_ENV') || APP_ENV !== 'development') {
+    error_reporting(E_ERROR | E_PARSE);
+    ini_set('display_errors', '0');
+}
+
 require_once __DIR__ . '/../auth.php';
 require_once __DIR__ . '/../db.php';
 
