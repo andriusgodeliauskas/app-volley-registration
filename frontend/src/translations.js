@@ -124,6 +124,9 @@ export const translations = {
         'profile.save': 'Save Changes',
         'profile.success': 'Profile updated successfully!',
         'profile.error': 'Failed to update profile',
+        'profile.email_language': 'Email Language',
+        'profile.language_lt': 'Lithuanian',
+        'profile.language_en': 'English',
 
         // Children
         'children.title': 'My Children',
@@ -702,6 +705,9 @@ export const translations = {
         'profile.save': 'Išsaugoti',
         'profile.success': 'Profilis sėkmingai atnaujintas!',
         'profile.error': 'Nepavyko atnaujinti profilio',
+        'profile.email_language': 'Email kalba',
+        'profile.language_lt': 'Lietuvių',
+        'profile.language_en': 'Anglų',
 
         // Children
         'children.title': 'Mano Vaikai',

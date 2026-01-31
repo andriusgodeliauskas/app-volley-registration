@@ -19,6 +19,7 @@ $userId = $currentUser['id'];
 $name = trim($input['name'] ?? '');
 $surname = trim($input['surname'] ?? '');
 $avatar = trim($input['avatar'] ?? '');
+$preferredLanguage = trim($input['preferred_language'] ?? '');
 
 // Validate name length (min 2, max 50 characters to prevent DoS)
 if (strlen($name) < 2 || strlen($name) > 50) {
@@ -41,23 +42,34 @@ if (!empty($avatar) && (strlen($avatar) > 20 || !preg_match("/^[a-zA-Z0-9_-]+$/"
     sendError('Invalid avatar format', 400);
 }
 
+// Validate preferred_language (only 'lt' or 'en' allowed)
+if (!empty($preferredLanguage) && !in_array($preferredLanguage, ['lt', 'en'])) {
+    sendError('Invalid language. Only "lt" or "en" allowed', 400);
+}
+
 $pdo = getDbConnection();
 
 try {
-    // Update user
-    $stmt = $pdo->prepare("UPDATE users SET name = ?, surname = ?, avatar = ? WHERE id = ?");
-    $stmt->execute([$name, $surname, $avatar, $userId]);
+    // Paruošti UPDATE užklausą (įtraukiant preferred_language jei pateikta)
+    if (!empty($preferredLanguage)) {
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, surname = ?, avatar = ?, preferred_language = ? WHERE id = ?");
+        $stmt->execute([$name, $surname, $avatar, $preferredLanguage, $userId]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, surname = ?, avatar = ? WHERE id = ?");
+        $stmt->execute([$name, $surname, $avatar, $userId]);
+    }
     
     // Fetch updated user to return
-    $stmt = $pdo->prepare("SELECT id, name, surname, email, role, balance, avatar, parent_id, is_active FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, name, surname, email, role, balance, avatar, parent_id, is_active, preferred_language FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $updatedUser = $stmt->fetch();
-    
+
     // Format types
     $updatedUser['id'] = (int)$updatedUser['id'];
     $updatedUser['balance'] = (float)$updatedUser['balance'];
     $updatedUser['parent_id'] = $updatedUser['parent_id'] ? (int)$updatedUser['parent_id'] : null;
     $updatedUser['is_active'] = (bool)$updatedUser['is_active'];
+    $updatedUser['preferred_language'] = $updatedUser['preferred_language'] ?? 'lt';
 
     sendSuccess(['user' => $updatedUser], 'Profile updated successfully');
 

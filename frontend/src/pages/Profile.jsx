@@ -22,7 +22,8 @@ export default function Profile() {
         name: '',
         surname: '',
         userEmail: '', // userEmail to avoid conflict with email input name if any
-        avatar: 'Midnight'
+        avatar: 'Midnight',
+        preferred_language: 'lt'
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -39,7 +40,8 @@ export default function Profile() {
                         name: userData.name || '',
                         surname: userData.surname || '',
                         userEmail: userData.email || '',
-                        avatar: userData.avatar || 'Midnight'
+                        avatar: userData.avatar || 'Midnight',
+                        preferred_language: userData.preferred_language || 'lt'
                     });
                 }
             } catch (err) {
@@ -63,7 +65,8 @@ export default function Profile() {
             const response = await post(API_ENDPOINTS.USER_UPDATE, {
                 name: formData.name,
                 surname: formData.surname,
-                avatar: formData.avatar
+                avatar: formData.avatar,
+                preferred_language: formData.preferred_language
             });
 
             if (response.success) {
@@ -168,6 +171,18 @@ export default function Profile() {
                                                         required
                                                     />
                                                 </div>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label className="form-label text-muted small fw-bold text-uppercase">{t('profile.email_language')}</label>
+                                                <select
+                                                    className="form-select"
+                                                    value={formData.preferred_language}
+                                                    onChange={(e) => setFormData({ ...formData, preferred_language: e.target.value })}
+                                                >
+                                                    <option value="lt">{t('profile.language_lt')}</option>
+                                                    <option value="en">{t('profile.language_en')}</option>
+                                                </select>
+                                                <div className="form-text">{t('profile.email_language')} - notification emails will be sent in this language</div>
                                             </div>
                                         </div>
                                     </div>

@@ -175,7 +175,7 @@ try {
 
     $stmt = $pdo->prepare("
         SELECT id, name, surname, email, role, balance, is_active,
-               oauth_google_id, password_required, parent_id, avatar
+               oauth_google_id, password_required, parent_id, avatar, preferred_language
         FROM users
         WHERE email = ?
     ");
@@ -227,6 +227,7 @@ try {
             'balance' => $existingUser['balance'],
             'parent_id' => $existingUser['parent_id'] ? (int) $existingUser['parent_id'] : null,
             'avatar' => $existingUser['avatar'] ?? 'Midnight',
+            'preferred_language' => $existingUser['preferred_language'] ?? 'lt',
             'children' => $children
         ];
 
@@ -292,6 +293,7 @@ try {
             'balance' => '0.00',
             'parent_id' => null,
             'avatar' => 'Midnight',
+            'preferred_language' => 'lt',
             'children' => $children
         ];
 

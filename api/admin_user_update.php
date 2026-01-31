@@ -31,6 +31,7 @@ $role = isset($input['role']) ? $input['role'] : null;
 $balance = isset($input['balance']) ? (float)$input['balance'] : null;
 $isValidActive = isset($input['is_active']);
 $isActive = $isValidActive ? (int)$input['is_active'] : null;
+$preferredLanguage = isset($input['preferred_language']) ? trim($input['preferred_language']) : null;
 
 // Validation
 if ($name && strlen($name) < 2) {
@@ -44,6 +45,9 @@ if ($email && !isValidEmail($email)) {
 }
 if ($role && !in_array($role, ['user', 'group_admin', 'super_admin'])) {
     sendError('Invalid role', 400);
+}
+if ($preferredLanguage && !in_array($preferredLanguage, ['lt', 'en'])) {
+    sendError('Invalid language. Only "lt" or "en" allowed', 400);
 }
 
 // Restriction: Only super_admin can change roles to/from admins or edit other admins
@@ -100,6 +104,10 @@ try {
     if ($isActive !== null) {
         $fields[] = 'is_active = ?';
         $params[] = $isActive;
+    }
+    if ($preferredLanguage !== null) {
+        $fields[] = 'preferred_language = ?';
+        $params[] = $preferredLanguage;
     }
 
     if (empty($fields)) {

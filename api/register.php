@@ -133,6 +133,7 @@ try {
             'balance' => '0.00',
             'parent_id' => null,
             'avatar' => 'Midnight',
+            'preferred_language' => 'lt',
             'children' => []
         ]
     ], 'Registration successful', 201);

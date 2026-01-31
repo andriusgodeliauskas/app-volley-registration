@@ -50,7 +50,7 @@ function getAuthUser(): ?array
         $pdo = getDbConnection();
 
         $stmt = $pdo->prepare("
-            SELECT id, name, email, role, balance, parent_id, is_active, token_expiry, last_activity
+            SELECT id, name, email, role, balance, parent_id, is_active, token_expiry, last_activity, preferred_language
             FROM users
             WHERE auth_token = ?
         ");
@@ -97,6 +97,7 @@ function getAuthUser(): ?array
         $user['id'] = (int) $user['id'];
         $user['parent_id'] = $user['parent_id'] ? (int) $user['parent_id'] : null;
         $user['is_active'] = (bool) $user['is_active'];
+        $user['preferred_language'] = $user['preferred_language'] ?? 'lt';
 
         return $user;
 
@@ -124,7 +125,7 @@ function tryRememberMeToken(): ?array
         $pdo = getDbConnection();
 
         $stmt = $pdo->prepare("
-            SELECT id, name, email, role, balance, parent_id, is_active, remember_me_expiry
+            SELECT id, name, email, role, balance, parent_id, is_active, remember_me_expiry, preferred_language
             FROM users
             WHERE remember_me_token = ?
         ");
@@ -181,6 +182,7 @@ function tryRememberMeToken(): ?array
         $user['id'] = (int) $user['id'];
         $user['parent_id'] = $user['parent_id'] ? (int) $user['parent_id'] : null;
         $user['is_active'] = (bool) $user['is_active'];
+        $user['preferred_language'] = $user['preferred_language'] ?? 'lt';
 
         return $user;
 

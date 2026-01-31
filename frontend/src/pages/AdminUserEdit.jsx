@@ -21,7 +21,8 @@ function AdminUserEdit() {
         role: 'user',
         balance: 0,
         is_active: true,
-        group_ids: []
+        group_ids: [],
+        preferred_language: 'lt'
     });
 
     const [topUpData, setTopUpData] = useState({ amount: '', description: '', created_at: '' });
@@ -64,7 +65,8 @@ function AdminUserEdit() {
                     role: response.data.user.role,
                     balance: response.data.user.balance,
                     is_active: response.data.user.is_active,
-                    group_ids: response.data.user.group_ids || []
+                    group_ids: response.data.user.group_ids || [],
+                    preferred_language: response.data.user.preferred_language || 'lt'
                 });
             } else {
                 setError(response.message || 'Failed to load user details');
@@ -286,6 +288,20 @@ function AdminUserEdit() {
                                             onChange={handleChange}
                                             required
                                         />
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">Email Language</label>
+                                        <select
+                                            className="form-select"
+                                            name="preferred_language"
+                                            value={formData.preferred_language}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="lt">Lietuvių (Lithuanian)</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                        <div className="form-text text-muted small">Language for email notifications</div>
                                     </div>
 
                                     <div className="row">

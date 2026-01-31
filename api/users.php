@@ -31,7 +31,7 @@ function handleGetUsers($pdo) {
     try {
         // Fetch all users
         $stmt = $pdo->query("
-            SELECT id, name, surname, email, role, balance, is_active, created_at, parent_id
+            SELECT id, name, surname, email, role, balance, is_active, created_at, parent_id, preferred_language
             FROM users
             ORDER BY is_active ASC, surname ASC, name ASC
         ");
@@ -43,6 +43,7 @@ function handleGetUsers($pdo) {
             $user['balance'] = (float)$user['balance'];
             $user['is_active'] = (bool)$user['is_active'];
             $user['parent_id'] = $user['parent_id'] ? (int)$user['parent_id'] : null;
+            $user['preferred_language'] = $user['preferred_language'] ?? 'lt';
             // Maybe add parent name if parent_id exists? keeping it simple for now
         }
 
