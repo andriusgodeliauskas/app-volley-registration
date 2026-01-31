@@ -7,10 +7,14 @@ import Navbar from '../components/Navbar';
 import Breadcrumb from '../components/Breadcrumb';
 
 const AVATAR_SEEDS = [
-    'Felix', 'Aneka', 'Zack', 'Midnight', 'Abby',
-    'Bella', 'Buster', 'Coco', 'Daisy', 'Ginger',
-    'Jack', 'Jasper', 'Lola', 'Lucky', 'Max',
-    'Misty', 'Oliver', 'Oscar', 'Pepper', 'Rocky'
+    // Male European/light-skinned
+    'Thomas', 'James', 'William', 'Michael', 'David',
+    'Robert', 'Daniel', 'Andrew', 'Matthew', 'Ryan',
+    'Brian', 'Kevin', 'Patrick', 'Scott', 'Adam',
+    // Mixed/diverse options
+    'Felix', 'Zack', 'Jack', 'Max', 'Oliver',
+    // Female options
+    'Emma', 'Sophie', 'Anna', 'Laura', 'Sarah'
 ];
 
 const getAvatarUrl = (seed) => `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
