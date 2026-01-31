@@ -54,6 +54,9 @@ function GoogleCallback() {
             try {
                 const result = await loginWithGoogle(code);
 
+                // Clear any previous errors on success
+                setError(null);
+
                 // Google OAuth users no longer need to set password
                 // Redirect directly based on role
                 const user = result.user;
