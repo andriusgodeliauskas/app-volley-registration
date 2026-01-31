@@ -121,6 +121,14 @@ try {
     // Reset rate limit after successful registration
     resetRateLimit($email, 'registration');
 
+    // Notify Super Admins about new user registration
+    require_once __DIR__ . '/send-new-user-notification.php';
+    try {
+        sendNewUserRegistrationNotification($email, $pdo);
+    } catch (Exception $e) {
+        error_log("Failed to send new user notifications: " . $e->getMessage());
+    }
+
     // Return success response with token for immediate login
     sendSuccess([
         'token' => $token,

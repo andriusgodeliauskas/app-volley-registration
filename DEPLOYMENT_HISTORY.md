@@ -4,6 +4,66 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 
 ---
 
+## 2026-01-31 - Super Admin New User Registration Notification ✅
+
+**Status:** READY FOR DEPLOYMENT
+**Date:** 2026-01-31
+
+### What Was Changed
+
+#### New Feature: Email Notification for New User Registrations
+When a new user registers in the system, all active Super Admins automatically receive an email notification.
+
+**Key Features:**
+- Sends email only to active Super Admins (`is_active = 1 AND role = 'super_admin'`)
+- Inactive Super Admins do NOT receive notifications
+- Email failures do NOT block the registration process (graceful failure)
+- Email content in Lithuanian only (Super Admins don't need EN)
+- Logged to `email_logs` table with type `new_user_registration`
+
+**Email Content:**
+```
+Sveiki,
+Naujas vartotojas užsiregistravo sistemoje:
+{new_user_email}
+[Prisijungti]
+Linkėjimai,
+AG Volley komanda
+```
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `api/email-templates/new-user-registered.php` | NEW - Email template for notification |
+| `api/send-new-user-notification.php` | NEW - Helper function to send notifications to all active Super Admins |
+| `api/register.php` | MODIFIED - Added notification call after successful registration (lines 124-130) |
+
+### Security Review
+
+**Status:** APPROVED (0 critical, 0 high priority issues)
+
+| Check | Status |
+|-------|--------|
+| SQL Injection | PASS - Prepared statements used |
+| XSS Prevention | PASS - htmlspecialchars with ENT_QUOTES |
+| Error Handling | PASS - Email failures don't block registration |
+| GDPR Compliance | PASS - Logged to email_logs table |
+
+### Database Changes Required
+
+**NONE** - No database migrations needed.
+
+### Testing Checklist
+
+- [ ] Register a new user
+- [ ] Verify active Super Admins received email
+- [ ] Verify inactive Super Admins did NOT receive email
+- [ ] Check `email_logs` table for new entries
+- [ ] Test when email server unavailable (registration should still succeed)
+
+---
+
 ## 2026-01-31 - Email System, Date Filters & Google OAuth Fixes ✅
 
 **Status:** DEPLOYED
