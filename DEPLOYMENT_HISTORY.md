@@ -4,6 +4,71 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 
 ---
 
+## 2026-01-31 - Email System Improvements & Date Filters ✅
+
+**Status:** READY FOR DEPLOYMENT
+**Date:** 2026-01-31
+
+### What Was Changed
+
+#### 1. Email System Bug Fixes
+- **Fixed:** PHP scope issue in `send-email.php` - `$currentUser` was not accessible inside function
+- **Fixed:** Missing closing brace in `send-negative-balance-email.php` causing syntax error
+- **Improved:** Better error messages in Lithuanian for email sending failures:
+  - "Vartotojas nerastas"
+  - "Vartotojo balansas nėra pakankamai neigiamas"
+  - "Nepavyko išsiųsti email"
+
+#### 2. Password Reset Email Template
+- **Removed:** Header "Slaptažodžio atkūrimas" from email
+- **Updated:** Intro text to clearer Lithuanian
+- **Changed:** Button text to "Sukurti naują slaptažodį"
+- **Removed:** Gray background from expiry warning
+- **Updated:** "not_requested" text
+
+#### 3. Email Preview Improvements
+- **Increased:** `body_preview` storage from 200 to 1000 characters
+- **Fixed:** Removed excessive whitespace from preview (collapsed multiple spaces)
+- **Improved:** Preview display in admin modal
+
+#### 4. Date Filter for Email Logs (NEW FEATURE)
+- **Backend:** Added `date_from` and `date_to` parameters to `email-logs.php`
+- **Frontend:** Added date range filter inputs with "Filtruoti" button
+- **Default:** Shows last 7 days of emails
+- **Translations:** Added "Nuo"/"Iki" (LT) and "From"/"To" (EN)
+
+#### 5. CLAUDE.md - Agent Workflow Documentation
+- **Added:** Detailed agent workflow requirements
+- **Added:** Agent table (volley-analysis-agent, php-backend-developer, ui-ux-designer, code-review-security)
+- **Added:** Required workflow steps for every task
+- **Added:** Development guidelines (14 rules total)
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `api/admin/email-logs.php` | Added date_from/date_to filters |
+| `api/admin/send-email.php` | Fixed $currentUser scope issue |
+| `api/email-templates/password-reset.php` | Updated template text/layout |
+| `api/email.php` | Increased body_preview, collapsed whitespace |
+| `api/send-negative-balance-email.php` | Fixed syntax, improved error messages |
+| `frontend/src/pages/admin/Messages.jsx` | Added date filter UI |
+| `frontend/src/translations.js` | Added date filter translations |
+| `CLAUDE.md` | Added agent workflow documentation |
+
+### Database Changes Required
+
+**NONE** - No database migrations needed for this deployment.
+
+### Deployment Checklist
+
+- [ ] Upload `deploy/` contents to production FTP
+- [ ] Test email sending functionality
+- [ ] Test date filter on Messages page
+- [ ] Verify password reset email template
+
+---
+
 ## 2026-01-09 - Security Phase 2 Production Deployment ✅
 
 **Status:** SUCCESSFUL

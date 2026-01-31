@@ -68,7 +68,7 @@ function sendEmail($to, $subject, $bodyHtml, $bodyText = '', $emailType = 'manua
         'email_type' => $emailType,
         'recipient_email' => $to,
         'subject' => $subject,
-        'body_preview' => substr(strip_tags($bodyHtml), 0, 200),
+        'body_preview' => substr(preg_replace('/\s+/', ' ', trim(strip_tags($bodyHtml))), 0, 1000),
         'status' => $success ? 'sent' : 'failed',
         'error_message' => $errorMessage
     ]);

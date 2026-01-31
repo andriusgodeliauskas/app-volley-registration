@@ -11,10 +11,22 @@ export default function Messages() {
     // State
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(true);
+    // Default date range: last 7 days
+    const getDefaultDateFrom = () => {
+        const date = new Date();
+        date.setDate(date.getDate() - 7);
+        return date.toISOString().split('T')[0];
+    };
+    const getDefaultDateTo = () => {
+        return new Date().toISOString().split('T')[0];
+    };
+
     const [filters, setFilters] = useState({
         email_type: '',
         search: '',
-        page: 1
+        page: 1,
+        date_from: getDefaultDateFrom(),
+        date_to: getDefaultDateTo()
     });
     const [pagination, setPagination] = useState({
         total: 0,
@@ -35,10 +47,10 @@ export default function Messages() {
     const [loadingUsers, setLoadingUsers] = useState(false);
     const [sendingBulk, setSendingBulk] = useState(false);
 
-    // Fetch emails
+    // Fetch emails on page load and when page changes
     useEffect(() => {
         fetchEmails();
-    }, [filters.page, filters.email_type]);
+    }, [filters.page]);
 
     const fetchEmails = async () => {
         setLoading(true);
@@ -50,6 +62,12 @@ export default function Messages() {
 
             if (filters.email_type) {
                 params.append('email_type', filters.email_type);
+            }
+            if (filters.date_from) {
+                params.append('date_from', filters.date_from);
+            }
+            if (filters.date_to) {
+                params.append('date_to', filters.date_to);
             }
 
             const response = await get(`/api/admin/email-logs.php?${params}`);
@@ -309,18 +327,45 @@ export default function Messages() {
                     </div>
 
                     {/* Filters */}
-                    <div className="row g-3 mb-4">
-                        <div className="col-md-4">
+                    <div className="row g-3 mb-4 align-items-end">
+                        <div className="col-md-3">
                             <select
                                 className="form-select"
                                 value={filters.email_type}
-                                onChange={(e) => setFilters({ ...filters, email_type: e.target.value, page: 1 })}
+                                onChange={(e) => setFilters({ ...filters, email_type: e.target.value })}
                             >
                                 <option value="">{t('admin.filter_all_types')}</option>
                                 <option value="account_activation">{t('admin.email_type_activation')}</option>
                                 <option value="password_reset">{t('admin.email_type_password_reset')}</option>
                                 <option value="negative_balance">{t('admin.email_type_negative_balance')}</option>
                             </select>
+                        </div>
+                        <div className="col-md-2">
+                            <label className="form-label small text-muted">{t('common.date_from')}</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={filters.date_from}
+                                onChange={(e) => setFilters({ ...filters, date_from: e.target.value })}
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <label className="form-label small text-muted">{t('common.date_to')}</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={filters.date_to}
+                                onChange={(e) => setFilters({ ...filters, date_to: e.target.value })}
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <button
+                                className="btn btn-primary w-100"
+                                onClick={() => { setFilters({ ...filters, page: 1 }); fetchEmails(); }}
+                            >
+                                <i className="bi bi-funnel me-1"></i>
+                                {t('common.filter')}
+                            </button>
                         </div>
                     </div>
 
@@ -452,8 +497,8 @@ export default function Messages() {
                                 )}
                                 <div className="mb-3">
                                     <strong>{t('admin.email_preview')}:</strong>
-                                    <div className="border rounded p-3 mt-2 bg-light">
-                                        {selectedEmail.body_preview}...
+                                    <div className="border rounded p-3 mt-2 bg-light" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                        {selectedEmail.body_preview}
                                     </div>
                                 </div>
                                 {selectedEmail.error_message && (

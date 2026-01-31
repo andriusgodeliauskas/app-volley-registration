@@ -42,6 +42,8 @@ function handleGetEmailLogs(): void
         // Get query parameters
         $userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : null;
         $emailType = isset($_GET['email_type']) ? $_GET['email_type'] : null;
+        $dateFrom = isset($_GET['date_from']) ? $_GET['date_from'] : null;
+        $dateTo = isset($_GET['date_to']) ? $_GET['date_to'] : null;
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $perPage = isset($_GET['per_page']) ? min(100, max(1, (int)$_GET['per_page'])) : 50;
         $offset = ($page - 1) * $perPage;
@@ -58,6 +60,16 @@ function handleGetEmailLogs(): void
         if ($emailType) {
             $where[] = 'el.email_type = ?';
             $params[] = $emailType;
+        }
+
+        if ($dateFrom) {
+            $where[] = 'DATE(el.sent_at) >= ?';
+            $params[] = $dateFrom;
+        }
+
+        if ($dateTo) {
+            $where[] = 'DATE(el.sent_at) <= ?';
+            $params[] = $dateTo;
         }
 
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';

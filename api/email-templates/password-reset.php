@@ -17,10 +17,10 @@ $translations = [
     'lt' => [
         'subject' => 'Slaptažodžio atkūrimas',
         'greeting' => 'Sveiki,',
-        'intro' => 'Gavome jūsų prašymą atstatyti slaptažodį Volley Registration sistemoje.',
-        'button_text' => 'Atkurti slaptažodį',
+        'intro' => 'Gavome jūsų prašymą sukurti naują prisijungimo slaptažodį. Paspauskite mygtuką ir būsite nukreipti į puslapį, kuriame galėsite sukurti naują slaptažodį.',
+        'button_text' => 'Sukurti naują slaptažodį',
         'expiry_warning' => 'Ši nuoroda galioja 1 valandą.',
-        'not_requested' => 'Jei jūs neprašėte slaptažodžio atkūrimo, tiesiog ignoruokite šį laišką.',
+        'not_requested' => 'Jei jūs neprašėte naujo slaptažodžio sukūrimo, ignoruokite šį laišką.',
         'regards' => 'Pagarbiai,',
         'team' => 'Volley Registration komanda',
         'footer' => '© 2026 Volley Registration. Visos teisės saugomos.'
@@ -28,10 +28,10 @@ $translations = [
     'en' => [
         'subject' => 'Password Reset',
         'greeting' => 'Hello,',
-        'intro' => 'We received a request to reset your password for Volley Registration system.',
-        'button_text' => 'Reset Password',
+        'intro' => 'We received a request to create a new password for your account. Click the button below to be redirected to a page where you can create a new password.',
+        'button_text' => 'Create new password',
         'expiry_warning' => 'This link is valid for 1 hour.',
-        'not_requested' => 'If you did not request a password reset, simply ignore this email.',
+        'not_requested' => 'If you did not request a new password, ignore this email.',
         'regards' => 'Best regards,',
         'team' => 'Volley Registration Team',
         'footer' => '© 2026 Volley Registration. All rights reserved.'
@@ -51,11 +51,6 @@ $t = $translations[$lang] ?? $translations['lt'];
     <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse;">
         <tr>
             <td style="padding: 20px 0;">
-                
-                <!-- Header -->
-                <h2 style="margin: 0 0 20px 0; font-size: 20px; font-weight: bold; color: #000000;">
-                    <?php echo htmlspecialchars($t['subject'], ENT_QUOTES, 'UTF-8'); ?>
-                </h2>
                 
                 <!-- Content -->
                 <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.5; color: #000000;">
@@ -79,7 +74,7 @@ $t = $translations[$lang] ?? $translations['lt'];
                 </table>
 
                 <!-- Warning -->
-                <p style="margin: 20px 0; padding: 12px; background-color: #f5f5f5; border-left: 3px solid #000000; font-size: 13px; line-height: 1.5; color: #000000;">
+                <p style="margin: 20px 0 15px 0; font-size: 14px; line-height: 1.5; color: #000000;">
                     <?php echo htmlspecialchars($t['expiry_warning'], ENT_QUOTES, 'UTF-8'); ?>
                 </p>
 

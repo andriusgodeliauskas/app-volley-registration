@@ -32,7 +32,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'POST':
-        handleSendEmail();
+        handleSendEmail($currentUser);
         break;
     default:
         sendError('Method not allowed', 405);
@@ -41,7 +41,7 @@ switch ($method) {
 /**
  * POST - Send email to user
  */
-function handleSendEmail(): void
+function handleSendEmail(array $currentUser): void
 {
     try {
         $input = getJsonInput();

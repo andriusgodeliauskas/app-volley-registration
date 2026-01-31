@@ -30,13 +30,13 @@ function sendNegativeBalanceEmail(int $userId, PDO $pdo = null): bool
 
     if (!$user) {
         error_log("Negative balance email: User not found (ID: $userId)");
-        return false;
+        throw new Exception("Vartotojas nerastas (ID: $userId)");
     }
 
     // Check if balance is actually negative
     if ($user['balance'] >= -1.00) {
         error_log("Negative balance email: User balance not negative enough (ID: $userId, balance: {$user['balance']})");
-        return false;
+        throw new Exception("Vartotojo balansas nėra pakankamai neigiamas (balansas: {$user['balance']} EUR). Reikia < -1.00 EUR.");
     }
 
     // Determine language (default to Lithuanian)
@@ -80,6 +80,6 @@ function sendNegativeBalanceEmail(int $userId, PDO $pdo = null): bool
         return true;
     } else {
         error_log("Failed to send negative balance email to: {$user['email']} (user_id: $userId)");
-        return false;
+        throw new Exception("Nepavyko išsiųsti email į: {$user['email']}. Patikrinkite SMTP konfigūraciją.");
     }
 }
