@@ -17,7 +17,7 @@ export const translations = {
 
         // Auth
         'auth.login_title': 'Welcome Back',
-        'auth.login_subtitle': 'Sign in to manage your volleyball games',
+        'auth.login_subtitle': 'Sign In',
         'auth.email': 'Email Address',
         'auth.password': 'Password',
         'auth.remember_me': 'Remember Me',
@@ -598,8 +598,8 @@ export const translations = {
         'nav.topup_terms': 'Papildymo taisyklės',
 
         // Auth
-        'auth.login_title': 'Sveiki Sugrįžę',
-        'auth.login_subtitle': 'Prisijunkite, kad galėtumėte valdyti žaidimus',
+        'auth.login_title': 'Sveiki sugrįžę',
+        'auth.login_subtitle': 'Prisijunkite',
         'auth.email': 'El. Paštas',
         'auth.password': 'Slaptažodis',
         'auth.remember_me': 'Prisiminti mane',

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 import OrDivider from '../components/OrDivider';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 
@@ -15,7 +14,7 @@ function Login() {
     const [localError, setLocalError] = useState(null);
 
     const { login } = useAuth();
-    const { t } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     const navigate = useNavigate();
 
     // Map backend error messages to translation keys
@@ -106,11 +105,6 @@ function Login() {
 
     return (
         <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
-            {/* Language Switcher - Top Right */}
-            <div className="position-absolute top-0 end-0 m-3">
-                <LanguageSwitcher />
-            </div>
-
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
@@ -119,11 +113,45 @@ function Login() {
                         <div className="card shadow-lg border-0 rounded-4">
                             <div className="card-body p-4 p-md-5">
 
+                                {/* Language Switcher - Top Right inside card */}
+                                <div className="position-absolute top-0 end-0 m-3">
+                                    <div className="dropdown">
+                                        <button
+                                            className="btn btn-sm btn-outline-secondary dropdown-toggle text-uppercase fw-semibold px-3"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            style={{ fontSize: '0.875rem' }}
+                                        >
+                                            {language}
+                                        </button>
+                                        <ul className="dropdown-menu dropdown-menu-end shadow-sm border rounded-3 p-1" style={{ minWidth: '120px' }}>
+                                            <li>
+                                                <button
+                                                    className={`dropdown-item rounded-2 py-2 ${language === 'lt' ? 'active' : ''}`}
+                                                    onClick={() => setLanguage('lt')}
+                                                >
+                                                    Lietuvių
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button
+                                                    className={`dropdown-item rounded-2 py-2 ${language === 'en' ? 'active' : ''}`}
+                                                    onClick={() => setLanguage('en')}
+                                                >
+                                                    English
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
                                 {/* Logo / Header */}
                                 <div className="text-center mb-4">
                                     <div className="d-inline-flex align-items-center justify-content-center bg-primary bg-gradient rounded-circle mb-3" style={{ width: '64px', height: '64px' }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" viewBox="0 0 16 16">
-                                            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+                                        {/* Volleyball SVG Icon */}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                                         </svg>
                                     </div>
                                     <h2 className="fw-bold mb-1">{t('auth.login_title')}</h2>

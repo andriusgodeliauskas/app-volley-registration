@@ -6,7 +6,7 @@ import OrDivider from '../components/OrDivider';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 
 function Register() {
-    const { t } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -124,6 +124,39 @@ function Register() {
                         {/* Card */}
                         <div className="card shadow-lg border-0 rounded-4">
                             <div className="card-body p-4 p-md-5">
+
+                                {/* Language Switcher - Top Right inside card */}
+                                <div className="position-absolute top-0 end-0 m-3">
+                                    <div className="dropdown">
+                                        <button
+                                            className="btn btn-sm btn-outline-secondary dropdown-toggle text-uppercase fw-semibold px-3"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            style={{ fontSize: '0.875rem' }}
+                                        >
+                                            {language}
+                                        </button>
+                                        <ul className="dropdown-menu dropdown-menu-end shadow-sm border rounded-3 p-1" style={{ minWidth: '120px' }}>
+                                            <li>
+                                                <button
+                                                    className={`dropdown-item rounded-2 py-2 ${language === 'lt' ? 'active' : ''}`}
+                                                    onClick={() => setLanguage('lt')}
+                                                >
+                                                    Lietuvių
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button
+                                                    className={`dropdown-item rounded-2 py-2 ${language === 'en' ? 'active' : ''}`}
+                                                    onClick={() => setLanguage('en')}
+                                                >
+                                                    English
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
 
                                 {/* Logo / Header */}
                                 <div className="text-center mb-4">
