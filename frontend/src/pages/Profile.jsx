@@ -16,7 +16,7 @@ const AVATAR_SEEDS = [
     'Maria', 'Katrin'
 ];
 
-const getAvatarUrl = (seed) => `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
+const getAvatarUrl = (seed) => `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}&skinColor=f2d3b1,ecad80,f9c9b6`;
 
 export default function Profile() {
     const { user, updateUser } = useAuth();
