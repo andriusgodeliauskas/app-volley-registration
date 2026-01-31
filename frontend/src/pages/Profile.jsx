@@ -6,8 +6,10 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Breadcrumb from '../components/Breadcrumb';
 
-// Avatar configurations - males first (25 total), then females (5)
+// Avatar configurations - males first (26 total), then females (5)
 const AVATARS = [
+    // Default - simple smiling male
+    { id: 'default', params: 'hair=short01&skinColor=f2d3b1&mouth=variant30&eyes=variant26&eyebrows=variant10' },
     // Males with short hair (10 options)
     { id: 'male1', params: 'hair=short01&skinColor=f2d3b1&mouth=variant01&eyes=variant01' },
     { id: 'male2', params: 'hair=short02&skinColor=ecad80&mouth=variant02&eyes=variant02' },
@@ -60,7 +62,7 @@ export default function Profile() {
         name: '',
         surname: '',
         userEmail: '', // userEmail to avoid conflict with email input name if any
-        avatar: 'male1',
+        avatar: 'default',
         preferred_language: 'lt'
     });
     const [loading, setLoading] = useState(true);
