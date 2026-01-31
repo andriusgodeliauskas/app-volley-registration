@@ -125,6 +125,7 @@ export const translations = {
         'profile.success': 'Profile updated successfully!',
         'profile.error': 'Failed to update profile',
         'profile.email_language': 'Email Language',
+        'profile.email_language_hint': 'Notification emails will be sent in this language',
         'profile.language_lt': 'Lithuanian',
         'profile.language_en': 'English',
 
@@ -706,6 +707,7 @@ export const translations = {
         'profile.success': 'Profilis sėkmingai atnaujintas!',
         'profile.error': 'Nepavyko atnaujinti profilio',
         'profile.email_language': 'Email kalba',
+        'profile.email_language_hint': 'Pranešimų el. laiškai bus siunčiami šia kalba',
         'profile.language_lt': 'Lietuvių',
         'profile.language_en': 'Anglų',
 

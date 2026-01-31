@@ -182,7 +182,7 @@ export default function Profile() {
                                                     <option value="lt">{t('profile.language_lt')}</option>
                                                     <option value="en">{t('profile.language_en')}</option>
                                                 </select>
-                                                <div className="form-text">{t('profile.email_language')} - notification emails will be sent in this language</div>
+                                                <div className="form-text">{t('profile.email_language_hint')}</div>
                                             </div>
                                         </div>
                                     </div>
