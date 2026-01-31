@@ -154,6 +154,12 @@ When developing this project, follow these critical principles:
 
 14. **Moderate and Orchestrate**: Always act as a moderator/orchestrator when working. Delegate tasks to specialized agents, coordinate their work, and ensure quality control throughout the process.
 
+15. **Never Hardcode**: Never hardcode text, credentials, URLs, or configuration values:
+    - **Text**: Always use translation keys (`t('key')`) - never hardcode English or any language text directly
+    - **Credentials**: All API keys, passwords, secrets must be in `secrets.php` (gitignored)
+    - **URLs**: Use configuration constants for API endpoints and redirect URLs
+    - **Values**: Use constants or config files for any values that might change between environments
+
 ---
 
 ## Agent Workflow (MANDATORY)
