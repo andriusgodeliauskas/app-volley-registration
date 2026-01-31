@@ -6,17 +6,35 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Breadcrumb from '../components/Breadcrumb';
 
-const AVATAR_SEEDS = [
-    // Male European light-skinned (12 options first)
-    'Leo', 'Marcus', 'Stefan', 'Erik', 'Henrik',
-    'Klaus', 'Viktor', 'Simon', 'Martin', 'Peter',
-    'Lukas', 'Jonas',
-    // Female European light-skinned
-    'Emma', 'Sophie', 'Hannah', 'Julia', 'Lisa',
-    'Maria', 'Katrin'
+// Avatar configurations - males first with short hair, then females with long hair
+const AVATARS = [
+    // Males with short hair (10 options with different expressions)
+    { id: 'male1', params: 'hair=short01&skinColor=f2d3b1&mouth=variant01&eyes=variant01' },
+    { id: 'male2', params: 'hair=short02&skinColor=ecad80&mouth=variant02&eyes=variant02' },
+    { id: 'male3', params: 'hair=short03&skinColor=f9c9b6&mouth=variant03&eyes=variant03' },
+    { id: 'male4', params: 'hair=short04&skinColor=f2d3b1&mouth=variant04&eyes=variant04' },
+    { id: 'male5', params: 'hair=short05&skinColor=ecad80&mouth=variant05&eyes=variant05' },
+    { id: 'male6', params: 'hair=short06&skinColor=f9c9b6&mouth=variant06&eyes=variant06' },
+    { id: 'male7', params: 'hair=short07&skinColor=f2d3b1&mouth=variant07&eyes=variant07' },
+    { id: 'male8', params: 'hair=short08&skinColor=ecad80&mouth=variant08&eyes=variant08' },
+    { id: 'male9', params: 'hair=short09&skinColor=f9c9b6&mouth=variant09&eyes=variant09' },
+    { id: 'male10', params: 'hair=short10&skinColor=f2d3b1&mouth=variant10&eyes=variant10' },
+    // Females with long hair (5 options)
+    { id: 'female1', params: 'hair=long01&skinColor=f2d3b1&mouth=variant01&eyes=variant01' },
+    { id: 'female2', params: 'hair=long02&skinColor=ecad80&mouth=variant02&eyes=variant02' },
+    { id: 'female3', params: 'hair=long03&skinColor=f9c9b6&mouth=variant03&eyes=variant03' },
+    { id: 'female4', params: 'hair=long04&skinColor=f2d3b1&mouth=variant04&eyes=variant04' },
+    { id: 'female5', params: 'hair=long05&skinColor=ecad80&mouth=variant05&eyes=variant05' },
 ];
 
-const getAvatarUrl = (seed) => `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}&skinColor=f2d3b1,ecad80,f9c9b6`;
+const getAvatarUrl = (avatarId) => {
+    const avatar = AVATARS.find(a => a.id === avatarId);
+    if (avatar) {
+        return `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatarId}&${avatar.params}`;
+    }
+    // Fallback for old avatar seeds
+    return `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatarId}&skinColor=f2d3b1`;
+};
 
 export default function Profile() {
     const { user, updateUser } = useAuth();
@@ -25,7 +43,7 @@ export default function Profile() {
         name: '',
         surname: '',
         userEmail: '', // userEmail to avoid conflict with email input name if any
-        avatar: 'Midnight',
+        avatar: 'male1',
         preferred_language: 'lt'
     });
     const [loading, setLoading] = useState(true);
@@ -43,7 +61,7 @@ export default function Profile() {
                         name: userData.name || '',
                         surname: userData.surname || '',
                         userEmail: userData.email || '',
-                        avatar: userData.avatar || 'Midnight',
+                        avatar: userData.avatar || 'male1',
                         preferred_language: userData.preferred_language || 'lt'
                     });
                 }
@@ -193,17 +211,17 @@ export default function Profile() {
                                     <div className="mb-4">
                                         <label className="form-label text-muted small fw-bold text-uppercase mb-3">{t('profile.choose_avatar')}</label>
                                         <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
-                                            {AVATAR_SEEDS.map(seed => (
+                                            {AVATARS.map(avatar => (
                                                 <button
-                                                    key={seed}
+                                                    key={avatar.id}
                                                     type="button"
-                                                    className={`btn p-1 ${formData.avatar === seed ? 'btn-primary' : 'btn-outline-light border-0'}`}
-                                                    onClick={() => setFormData({ ...formData, avatar: seed })}
+                                                    className={`btn p-1 ${formData.avatar === avatar.id ? 'btn-primary' : 'btn-outline-light border-0'}`}
+                                                    onClick={() => setFormData({ ...formData, avatar: avatar.id })}
                                                     style={{ width: '60px', height: '60px', overflow: 'hidden' }}
                                                 >
                                                     <img
-                                                        src={getAvatarUrl(seed)}
-                                                        alt={seed}
+                                                        src={getAvatarUrl(avatar.id)}
+                                                        alt={avatar.id}
                                                         style={{ width: '100%', height: '100%' }}
                                                     />
                                                 </button>
