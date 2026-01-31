@@ -46,9 +46,10 @@ function GoogleSignInButton() {
 
         setLoading(true);
 
-        // Generate CSRF state parameter and store in sessionStorage
+        // Generate CSRF state parameter and store in localStorage (not sessionStorage)
+        // localStorage persists better across redirects than sessionStorage
         const state = generateState();
-        sessionStorage.setItem('oauth_state', state);
+        localStorage.setItem('oauth_state', state);
 
         // Build Google OAuth URL
         const params = new URLSearchParams({

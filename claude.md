@@ -128,21 +128,84 @@ When developing this project, follow these critical principles:
 
 1. **Think First, Read Code**: Always think through the problem and read relevant codebase files before making changes.
 
-2. **Get Approval Before Major Changes**: Before making any significant changes, present the plan and wait for verification.
+2. **Git Backup Check**: Before making any major changes, verify that you have an option to restore. Check if the last changes were pushed to git so you can recover if needed.
 
-3. **Explain Changes**: Provide a high-level explanation of changes at every step.
+3. **Get Approval Before Major Changes**: Before making any significant changes, present the plan and wait for verification.
 
-4. **Simplicity First**: Make every task and code change as simple as possible. Avoid massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity.
+4. **Explain Changes**: Provide a high-level explanation of changes at every step.
 
-5. **Maintain Documentation**: Keep documentation files that describe how the app architecture works inside and out.
+5. **Simplicity First**: Make every task and code change as simple as possible. Avoid massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity.
 
-6. **Never Speculate**: Never speculate about code you have not opened. If a specific file is referenced, READ it before answering. Investigate and read relevant files BEFORE answering questions about the codebase. Never make claims about code before investigating unless you are certain - give grounded and hallucination-free answers.
+6. **Maintain Documentation**: Keep documentation files that describe how the app architecture works inside and out.
 
-7. **Verify Your Work**: Go back and verify all work after completion.
+7. **Never Speculate**: Never speculate about code you have not opened. If a specific file is referenced, READ it before answering. Investigate and read relevant files BEFORE answering questions about the codebase. Never make claims about code before investigating unless you are certain - give grounded and hallucination-free answers.
 
-8. **Best Practices**: Ensure best coding practices, efficiency, and good security in all changes.
+8. **Verify Your Work**: Go back and verify all work after completion.
 
-9. **Test Coverage**: All code changes should be covered by tests. Manual testing should be performed for frontend changes, and test cases should be documented.
+9. **Best Practices**: Ensure best coding practices, efficiency, and good security in all changes.
+
+10. **Use Agents**: Always use specialized agents for tasks. Delegate work to appropriate agents (Explore, Plan, code-review-security, php-backend-developer, ui-ux-designer, etc.) to ensure quality and thoroughness.
+
+11. **Code Review**: Each time code is written or modified, run a code review using the code-review-security agent to check for vulnerabilities, quality issues, and compliance.
+
+12. **Test Coverage**: All code changes should be covered by tests. Manual testing should be performed for frontend changes, and test cases should be documented.
+
+13. **Tester Loop**: Ensure that when issues are found during testing, the code is returned to the coding agent for fixes. Continue this loop until all issues are resolved.
+
+14. **Moderate and Orchestrate**: Always act as a moderator/orchestrator when working. Delegate tasks to specialized agents, coordinate their work, and ensure quality control throughout the process.
+
+---
+
+## Agent Workflow (MANDATORY)
+
+**IMPORTANT: Claude MUST use specialized agents for all development tasks. Never write code directly.**
+
+### Available Agents
+
+| Agent | Use For |
+|-------|---------|
+| `volley-analysis-agent` | Technical analysis, specifications, feature planning |
+| `php-backend-developer` | All PHP backend code (API endpoints, database, auth) |
+| `ui-ux-designer` | All React frontend code (components, pages, UI) |
+| `code-review-security` | Security review, code quality, GDPR compliance |
+| `Explore` | Codebase exploration, finding files, understanding code |
+| `Plan` | Implementation planning for complex tasks |
+
+### Required Workflow for Every Task
+
+```
+1. ANALYZE (if complex)
+   → Use volley-analysis-agent for specifications
+
+2. IMPLEMENT
+   → Backend changes: Use php-backend-developer agent
+   → Frontend changes: Use ui-ux-designer agent
+   → Run agents in PARALLEL if both needed
+
+3. REVIEW (MANDATORY after every code change)
+   → Use code-review-security agent
+   → Fix any issues found
+
+4. BUILD & TEST
+   → Run build scripts
+   → Verify changes work
+
+5. REPORT
+   → Summarize what was done
+   → List files changed
+```
+
+### Example Task Flow
+
+**User request:** "Add date filter to Messages page"
+
+1. `php-backend-developer` → Add date parameters to API
+2. `ui-ux-designer` → Add date inputs to React component
+3. `code-review-security` → Review both changes
+4. Build staging + production
+5. Report to user
+
+**Claude's role:** Orchestrate agents, don't write code directly.
 
 ---
 

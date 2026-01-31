@@ -37,12 +37,15 @@ function GoogleCallback() {
             }
 
             // CSRF protection: Validate state parameter
-            const storedState = sessionStorage.getItem('oauth_state');
-            sessionStorage.removeItem('oauth_state'); // Clear after use
+            // Use localStorage instead of sessionStorage for better cross-redirect persistence
+            const storedState = localStorage.getItem('oauth_state');
+            localStorage.removeItem('oauth_state'); // Clear after use
 
             // SECURITY: Enforce state validation to prevent CSRF attacks
             if (!state || !storedState || state !== storedState) {
                 console.error('OAuth state validation failed - potential CSRF attack');
+                console.error('State from URL:', state);
+                console.error('Stored state:', storedState);
                 setError(t('error.csrf_validation_failed') || 'Security validation failed. Please try again.');
                 setLoading(false);
                 return; // CRITICAL: Stop execution
