@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { getAvatarUrl } from '../utils/avatarUtils';
 
 function AdminNavbar() {
     const { user, logout } = useAuth();
@@ -47,7 +48,7 @@ function AdminNavbar() {
                 <div className="dropdown">
                     <div className="user-menu" data-bs-toggle="dropdown">
                         <img
-                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${user?.avatar || 'Midnight'}`}
+                            src={getAvatarUrl(user?.avatar || 'default')}
                             alt="Avatar"
                             className="user-avatar"
                         />
@@ -85,7 +86,7 @@ function AdminNavbar() {
                         {/* User Info Section */}
                         <div className="mobile-menu-user">
                             <img
-                                src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${user?.avatar || 'Midnight'}`}
+                                src={getAvatarUrl(user?.avatar || 'default')}
                                 alt="Avatar"
                                 className="mobile-user-avatar"
                             />

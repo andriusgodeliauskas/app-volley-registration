@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
+import { getAvatarUrl } from '../utils/avatarUtils';
 
 function AdminUsers() {
     const { user, logout } = useAuth();
@@ -197,7 +198,7 @@ function AdminUsers() {
                                 <div key={u.id} className="event-card">
                                     <div className="event-icon">
                                         <img
-                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${u.avatar || 'Midnight'}`}
+                                            src={getAvatarUrl(u.avatar || 'default')}
                                             alt={u.name}
                                             className="w-100 h-100 rounded"
                                             style={{ objectFit: 'cover' }}

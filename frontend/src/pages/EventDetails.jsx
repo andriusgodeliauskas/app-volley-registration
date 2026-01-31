@@ -6,6 +6,7 @@ import { API_ENDPOINTS, get, post, del } from '../api/config';
 import Navbar from '../components/Navbar';
 import Breadcrumb from '../components/Breadcrumb';
 import RegisterUserModal from '../components/RegisterUserModal';
+import { getAvatarUrl } from '../utils/avatarUtils';
 
 function EventDetails() {
     const { t } = useLanguage();
@@ -442,7 +443,7 @@ function EventDetails() {
                                                         </div>
                                                         <div className="d-flex align-items-center">
                                                             <img
-                                                                src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${attendee.avatar || 'Midnight'}`}
+                                                                src={getAvatarUrl(attendee.avatar || 'default')}
                                                                 alt={attendee.name}
                                                                 className="me-3 rounded-circle shadow-sm bg-gray-100"
                                                                 style={{ width: '40px', height: '40px' }}
@@ -492,7 +493,7 @@ function EventDetails() {
                                                                 </div>
                                                                 <div className="d-flex align-items-center">
                                                                     <img
-                                                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${waitlistUser.avatar || 'Midnight'}`}
+                                                                        src={getAvatarUrl(waitlistUser.avatar || 'default')}
                                                                         alt={waitlistUser.name}
                                                                         className="me-3 rounded-circle shadow-sm bg-light opacity-75"
                                                                         style={{ width: '40px', height: '40px', filter: 'grayscale(100%)' }}
@@ -572,7 +573,7 @@ function EventDetails() {
                                                             <td className="px-3 py-2">
                                                                 <div className="d-flex align-items-center">
                                                                     <img
-                                                                        src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${record.avatar || 'Midnight'}`}
+                                                                        src={getAvatarUrl(record.avatar || 'default')}
                                                                         alt={record.name}
                                                                         className="me-2 rounded-circle"
                                                                         style={{ width: '32px', height: '32px' }}
@@ -626,7 +627,7 @@ function EventDetails() {
                                                 <div key={record.id} className={`border-start border-3 ${statusClass} bg-white rounded mb-2 px-2 pt-2 pb-3`}>
                                                     <div className="d-flex align-items-center mb-2">
                                                         <img
-                                                            src={`https://api.dicebear.com/9.x/adventurer/svg?seed=${record.avatar || 'Midnight'}`}
+                                                            src={getAvatarUrl(record.avatar || 'default')}
                                                             alt={record.name}
                                                             className="me-2 rounded-circle"
                                                             style={{ width: '32px', height: '32px' }}
