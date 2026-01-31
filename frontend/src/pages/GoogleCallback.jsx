@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -11,14 +11,29 @@ import { useLanguage } from '../context/LanguageContext';
 function GoogleCallback() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { loginWithGoogle, completeGoogleRegistration } = useAuth();
+    const { loginWithGoogle, user } = useAuth();
     const { t } = useLanguage();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const processedRef = useRef(false);
 
     useEffect(() => {
+        // Prevent double execution
+        if (processedRef.current) return;
+
+        // If already logged in, redirect
+        if (user) {
+            if (user.role === 'super_admin' || user.role === 'group_admin') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
+            return;
+        }
+
         const handleCallback = async () => {
+            processedRef.current = true;
             const code = searchParams.get('code');
             const state = searchParams.get('state');
             const errorParam = searchParams.get('error');
@@ -56,6 +71,13 @@ function GoogleCallback() {
 
                 // Clear any previous errors on success
                 setError(null);
+
+                // Check if result and user exist
+                if (!result || !result.user) {
+                    // Login succeeded but no user data - redirect to dashboard
+                    navigate('/dashboard');
+                    return;
+                }
 
                 // Google OAuth users no longer need to set password
                 // Redirect directly based on role
