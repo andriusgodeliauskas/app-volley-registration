@@ -4,14 +4,24 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 
 ---
 
-## 2026-01-31 - Email System Improvements & Date Filters ✅
+## 2026-01-31 - Email System, Date Filters & Google OAuth Fixes ✅
 
-**Status:** READY FOR DEPLOYMENT
+**Status:** DEPLOYED
 **Date:** 2026-01-31
 
 ### What Was Changed
 
-#### 1. Email System Bug Fixes
+#### 1. Google OAuth CSRF Fix (Critical)
+- **Problem:** CSRF validation error when logging in via Google, even though login succeeded
+- **Root Cause:** `sessionStorage` doesn't persist across OAuth redirects
+- **Solution:** Changed to `localStorage` for OAuth state token storage
+- **Additional Fixes:**
+  - Added `useRef` to prevent double callback execution
+  - Added check if user already logged in
+  - Added null checks for result.user
+  - Improved error state handling
+
+#### 2. Email System Bug Fixes
 - **Fixed:** PHP scope issue in `send-email.php` - `$currentUser` was not accessible inside function
 - **Fixed:** Missing closing brace in `send-negative-balance-email.php` causing syntax error
 - **Improved:** Better error messages in Lithuanian for email sending failures:
@@ -47,13 +57,15 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 
 | File | Change |
 |------|--------|
+| `frontend/src/components/GoogleSignInButton.jsx` | Changed sessionStorage to localStorage |
+| `frontend/src/pages/GoogleCallback.jsx` | Fixed CSRF validation, added double-execution prevention |
+| `frontend/src/translations.js` | Added csrf_validation_failed translations, date filter translations |
 | `api/admin/email-logs.php` | Added date_from/date_to filters |
 | `api/admin/send-email.php` | Fixed $currentUser scope issue |
 | `api/email-templates/password-reset.php` | Updated template text/layout |
 | `api/email.php` | Increased body_preview, collapsed whitespace |
 | `api/send-negative-balance-email.php` | Fixed syntax, improved error messages |
 | `frontend/src/pages/admin/Messages.jsx` | Added date filter UI |
-| `frontend/src/translations.js` | Added date filter translations |
 | `CLAUDE.md` | Added agent workflow documentation |
 
 ### Database Changes Required
