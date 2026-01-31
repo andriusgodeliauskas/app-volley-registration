@@ -53,6 +53,13 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 - **Added:** Required workflow steps for every task
 - **Added:** Development guidelines (14 rules total)
 
+#### 6. Email Language Preference (NEW FEATURE)
+- **User Profile:** Added dropdown to select email language (Lietuvių/English)
+- **Admin Users:** Added email language dropdown to admin user edit page
+- **Backend:** All user APIs now return `preferred_language` field
+- **Default:** New users default to 'lt' (Lithuanian)
+- **Translations:** Added "Email kalba"/"Email language" labels
+
 ### Files Changed
 
 | File | Change |
@@ -67,6 +74,12 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 | `api/send-negative-balance-email.php` | Fixed syntax, improved error messages |
 | `frontend/src/pages/admin/Messages.jsx` | Added date filter UI |
 | `CLAUDE.md` | Added agent workflow documentation |
+| `frontend/src/pages/Profile.jsx` | Added email language dropdown |
+| `frontend/src/pages/AdminUserEdit.jsx` | Added email language dropdown |
+| `api/user_update.php` | Added preferred_language validation and update |
+| `api/admin_user_update.php` | Added preferred_language handling |
+| `api/users.php`, `api/user.php`, `api/login.php`, `api/auth.php` | Added preferred_language to responses |
+| `api/google-auth.php`, `api/register.php` | Set default preferred_language for new users |
 
 ### Database Changes Required
 
@@ -78,6 +91,8 @@ This document tracks all production deployments to https://volley.godeliauskas.c
 - [ ] Test email sending functionality
 - [ ] Test date filter on Messages page
 - [ ] Verify password reset email template
+- [ ] Test email language preference in Profile
+- [ ] Test admin can change user's email language
 
 ---
 
