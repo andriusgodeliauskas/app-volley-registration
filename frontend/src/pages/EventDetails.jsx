@@ -273,6 +273,15 @@ function EventDetails() {
     const hasAnyRegistration = isRegistered || isOnWaitlist;
     const isSuperAdmin = user?.role === 'super_admin';
 
+    // Get IDs of all registered users (including waitlist)
+    const registeredUserIds = new Set([
+        ...(attendees || []).map(a => a.id),
+        ...(waitlist || []).map(w => w.id)
+    ]);
+
+    // Filter family members to only show those not yet registered
+    const availableFamilyMembers = familyMembers.filter(m => !registeredUserIds.has(m.id));
+
     // Dates
     const eventDate = new Date(event.date_time);
     const dateStr = eventDate.toISOString().split('T')[0];
@@ -331,13 +340,15 @@ function EventDetails() {
                             </div>
                             <div className="modal-body">
                                 <div className="d-grid gap-2">
-                                    <button
-                                        className="btn-custom bg-primary text-white border-primary fw-bold"
-                                        onClick={() => handleFamilySelect(null)}
-                                    >
-                                        {t('family.register_self')} - {user?.name}
-                                    </button>
-                                    {familyMembers.map((member) => (
+                                    {!hasAnyRegistration && (
+                                        <button
+                                            className="btn-custom bg-primary text-white border-primary fw-bold"
+                                            onClick={() => handleFamilySelect(null)}
+                                        >
+                                            {t('family.register_self')} - {user?.name}
+                                        </button>
+                                    )}
+                                    {availableFamilyMembers.map((member) => (
                                         <button
                                             key={member.id}
                                             className="btn-custom"
@@ -520,7 +531,7 @@ function EventDetails() {
                                                 </button>
                                             ) : (
                                                 <>
-                                                    {familyMembers.length > 0 ? (
+                                                    {availableFamilyMembers.length > 0 ? (
                                                         <button
                                                             className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
                                                             onClick={openFamilySelectModal}
@@ -541,7 +552,7 @@ function EventDetails() {
                                                 </>
                                             )}
                                             {/* Family registration button - always shown if family members exist */}
-                                            {familyMembers.length > 0 && hasAnyRegistration && (
+                                            {availableFamilyMembers.length > 0 && hasAnyRegistration && (
                                                 <button
                                                     className={`btn-custom w-100 ${isActionBlocked ? '' : 'bg-primary text-white border-primary'}`}
                                                     onClick={() => openFamilySelectModal()}
@@ -582,7 +593,7 @@ function EventDetails() {
                                         </button>
                                     ) : (
                                         <>
-                                            {familyMembers.length > 0 ? (
+                                            {availableFamilyMembers.length > 0 ? (
                                                 <button
                                                     className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
                                                     onClick={openFamilySelectModal}
@@ -603,7 +614,7 @@ function EventDetails() {
                                         </>
                                     )}
                                     {/* Family registration button - always shown if family members exist */}
-                                    {familyMembers.length > 0 && hasAnyRegistration && (
+                                    {availableFamilyMembers.length > 0 && hasAnyRegistration && (
                                         <button
                                             className={`btn-custom w-100 ${isActionBlocked ? '' : 'bg-primary text-white border-primary'}`}
                                             onClick={() => openFamilySelectModal()}
