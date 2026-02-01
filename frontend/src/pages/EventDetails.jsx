@@ -665,10 +665,10 @@ function EventDetails() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {(isSuperAdmin || (attendee.id === user?.id && !isActionBlocked)) && (
+                                                    {(isSuperAdmin || (attendee.id === user?.id && !isActionBlocked) || (attendee.registered_by === user?.id && !isActionBlocked)) && (
                                                         <button
                                                             className="btn btn-sm btn-outline-danger ms-2"
-                                                            onClick={() => isSuperAdmin ? openAdminCancelModal(attendee.id, attendee.name) : openCancelModal()}
+                                                            onClick={() => (attendee.id === user?.id) ? openCancelModal() : openAdminCancelModal(attendee.id, attendee.name)}
                                                             disabled={processing}
                                                         >
                                                             <i className="bi bi-x-circle"></i>
@@ -715,10 +715,10 @@ function EventDetails() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            {(isSuperAdmin || (waitlistUser.id === user?.id && !isActionBlocked)) && (
+                                                            {(isSuperAdmin || (waitlistUser.id === user?.id && !isActionBlocked) || (waitlistUser.registered_by === user?.id && !isActionBlocked)) && (
                                                                 <button
                                                                     className="btn btn-sm btn-outline-danger ms-2"
-                                                                    onClick={() => isSuperAdmin ? openAdminCancelModal(waitlistUser.id, waitlistUser.name) : openCancelModal()}
+                                                                    onClick={() => (waitlistUser.id === user?.id) ? openCancelModal() : openAdminCancelModal(waitlistUser.id, waitlistUser.name)}
                                                                     disabled={processing}
                                                                 >
                                                                     <i className="bi bi-x-circle"></i>
