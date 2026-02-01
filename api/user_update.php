@@ -20,6 +20,7 @@ $name = trim($input['name'] ?? '');
 $surname = trim($input['surname'] ?? '');
 $avatar = trim($input['avatar'] ?? '');
 $preferredLanguage = trim($input['preferred_language'] ?? '');
+$payForFamilyMembers = isset($input['pay_for_family_members']) ? $input['pay_for_family_members'] : null;
 
 // Validate name length (min 2, max 50 characters to prevent DoS)
 if (strlen($name) < 2 || strlen($name) > 50) {
@@ -47,20 +48,41 @@ if (!empty($preferredLanguage) && !in_array($preferredLanguage, ['lt', 'en'])) {
     sendError('Invalid language. Only "lt" or "en" allowed', 400);
 }
 
+// Validate pay_for_family_members (must be boolean 0 or 1)
+if ($payForFamilyMembers !== null) {
+    // Accept boolean, int, or string representation
+    if (!in_array($payForFamilyMembers, [0, 1, '0', '1', true, false], true)) {
+        sendError('Invalid pay_for_family_members value. Must be 0 or 1', 400);
+    }
+    // Normalize to integer
+    $payForFamilyMembers = (int)$payForFamilyMembers;
+}
+
 $pdo = getDbConnection();
 
 try {
-    // Paruošti UPDATE užklausą (įtraukiant preferred_language jei pateikta)
+    // Build dynamic UPDATE query based on provided fields
+    $updateFields = ['name = ?', 'surname = ?', 'avatar = ?'];
+    $params = [$name, $surname, $avatar];
+
     if (!empty($preferredLanguage)) {
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, surname = ?, avatar = ?, preferred_language = ? WHERE id = ?");
-        $stmt->execute([$name, $surname, $avatar, $preferredLanguage, $userId]);
-    } else {
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, surname = ?, avatar = ? WHERE id = ?");
-        $stmt->execute([$name, $surname, $avatar, $userId]);
+        $updateFields[] = 'preferred_language = ?';
+        $params[] = $preferredLanguage;
     }
-    
+
+    if ($payForFamilyMembers !== null) {
+        $updateFields[] = 'pay_for_family_members = ?';
+        $params[] = $payForFamilyMembers;
+    }
+
+    $params[] = $userId; // WHERE condition
+
+    $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
     // Fetch updated user to return
-    $stmt = $pdo->prepare("SELECT id, name, surname, email, role, balance, avatar, parent_id, is_active, preferred_language FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, name, surname, email, role, balance, avatar, parent_id, is_active, preferred_language, pay_for_family_members FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $updatedUser = $stmt->fetch();
 
@@ -70,6 +92,7 @@ try {
     $updatedUser['parent_id'] = $updatedUser['parent_id'] ? (int)$updatedUser['parent_id'] : null;
     $updatedUser['is_active'] = (bool)$updatedUser['is_active'];
     $updatedUser['preferred_language'] = $updatedUser['preferred_language'] ?? 'lt';
+    $updatedUser['pay_for_family_members'] = (bool)$updatedUser['pay_for_family_members'];
 
     sendSuccess(['user' => $updatedUser], 'Profile updated successfully');
 

@@ -31,7 +31,7 @@ function handleGetUser(array $currentUser): void
     try {
         // Fetch fresh user data
         $stmt = $pdo->prepare("
-            SELECT id, name, surname, email, role, balance, negative_balance_limit, parent_id, is_active, created_at, avatar, preferred_language
+            SELECT id, name, surname, email, role, balance, negative_balance_limit, parent_id, is_active, created_at, avatar, preferred_language, pay_for_family_members
             FROM users
             WHERE id = ?
         ");
@@ -48,6 +48,7 @@ function handleGetUser(array $currentUser): void
         $user['parent_id'] = $user['parent_id'] ? (int)$user['parent_id'] : null;
         $user['is_active'] = (bool)$user['is_active'];
         $user['preferred_language'] = $user['preferred_language'] ?? 'lt';
+        $user['pay_for_family_members'] = (bool)$user['pay_for_family_members'];
         
         // Fetch children if any
         $stmt = $pdo->prepare("

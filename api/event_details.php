@@ -59,17 +59,23 @@ try {
                 SELECT COUNT(*)
                 FROM registrations r
                 WHERE r.event_id = e.id AND r.user_id = ? AND r.status = 'registered'
-            ) > 0 as user_registered
+            ) > 0 as user_registered,
+            (
+                SELECT COUNT(*)
+                FROM registrations r
+                WHERE r.event_id = e.id AND r.user_id = ? AND r.status = 'waitlist'
+            ) > 0 as user_on_waitlist
         FROM events e
         LEFT JOIN groups g ON e.group_id = g.id
         WHERE e.id = ?
     ");
-    $stmt->execute([$userId, $eventId]);
+    $stmt->execute([$userId, $userId, $eventId]);
     $event = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Cast boolean-like fields
     if ($event) {
         $event['user_registered'] = (bool)$event['user_registered'];
+        $event['user_on_waitlist'] = (bool)$event['user_on_waitlist'];
     }
 
     if (!$event) {

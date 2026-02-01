@@ -91,42 +91,129 @@ function handleFinalizeEvent(array $adminUser): void
         foreach ($registrationsToCharge as $reg) {
             // Nustatyti kas moka (kas registravo arba pats dalyvis)
             $payerId = !empty($reg['registered_by']) ? $reg['registered_by'] : $reg['user_id'];
+            $participantId = $reg['user_id'];
 
-            // Nuskaičiuoti pinigus nuo mokėtojo
-            $stmt = $pdo->prepare("UPDATE users SET balance = balance - ? WHERE id = ?");
-            $stmt->execute([$eventPrice, $payerId]);
+            // Patikrinti ar tai šeimos mokėjimas (moka už kitą)
+            $isFamilyPayment = ($payerId !== $participantId);
 
-            // Įrašyti transakciją mokėtojui
-            $stmt = $pdo->prepare("
-                INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
-                VALUES (?, ?, 'payment', ?, ?, ?)
-            ");
-            $stmt->execute([
-                $payerId,
-                -$eventPrice,
-                "Payment for: {$event['title']}",
-                $reg['registration_id'],
-                $adminUser['id']
-            ]);
+            if ($isFamilyPayment) {
+                // SECURITY: Patikrinti ar egzistuoja šeimos leidimas
+                $stmt = $pdo->prepare("
+                    SELECT id FROM family_permissions
+                    WHERE requester_id = ? AND target_id = ? AND status = 'accepted'
+                ");
+                $stmt->execute([$payerId, $participantId]);
 
-            // Jei mokėtojas skiriasi nuo dalyvio - sukurti family_transfer įrašą dokumentacijai
-            if ($payerId != $reg['user_id']) {
-                // Gauti dalyvio vardą aprašymui
+                if (!$stmt->fetch()) {
+                    // Nėra leidimo - grįžti prie dalyvio mokėjimo už save
+                    $payerId = $participantId;
+                    $isFamilyPayment = false;
+                }
+            }
+
+            if ($isFamilyPayment) {
+                // Gauti mokėtojo nustatymus
+                $stmt = $pdo->prepare("SELECT pay_for_family_members, name, balance FROM users WHERE id = ? FOR UPDATE");
+                $stmt->execute([$payerId]);
+                $payer = $stmt->fetch();
+                $payerName = $payer ? $payer['name'] : 'Unknown';
+                $payForFamilyMembers = $payer ? (bool)$payer['pay_for_family_members'] : false;
+                $payerBalance = $payer ? (float)$payer['balance'] : 0.0;
+
+                // Gauti dalyvio vardą
                 $stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
-                $stmt->execute([$reg['user_id']]);
+                $stmt->execute([$participantId]);
                 $participant = $stmt->fetch();
                 $participantName = $participant ? $participant['name'] : 'Unknown';
 
-                // Įrašyti family_transfer transakciją mokėtojo paskyroje (dokumentacijai)
+                // SECURITY: Patikrinti ar mokėtojas turi pakankamai lėšų prieš triple-transaction
+                if ($payForFamilyMembers && $payerBalance < $eventPrice) {
+                    // Nepakanka lėšų - grįžti prie senos logikos (dalyvis moka už save)
+                    $payForFamilyMembers = false;
+                }
+
+                if ($payForFamilyMembers) {
+                    // NAUJA LOGIKA: Trys transakcijos (skaidrus pinigų kelias)
+
+                    // 1. Mokėtojas perveda pinigus dalyviui
+                    $stmt = $pdo->prepare("UPDATE users SET balance = balance - ? WHERE id = ?");
+                    $stmt->execute([$eventPrice, $payerId]);
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
+                        VALUES (?, ?, 'family_transfer', ?, ?, ?)
+                    ");
+                    $stmt->execute([
+                        $payerId,
+                        -$eventPrice,
+                        "Transfer to {$participantName} for: {$event['title']}",
+                        $reg['registration_id'],
+                        $adminUser['id']
+                    ]);
+
+                    // 2. Dalyvis gauna pinigus iš mokėtojo
+                    $stmt = $pdo->prepare("UPDATE users SET balance = balance + ? WHERE id = ?");
+                    $stmt->execute([$eventPrice, $participantId]);
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
+                        VALUES (?, ?, 'family_transfer', ?, ?, ?)
+                    ");
+                    $stmt->execute([
+                        $participantId,
+                        $eventPrice,
+                        "Transfer from {$payerName} for: {$event['title']}",
+                        $reg['registration_id'],
+                        $adminUser['id']
+                    ]);
+
+                    // 3. Dalyvis moka už renginį
+                    $stmt = $pdo->prepare("UPDATE users SET balance = balance - ? WHERE id = ?");
+                    $stmt->execute([$eventPrice, $participantId]);
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
+                        VALUES (?, ?, 'payment', ?, ?, ?)
+                    ");
+                    $stmt->execute([
+                        $participantId,
+                        -$eventPrice,
+                        "Payment for: {$event['title']}",
+                        $reg['registration_id'],
+                        $adminUser['id']
+                    ]);
+
+                } else {
+                    // SENA LOGIKA: Viena transakcija (tiesioginis mokėjimas)
+                    $stmt = $pdo->prepare("UPDATE users SET balance = balance - ? WHERE id = ?");
+                    $stmt->execute([$eventPrice, $payerId]);
+
+                    $stmt = $pdo->prepare("
+                        INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
+                        VALUES (?, ?, 'payment', ?, ?, ?)
+                    ");
+                    $stmt->execute([
+                        $payerId,
+                        -$eventPrice,
+                        "Payment for: {$event['title']} (už {$participantName})",
+                        $reg['registration_id'],
+                        $adminUser['id']
+                    ]);
+                }
+
+            } else {
+                // Normalus atvejis: dalyvis moka už save
+                $stmt = $pdo->prepare("UPDATE users SET balance = balance - ? WHERE id = ?");
+                $stmt->execute([$eventPrice, $payerId]);
+
                 $stmt = $pdo->prepare("
                     INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
-                    VALUES (?, ?, 'family_transfer', ?, ?, ?)
+                    VALUES (?, ?, 'payment', ?, ?, ?)
                 ");
-                $description = "Family payment for {$participantName} - {$event['title']}";
                 $stmt->execute([
                     $payerId,
-                    0, // Amount is 0 because payment was already deducted above
-                    $description,
+                    -$eventPrice,
+                    "Payment for: {$event['title']}",
                     $reg['registration_id'],
                     $adminUser['id']
                 ]);

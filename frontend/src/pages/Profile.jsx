@@ -15,7 +15,8 @@ export default function Profile() {
         surname: '',
         userEmail: '', // userEmail to avoid conflict with email input name if any
         avatar: 'default',
-        preferred_language: 'lt'
+        preferred_language: 'lt',
+        pay_for_family_members: true
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -33,7 +34,8 @@ export default function Profile() {
                         surname: userData.surname || '',
                         userEmail: userData.email || '',
                         avatar: userData.avatar || 'male1',
-                        preferred_language: userData.preferred_language || 'lt'
+                        preferred_language: userData.preferred_language || 'lt',
+                        pay_for_family_members: userData.pay_for_family_members !== undefined ? userData.pay_for_family_members : true
                     });
                 }
             } catch (err) {
@@ -58,7 +60,8 @@ export default function Profile() {
                 name: formData.name,
                 surname: formData.surname,
                 avatar: formData.avatar,
-                preferred_language: formData.preferred_language
+                preferred_language: formData.preferred_language,
+                pay_for_family_members: formData.pay_for_family_members ? 1 : 0
             });
 
             if (response.success) {
@@ -176,6 +179,27 @@ export default function Profile() {
                                                 </select>
                                                 <div className="form-text">{t('profile.email_language_hint')}</div>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <label className="form-label text-muted small fw-bold text-uppercase mb-3">{t('profile.payForFamilyMembers')}</label>
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="payForFamilyMembers"
+                                                checked={formData.pay_for_family_members}
+                                                onChange={(e) => setFormData({ ...formData, pay_for_family_members: e.target.checked })}
+                                                style={{ minWidth: '20px', minHeight: '20px', cursor: 'pointer' }}
+                                            />
+                                            <label
+                                                className="form-check-label ms-2"
+                                                htmlFor="payForFamilyMembers"
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                {t('profile.payForFamilyMembersDescription')}
+                                            </label>
                                         </div>
                                     </div>
 

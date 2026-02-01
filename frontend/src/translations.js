@@ -315,6 +315,7 @@ export const translations = {
         'family.email_placeholder': 'example@example.com',
         'family.register_for': 'Register',
         'family.register_self': 'Self',
+        'family.register_family_member': 'Register Family Member',
         'family.registered_by': 'Registered by',
         'family.requested_at': 'Requested',
         'family.responded_at': 'Responded',
@@ -413,6 +414,8 @@ export const translations = {
         'profile.email_readonly': 'Email cannot be changed.',
         'profile.choose_avatar': 'Choose Avatar',
         'profile.saving': 'Saving...',
+        'profile.payForFamilyMembers': 'Pay for family members',
+        'profile.payForFamilyMembersDescription': 'When enabled, your payments for family members will be visible as transfers',
 
         // Event Details
         'event.failed_load': 'Failed to load event details',
@@ -998,6 +1001,7 @@ export const translations = {
         'family.email_placeholder': 'vardenis@pavyzdys.lt',
         'family.register_for': 'Registruoti',
         'family.register_self': 'Save',
+        'family.register_family_member': 'Registruoti šeimos narį',
         'family.registered_by': 'Užregistravo',
         'family.requested_at': 'Prašymo data',
         'family.responded_at': 'Atsakymo data',
@@ -1096,6 +1100,8 @@ export const translations = {
         'profile.email_readonly': 'El. paštas negali būti keičiamas.',
         'profile.choose_avatar': 'Pasirinkti Avatarą',
         'profile.saving': 'Išsaugoma...',
+        'profile.payForFamilyMembers': 'Mokėti už šeimos narius',
+        'profile.payForFamilyMembersDescription': 'Kai įjungta, jūsų mokėjimai už šeimos narius bus matomi kaip pervedimai',
 
         // Event Details
         'event.failed_load': 'Nepavyko užkrauti renginio informacijos',

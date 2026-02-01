@@ -269,6 +269,8 @@ function EventDetails() {
     const spotsLeft = event.max_players - event.registered_count;
     const isFull = spotsLeft <= 0;
     const isRegistered = event.user_registered;
+    const isOnWaitlist = event.user_on_waitlist;
+    const hasAnyRegistration = isRegistered || isOnWaitlist;
     const isSuperAdmin = user?.role === 'super_admin';
 
     // Dates
@@ -508,7 +510,7 @@ function EventDetails() {
                                         </button>
                                     ) : (
                                         <>
-                                            {isRegistered ? (
+                                            {hasAnyRegistration ? (
                                                 <button
                                                     className={`btn-custom w-100 ${isActionBlocked ? '' : 'btn-danger-custom text-white bg-danger border-danger'}`}
                                                     onClick={openCancelModal}
@@ -538,6 +540,17 @@ function EventDetails() {
                                                     )}
                                                 </>
                                             )}
+                                            {/* Family registration button - always shown if family members exist */}
+                                            {familyMembers.length > 0 && hasAnyRegistration && (
+                                                <button
+                                                    className={`btn-custom w-100 ${isActionBlocked ? '' : 'bg-primary text-white border-primary'}`}
+                                                    onClick={() => openFamilySelectModal()}
+                                                    disabled={processing || isActionBlocked}
+                                                >
+                                                    <i className="bi bi-people-fill me-2"></i>
+                                                    {processing ? t('common.loading') : t('family.register_family_member')}
+                                                </button>
+                                            )}
                                         </>
                                     )}
                                 </div>
@@ -559,7 +572,7 @@ function EventDetails() {
                                 </button>
                             ) : (
                                 <>
-                                    {isRegistered ? (
+                                    {hasAnyRegistration ? (
                                         <button
                                             className={`btn-custom w-100 ${isActionBlocked ? '' : 'btn-danger-custom text-white bg-danger border-danger'}`}
                                             onClick={openCancelModal}
@@ -588,6 +601,17 @@ function EventDetails() {
                                                 </button>
                                             )}
                                         </>
+                                    )}
+                                    {/* Family registration button - always shown if family members exist */}
+                                    {familyMembers.length > 0 && hasAnyRegistration && (
+                                        <button
+                                            className={`btn-custom w-100 ${isActionBlocked ? '' : 'bg-primary text-white border-primary'}`}
+                                            onClick={() => openFamilySelectModal()}
+                                            disabled={processing || isActionBlocked}
+                                        >
+                                            <i className="bi bi-people-fill me-2"></i>
+                                            {processing ? t('common.loading') : t('family.register_family_member')}
+                                        </button>
                                     )}
                                 </>
                             )}
@@ -641,10 +665,10 @@ function EventDetails() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {isSuperAdmin && (
+                                                    {(isSuperAdmin || (attendee.id === user?.id && !isActionBlocked)) && (
                                                         <button
                                                             className="btn btn-sm btn-outline-danger ms-2"
-                                                            onClick={() => openAdminCancelModal(attendee.id, attendee.name)}
+                                                            onClick={() => isSuperAdmin ? openAdminCancelModal(attendee.id, attendee.name) : openCancelModal()}
                                                             disabled={processing}
                                                         >
                                                             <i className="bi bi-x-circle"></i>
@@ -691,10 +715,10 @@ function EventDetails() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            {isSuperAdmin && (
+                                                            {(isSuperAdmin || (waitlistUser.id === user?.id && !isActionBlocked)) && (
                                                                 <button
                                                                     className="btn btn-sm btn-outline-danger ms-2"
-                                                                    onClick={() => openAdminCancelModal(waitlistUser.id, waitlistUser.name)}
+                                                                    onClick={() => isSuperAdmin ? openAdminCancelModal(waitlistUser.id, waitlistUser.name) : openCancelModal()}
                                                                     disabled={processing}
                                                                 >
                                                                     <i className="bi bi-x-circle"></i>
