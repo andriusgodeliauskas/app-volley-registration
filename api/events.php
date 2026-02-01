@@ -65,7 +65,7 @@ function handleGetEvents(array $currentUser): void
     
     // Build query
     $sql = "
-        SELECT 
+        SELECT
             e.id,
             e.group_id,
             e.title,
@@ -77,8 +77,8 @@ function handleGetEvents(array $currentUser): void
             e.price_per_person,
             e.rent_price,
             e.status,
-            e.status,
             e.icon,
+            e.registration_cutoff_hours,
             e.created_at,
             g.name as group_name,
             (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'registered') as registered_count,
@@ -154,6 +154,7 @@ function handleGetEvents(array $currentUser): void
             $event['court_count'] = (int)$event['court_count'];
             $event['price_per_person'] = (float)$event['price_per_person'];
             $event['rent_price'] = (float)($event['rent_price'] ?? 0);
+            $event['registration_cutoff_hours'] = $event['registration_cutoff_hours'] !== null ? (int)$event['registration_cutoff_hours'] : null;
             $event['registered_count'] = (int)$event['registered_count'];
             $event['user_registered'] = (int)$event['user_registered'] > 0;
             $event['spots_available'] = $event['max_players'] - $event['registered_count'];
@@ -207,12 +208,21 @@ function handleCreateEvent(array $currentUser): void
     try {
         $stmt = $pdo->prepare("
             INSERT INTO events (
-                group_id, title, description, date_time, location, 
-                max_players, court_count, price_per_person, rent_price, status, icon
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                group_id, title, description, date_time, location,
+                max_players, court_count, price_per_person, rent_price, status, icon, registration_cutoff_hours
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        
+
         $rentPrice = ($currentUser['role'] === 'super_admin') ? ($input['rent_price'] ?? 0.00) : 0.00;
+
+        // Validate and set registration_cutoff_hours
+        $cutoffHours = null;
+        if (isset($input['registration_cutoff_hours'])) {
+            $cutoffHours = filter_var($input['registration_cutoff_hours'], FILTER_VALIDATE_INT);
+            if ($cutoffHours === false || $cutoffHours < 0) {
+                sendError('registration_cutoff_hours must be a positive integer or null', 400);
+            }
+        }
 
         $stmt->execute([
             (int)$input['group_id'],
@@ -225,13 +235,14 @@ function handleCreateEvent(array $currentUser): void
             $input['price_per_person'] ?? 0.00,
             $rentPrice,
             $input['status'] ?? 'open',
-            $input['icon'] ?? 'volleyball'
+            $input['icon'] ?? 'volleyball',
+            $cutoffHours
         ]);
-        
+
         $eventId = $pdo->lastInsertId();
-        
+
         sendSuccess(['event_id' => (int)$eventId], 'Event created successfully', 201);
-        
+
     } catch (PDOException $e) {
         if (APP_ENV === 'development') {
             sendError('Database error: ' . $e->getMessage(), 500);

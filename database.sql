@@ -87,9 +87,10 @@ CREATE TABLE `events` (
     rent_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     status ENUM('open', 'closed', 'canceled') DEFAULT 'open',
     `icon` VARCHAR(50) NOT NULL DEFAULT 'volleyball',
+    `registration_cutoff_hours` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Hours before event when registration closes for regular users. NULL = 1 hour default',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     PRIMARY KEY (`id`),
     KEY `idx_events_group_id` (`group_id`),
     KEY `idx_events_date_time` (`date_time`),

@@ -30,6 +30,7 @@ function AdminEvents() {
         court_count: 1,
         price_per_person: 5.00,
         rent_price: 0.00,
+        registration_cutoff_hours: '',
         icon: '🏐'
     });
 
@@ -108,6 +109,7 @@ function AdminEvents() {
             court_count: event.court_count,
             price_per_person: event.price_per_person,
             rent_price: event.rent_price || 0.00,
+            registration_cutoff_hours: event.registration_cutoff_hours || '',
             icon: event.icon || '🏐'
         };
 
@@ -121,7 +123,15 @@ function AdminEvents() {
         setError('');
 
         try {
-            const response = await post(API_ENDPOINTS.EVENTS, newEvent);
+            // Prepare the event data with registration_cutoff_hours as integer or null
+            const eventData = {
+                ...newEvent,
+                registration_cutoff_hours: newEvent.registration_cutoff_hours === '' || newEvent.registration_cutoff_hours === null
+                    ? null
+                    : parseInt(newEvent.registration_cutoff_hours)
+            };
+
+            const response = await post(API_ENDPOINTS.EVENTS, eventData);
             if (response.success) {
                 setSuccess(t('admin.event_create_success'));
                 setShowCreateModal(false);
@@ -135,6 +145,7 @@ function AdminEvents() {
                     court_count: 1,
                     price_per_person: 5.00,
                     rent_price: 0.00,
+                    registration_cutoff_hours: '',
                     icon: '🏐'
                 });
                 fetchData();
@@ -483,6 +494,19 @@ function AdminEvents() {
                                                 />
                                             </div>
                                         )}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">{t('registration_cutoff_hours')}</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={newEvent.registration_cutoff_hours}
+                                            onChange={(e) => setNewEvent({ ...newEvent, registration_cutoff_hours: e.target.value })}
+                                            min="0"
+                                            step="1"
+                                            placeholder="1"
+                                        />
+                                        <small className="form-text text-muted">{t('registration_cutoff_hours_helper')}</small>
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label text-muted small fw-bold text-uppercase">{t('event.description')}</label>

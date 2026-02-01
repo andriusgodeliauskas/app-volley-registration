@@ -69,21 +69,21 @@ function handleRegister(array $currentUser): void
         
         // Fetch event details with lock
         $stmt = $pdo->prepare("
-            SELECT 
+            SELECT
                 e.*,
                 (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'registered') as registered_count
-            FROM events e 
-            WHERE e.id = ? 
+            FROM events e
+            WHERE e.id = ?
             FOR UPDATE
         ");
         $stmt->execute([$eventId]);
         $event = $stmt->fetch();
-        
+
         if (!$event) {
             $pdo->rollBack();
             sendError('Event not found', 404);
         }
-        
+
         // Check if event is open for registration (skip for super admin)
         if ($currentUser['role'] !== 'super_admin' && $event['status'] !== 'open') {
             $pdo->rollBack();
@@ -94,6 +94,19 @@ function handleRegister(array $currentUser): void
         if ($currentUser['role'] !== 'super_admin' && strtotime($event['date_time']) <= time()) {
             $pdo->rollBack();
             sendError('Cannot register for past events', 400);
+        }
+
+        // Check registration cutoff (skip for super admin)
+        if ($currentUser['role'] !== 'super_admin') {
+            $eventTime = strtotime($event['date_time']);
+            $now = time();
+            $cutoffHours = $event['registration_cutoff_hours'] ?? 1; // Default to 1 hour if NULL
+            $cutoffSeconds = $cutoffHours * 3600;
+
+            if (($eventTime - $now) < $cutoffSeconds) {
+                $pdo->rollBack();
+                sendError("Registration is closed {$cutoffHours} hours before the event", 400);
+            }
         }
         
         // Check if spots are available - REMOVED for waitlist feature
@@ -305,7 +318,7 @@ function handleCancelRegistration(array $currentUser): void
         
         // Fetch registration with event details
         $stmt = $pdo->prepare("
-            SELECT r.id as registration_id, r.registered_by, e.title, e.date_time
+            SELECT r.id as registration_id, r.registered_by, e.title, e.date_time, e.registration_cutoff_hours
             FROM registrations r
             JOIN events e ON r.event_id = e.id
             WHERE r.user_id = ? AND r.event_id = ? AND r.status = 'registered'
@@ -313,12 +326,12 @@ function handleCancelRegistration(array $currentUser): void
         ");
         $stmt->execute([$unregisterUserId, $eventId]);
         $registration = $stmt->fetch();
-        
+
         if (!$registration) {
             $pdo->rollBack();
             sendError('Registration not found', 404);
         }
-        
+
         $eventTime = strtotime($registration['date_time']);
         $now = time();
 
@@ -327,11 +340,16 @@ function handleCancelRegistration(array $currentUser): void
             $pdo->rollBack();
             sendError('Cannot cancel registration for past events', 400);
         }
-        
-        // Check if less than 1 hour before event
-        if (($eventTime - $now) < 3600) {
-            $pdo->rollBack();
-            sendError('Cannot cancel registration less than 1 hour before the event', 400);
+
+        // Check cancellation cutoff (skip for super admin)
+        if ($currentUser['role'] !== 'super_admin') {
+            $cutoffHours = $registration['registration_cutoff_hours'] ?? 1; // Default to 1 hour if NULL
+            $cutoffSeconds = $cutoffHours * 3600;
+
+            if (($eventTime - $now) < $cutoffSeconds) {
+                $pdo->rollBack();
+                sendError("Cancellation is not allowed {$cutoffHours} hours before the event", 400);
+            }
         }
         
         // Update registration status

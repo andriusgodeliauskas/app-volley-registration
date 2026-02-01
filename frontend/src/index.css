@@ -264,6 +264,24 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-custom:disabled,
+.btn-custom.disabled {
+  background: #e5e7eb !important;
+  border-color: #d1d5db !important;
+  color: #9ca3af !important;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+.btn-custom:disabled:hover,
+.btn-custom.disabled:hover {
+  background: #e5e7eb !important;
+  border-color: #d1d5db !important;
+  color: #9ca3af !important;
+  transform: none;
+}
+
 .btn-danger-custom {
   color: #dc2626;
   border-color: #fecaca;

@@ -199,6 +199,13 @@ function EventDetails() {
     const dateStr = eventDate.toISOString().split('T')[0];
     const timeStr = eventDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
+    // Calculate registration cutoff
+    const cutoffHours = event.registration_cutoff_hours || 1;
+    const cutoffTime = new Date(eventDate.getTime() - (cutoffHours * 60 * 60 * 1000));
+    const now = new Date();
+    const isCutoffPassed = now >= cutoffTime;
+    const isActionBlocked = isCutoffPassed && !isSuperAdmin;
+
     return (
         <div className="min-vh-100">
             <Navbar />
@@ -245,6 +252,25 @@ function EventDetails() {
                         <i className="bi bi-exclamation-triangle-fill alert-custom-icon"></i>
                         <div className="flex-grow-1">{error === 'Event is not open for registration' ? t('event.not_open') : error}</div>
                         <button type="button" className="btn-close" onClick={() => setError(null)}></button>
+                    </div>
+                )}
+
+                {/* Registration Cutoff Info */}
+                {isCutoffPassed && !isSuperAdmin && (
+                    <div className="alert-custom bg-warning bg-opacity-10 border-warning text-dark mb-4">
+                        <i className="bi bi-clock-fill alert-custom-icon"></i>
+                        <div className="flex-grow-1">
+                            <strong>{t('event.registration_closed').replace('{hours}', cutoffHours)}</strong>
+                            <div className="small mt-1">
+                                {t('event.registration_closes_at')}: {cutoffTime.toLocaleString('lt-LT', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -354,17 +380,17 @@ function EventDetails() {
                                         <>
                                             {isRegistered ? (
                                                 <button
-                                                    className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
+                                                    className={`btn-custom w-100 ${isActionBlocked ? '' : 'btn-danger-custom text-white bg-danger border-danger'}`}
                                                     onClick={openCancelModal}
-                                                    disabled={processing}
+                                                    disabled={processing || isActionBlocked}
                                                 >
                                                     {processing ? t('common.loading') : t('event.cancel_btn')}
                                                 </button>
                                             ) : (
                                                 <button
-                                                    className={`btn-custom w-100 ${isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary'}`}
+                                                    className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
                                                     onClick={openRegisterModal}
-                                                    disabled={processing}
+                                                    disabled={processing || isActionBlocked}
                                                 >
                                                     {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
                                                 </button>
@@ -392,17 +418,17 @@ function EventDetails() {
                                 <>
                                     {isRegistered ? (
                                         <button
-                                            className="btn-custom btn-danger-custom text-white bg-danger border-danger w-100"
+                                            className={`btn-custom w-100 ${isActionBlocked ? '' : 'btn-danger-custom text-white bg-danger border-danger'}`}
                                             onClick={openCancelModal}
-                                            disabled={processing}
+                                            disabled={processing || isActionBlocked}
                                         >
                                             {processing ? t('common.loading') : t('event.cancel_btn')}
                                         </button>
                                     ) : (
                                         <button
-                                            className={`btn-custom w-100 ${isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary'}`}
+                                            className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
                                             onClick={openRegisterModal}
-                                            disabled={processing}
+                                            disabled={processing || isActionBlocked}
                                         >
                                             {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
                                         </button>

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminEventEdit() {
     const { id } = useParams();
     const { user, logout } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
@@ -25,6 +27,7 @@ function AdminEventEdit() {
         court_count: 1,
         price_per_person: 0,
         rent_price: 0,
+        registration_cutoff_hours: '',
         status: 'open',
         icon: '🏐'
     });
@@ -116,7 +119,8 @@ function AdminEventEdit() {
                 max_players: parseInt(formData.max_players),
                 court_count: parseInt(formData.court_count),
                 price_per_person: parseFloat(formData.price_per_person),
-                rent_price: parseFloat(formData.rent_price)
+                rent_price: parseFloat(formData.rent_price),
+                registration_cutoff_hours: formData.registration_cutoff_hours ? parseInt(formData.registration_cutoff_hours) : null
             };
 
             const response = await post(API_ENDPOINTS.ADMIN_EVENT_UPDATE, payload);
@@ -302,6 +306,24 @@ function AdminEventEdit() {
                                                 />
                                             </div>
                                         )}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">
+                                            {t('registration_cutoff_hours')}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            name="registration_cutoff_hours"
+                                            value={formData.registration_cutoff_hours}
+                                            onChange={handleChange}
+                                            min="0"
+                                            placeholder={t('registration_cutoff_hours_placeholder')}
+                                        />
+                                        <small className="form-text text-muted">
+                                            {t('registration_cutoff_hours_helper')}
+                                        </small>
                                     </div>
 
                                     <div className="mb-3">

@@ -38,19 +38,20 @@ try {
     $userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
 
     $stmt = $pdo->prepare("
-        SELECT 
-            e.id, 
-            e.title, 
-            e.date_time, 
-            e.location, 
-            e.price_per_person, 
-            e.max_players, 
+        SELECT
+            e.id,
+            e.title,
+            e.date_time,
+            e.location,
+            e.price_per_person,
+            e.max_players,
             e.status,
             e.icon,
+            e.registration_cutoff_hours,
             g.name as group_name,
             (
-                SELECT COUNT(*) 
-                FROM registrations r 
+                SELECT COUNT(*)
+                FROM registrations r
                 WHERE r.event_id = e.id AND r.status = 'registered'
             ) as registered_count,
             (

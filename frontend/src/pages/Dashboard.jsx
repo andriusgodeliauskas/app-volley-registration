@@ -190,7 +190,7 @@ function Dashboard() {
                 }
             }
         } catch (err) {
-            setError(err.message || (type === 'register' ? t('dash.error_register') : t('dash.error_cancel')));
+            setError(translateError(err.message) || (type === 'register' ? t('dash.error_register') : t('dash.error_cancel')));
         } finally {
             setRegistering(prev => ({ ...prev, [eventId]: false }));
         }
@@ -219,6 +219,27 @@ function Dashboard() {
      * Check if user can afford the event
      */
     const canAfford = (price) => balance >= parseFloat(price);
+
+    /**
+     * Translate backend error messages
+     */
+    const translateError = (errorMessage) => {
+        if (!errorMessage) return t('common.error');
+
+        // Check for registration cutoff error
+        const cutoffMatch = errorMessage.match(/Registration is closed (\d+) hours? before the event/i);
+        if (cutoffMatch) {
+            return t('event.registration_closed').replace('{hours}', cutoffMatch[1]);
+        }
+
+        // Check for cancellation cutoff error
+        const cancelMatch = errorMessage.match(/Cancellation is not allowed (\d+) hours? before the event/i);
+        if (cancelMatch) {
+            return t('event.cancellation_closed').replace('{hours}', cancelMatch[1]);
+        }
+
+        return errorMessage;
+    };
 
     return (
         <div className="min-vh-100">
@@ -328,6 +349,15 @@ function Dashboard() {
                             const isFull = event.spots_available <= 0;
                             const isProcessing = registering[event.id];
 
+                            // Calculate registration cutoff
+                            const eventDate = new Date(event.date_time);
+                            const cutoffHours = event.registration_cutoff_hours || 1;
+                            const cutoffTime = new Date(eventDate.getTime() - (cutoffHours * 60 * 60 * 1000));
+                            const now = new Date();
+                            const isCutoffPassed = now >= cutoffTime;
+                            const isSuperAdmin = user?.role === 'super_admin';
+                            const isActionBlocked = isCutoffPassed && !isSuperAdmin;
+
                             return (
                                 <div key={event.id} className="event-card">
                                     <div className="event-icon">
@@ -350,20 +380,26 @@ function Dashboard() {
                                     </div>
                                     <div className="event-actions">
                                         <Link to={`/event/${event.id}`} className="btn-custom">{t('dash.more_info')}</Link>
+                                        {isActionBlocked && (
+                                            <div className="text-warning small text-center mb-1">
+                                                <i className="bi bi-clock me-1"></i>
+                                                {t('event.registration_closed').replace('{hours}', cutoffHours)}
+                                            </div>
+                                        )}
                                         {isRegistered ? (
                                             <button
-                                                className="btn-custom btn-danger-custom"
+                                                className={`btn-custom ${isActionBlocked ? '' : 'btn-danger-custom'}`}
                                                 onClick={() => handleCancelClick(event)}
-                                                disabled={isProcessing}
+                                                disabled={isProcessing || isActionBlocked}
                                             >
                                                 {isProcessing ? t('common.loading') : t('event.cancel_btn')}
                                             </button>
                                         ) : (
                                             <button
-                                                className={`btn-custom ${isFull ? '' : 'text-primary border-primary'}`}
-                                                style={!isFull ? { background: '#eff6ff' } : {}}
+                                                className={`btn-custom ${isActionBlocked ? '' : (isFull ? '' : 'text-primary border-primary')}`}
+                                                style={!isActionBlocked && !isFull ? { background: '#eff6ff' } : {}}
                                                 onClick={() => handleRegister(event)}
-                                                disabled={isProcessing}
+                                                disabled={isProcessing || isActionBlocked}
                                             >
                                                 {isProcessing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
                                             </button>

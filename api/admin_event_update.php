@@ -32,10 +32,21 @@ $location = isset($input['location']) ? trim($input['location']) : null;
 $maxPlayers = isset($input['max_players']) ? (int)$input['max_players'] : null;
 $courtCount = isset($input['court_count']) ? (int)$input['court_count'] : null;
 $price = isset($input['price_per_person']) ? (float)$input['price_per_person'] : null;
-$price = isset($input['price_per_person']) ? (float)$input['price_per_person'] : null;
 $rentPrice = isset($input['rent_price']) ? (float)$input['rent_price'] : null;
 $status = isset($input['status']) ? trim($input['status']) : null;
 $icon = isset($input['icon']) ? trim($input['icon']) : null;
+
+// Validate and set registration_cutoff_hours
+$cutoffHours = null;
+if (array_key_exists('registration_cutoff_hours', $input)) {
+    if ($input['registration_cutoff_hours'] !== null) {
+        $cutoffHours = filter_var($input['registration_cutoff_hours'], FILTER_VALIDATE_INT);
+        if ($cutoffHours === false || $cutoffHours < 0) {
+            sendError('registration_cutoff_hours must be a positive integer or null', 400);
+        }
+    }
+    // If it's explicitly null, we'll handle it below
+}
 
 // Validation
 if ($title && strlen($title) < 3) {
@@ -107,6 +118,10 @@ try {
     if ($icon !== null) {
         $fields[] = 'icon = ?';
         $params[] = $icon;
+    }
+    if (array_key_exists('registration_cutoff_hours', $input)) {
+        $fields[] = 'registration_cutoff_hours = ?';
+        $params[] = $cutoffHours; // Can be null
     }
 
     if (empty($fields)) {

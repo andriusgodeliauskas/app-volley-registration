@@ -40,6 +40,7 @@ try {
             e.rent_price,
             e.icon,
             e.status,
+            e.registration_cutoff_hours,
             g.name as group_name
         FROM events e
         LEFT JOIN groups g ON e.group_id = g.id
@@ -59,6 +60,7 @@ try {
     $event['court_count'] = (int)$event['court_count'];
     $event['price_per_person'] = (float)$event['price_per_person'];
     $event['rent_price'] = (float)($event['rent_price'] ?? 0);
+    $event['registration_cutoff_hours'] = $event['registration_cutoff_hours'] !== null ? (int)$event['registration_cutoff_hours'] : null;
 
     // Format date_time for datetime-local input (YYYY-MM-DDTHH:MM)
     if ($event['date_time']) {

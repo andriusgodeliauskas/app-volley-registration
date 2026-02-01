@@ -379,6 +379,9 @@ export const translations = {
         'event.confirm_action': 'Are you sure you want to {action} {title}?',
         'event.action_register': 'register for',
         'event.action_cancel': 'cancel your registration for',
+        'event.registration_closed': 'Registration closed {hours} hours before event',
+        'event.registration_closes_at': 'Registration closes at',
+        'event.cancellation_closed': 'Cancellation not allowed {hours} hours before event',
 
         // Children Page
         'children.coming_soon': 'This feature is coming soon!',
@@ -538,6 +541,9 @@ export const translations = {
         'admin.form_rent_total': 'Rent Price Total (€)',
         'admin.form_rent_tooltip': 'Total to pay to venue',
         'admin.form_creating': 'Creating...',
+        'registration_cutoff_hours': 'Registration Cutoff (hours)',
+        'registration_cutoff_hours_helper': 'Hours before event when registration closes. Leave empty for 1 hour default.',
+        'registration_cutoff_hours_placeholder': 'Default: 1 hour',
 
         // Admin Groups
         'admin.groups_title': 'Groups',
@@ -964,6 +970,9 @@ export const translations = {
         'event.confirm_action': 'Ar tikrai norite {action} {title}?',
         'event.action_register': 'užsiregistruoti į',
         'event.action_cancel': 'atšaukti registraciją į',
+        'event.registration_closed': 'Registracija uždaryta {hours} val. prieš renginį',
+        'event.registration_closes_at': 'Registracija užsidaro',
+        'event.cancellation_closed': 'Atšaukti negalima {hours} val. prieš renginį',
 
         // Children Page
         'children.coming_soon': 'Ši funkcija netrukus bus prieinama!',
@@ -1123,6 +1132,9 @@ export const translations = {
         'admin.form_rent_total': 'Bendra Nuomos Kaina (€)',
         'admin.form_rent_tooltip': 'Viso mokėti salės savininkui',
         'admin.form_creating': 'Kuriama...',
+        'registration_cutoff_hours': 'Registracijos uždarymas (val.)',
+        'registration_cutoff_hours_helper': 'Valandos prieš renginį, kada užsidaro registracija. Palikite tuščią 1 val. nutylint.',
+        'registration_cutoff_hours_placeholder': 'Nutylint: 1 val.',
 
         // Admin Groups
         'admin.groups_title': 'Grupės',
