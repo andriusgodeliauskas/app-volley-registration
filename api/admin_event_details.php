@@ -41,6 +41,7 @@ try {
             e.icon,
             e.status,
             e.registration_cutoff_hours,
+            e.negative_balance_limit,
             g.name as group_name
         FROM events e
         LEFT JOIN groups g ON e.group_id = g.id
@@ -61,6 +62,7 @@ try {
     $event['price_per_person'] = (float)$event['price_per_person'];
     $event['rent_price'] = (float)($event['rent_price'] ?? 0);
     $event['registration_cutoff_hours'] = $event['registration_cutoff_hours'] !== null ? (int)$event['registration_cutoff_hours'] : null;
+    $event['negative_balance_limit'] = (float)($event['negative_balance_limit'] ?? -12.00);
 
     // Format date_time for datetime-local input (YYYY-MM-DDTHH:MM)
     if ($event['date_time']) {

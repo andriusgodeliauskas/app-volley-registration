@@ -48,6 +48,18 @@ if (array_key_exists('registration_cutoff_hours', $input)) {
     // If it's explicitly null, we'll handle it below
 }
 
+// Validate and set negative_balance_limit
+$negativeBalanceLimit = null;
+if (array_key_exists('negative_balance_limit', $input)) {
+    if ($input['negative_balance_limit'] !== null) {
+        $negativeBalanceLimit = filter_var($input['negative_balance_limit'], FILTER_VALIDATE_FLOAT);
+        if ($negativeBalanceLimit === false) {
+            sendError('negative_balance_limit must be a valid number', 400);
+        }
+    }
+    // If it's explicitly null, we'll use the default value
+}
+
 // Validation
 if ($title && strlen($title) < 3) {
     sendError('Title must be at least 3 characters', 400);
@@ -122,6 +134,10 @@ try {
     if (array_key_exists('registration_cutoff_hours', $input)) {
         $fields[] = 'registration_cutoff_hours = ?';
         $params[] = $cutoffHours; // Can be null
+    }
+    if (array_key_exists('negative_balance_limit', $input)) {
+        $fields[] = 'negative_balance_limit = ?';
+        $params[] = $negativeBalanceLimit; // Can be null
     }
 
     if (empty($fields)) {

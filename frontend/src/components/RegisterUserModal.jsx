@@ -66,10 +66,22 @@ export default function RegisterUserModal({ show, onHide, eventId, onSuccess }) 
       setIsLoading(true);
       setError('');
 
-      await post(`${import.meta.env.VITE_API_URL}/register_event.php`, {
+      const response = await post(`${import.meta.env.VITE_API_URL}/register_event.php`, {
         event_id: eventId,
         user_id: selectedUser.id
       });
+
+      if (!response.success) {
+        // Map error codes to translated messages
+        let errorMessage = response.message || t('errors.registrationFailed');
+        if (response.message === 'balance_exceeds_user_limit') {
+          errorMessage = t('error.balance_exceeds_user_limit');
+        } else if (response.message === 'balance_exceeds_event_limit') {
+          errorMessage = t('error.balance_exceeds_event_limit');
+        }
+        setError(errorMessage);
+        return;
+      }
 
       // Reset and close
       setSearchTerm('');

@@ -32,6 +32,7 @@ $balance = isset($input['balance']) ? (float)$input['balance'] : null;
 $isValidActive = isset($input['is_active']);
 $isActive = $isValidActive ? (int)$input['is_active'] : null;
 $preferredLanguage = isset($input['preferred_language']) ? trim($input['preferred_language']) : null;
+$negativeBalanceLimit = isset($input['negative_balance_limit']) ? (float)$input['negative_balance_limit'] : null;
 
 // Validation
 if ($name && strlen($name) < 2) {
@@ -48,6 +49,9 @@ if ($role && !in_array($role, ['user', 'group_admin', 'super_admin'])) {
 }
 if ($preferredLanguage && !in_array($preferredLanguage, ['lt', 'en'])) {
     sendError('Invalid language. Only "lt" or "en" allowed', 400);
+}
+if ($negativeBalanceLimit !== null && !is_numeric($negativeBalanceLimit)) {
+    sendError('Negative balance limit must be a valid number', 400);
 }
 
 // Restriction: Only super_admin can change roles to/from admins or edit other admins
@@ -108,6 +112,10 @@ try {
     if ($preferredLanguage !== null) {
         $fields[] = 'preferred_language = ?';
         $params[] = $preferredLanguage;
+    }
+    if ($negativeBalanceLimit !== null) {
+        $fields[] = 'negative_balance_limit = ?';
+        $params[] = $negativeBalanceLimit;
     }
 
     if (empty($fields)) {

@@ -21,6 +21,7 @@ function EventDetails() {
     const [detailsCollapsed, setDetailsCollapsed] = useState(true); // For mobile view
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [adminCancelModal, setAdminCancelModal] = useState({ show: false, userId: null, userName: null });
+    const [negativeBalanceWarningDismissed, setNegativeBalanceWarningDismissed] = useState(false);
 
     const fetchDetails = async () => {
         setLoading(true);
@@ -100,7 +101,14 @@ function EventDetails() {
                     setSuccessMessage(t('dash.registration_success'));
                     fetchDetails(); // Reload data
                 } else {
-                    setError(response.message || t('event.failed_register'));
+                    // Map error codes to translated messages
+                    let errorMessage = response.message || t('event.failed_register');
+                    if (response.message === 'balance_exceeds_user_limit') {
+                        errorMessage = t('error.balance_exceeds_user_limit');
+                    } else if (response.message === 'balance_exceeds_event_limit') {
+                        errorMessage = t('error.balance_exceeds_event_limit');
+                    }
+                    setError(errorMessage);
                 }
             } else if (type === 'cancel') {
                 const response = await del(`${API_ENDPOINTS.REGISTER_EVENT}?event_id=${id}`);
@@ -204,7 +212,15 @@ function EventDetails() {
     const cutoffTime = new Date(eventDate.getTime() - (cutoffHours * 60 * 60 * 1000));
     const now = new Date();
     const isCutoffPassed = now >= cutoffTime;
-    const isActionBlocked = isCutoffPassed && !isSuperAdmin;
+
+    // Check negative balance limit (use most restrictive limit)
+    const userLimit = parseFloat(user?.negative_balance_limit || 0);
+    const eventLimit = parseFloat(event.negative_balance_limit || 0);
+    const effectiveLimit = Math.max(userLimit, eventLimit); // Most restrictive (least negative)
+    const userBalance = parseFloat(user?.balance || 0);
+    const isNegativeBalanceBlocked = !isSuperAdmin && userBalance < effectiveLimit;
+
+    const isActionBlocked = (isCutoffPassed || isNegativeBalanceBlocked) && !isSuperAdmin;
 
     return (
         <div className="min-vh-100">
@@ -271,6 +287,15 @@ function EventDetails() {
                                 })}
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {/* Negative Balance Warning */}
+                {isNegativeBalanceBlocked && !isSuperAdmin && !negativeBalanceWarningDismissed && (
+                    <div className="alert-custom bg-warning bg-opacity-10 border-warning text-dark mb-4 d-flex align-items-center">
+                        <i className="bi bi-exclamation-triangle-fill me-3 flex-shrink-0"></i>
+                        <div className="flex-grow-1">{t('error.negative_balance_registration_blocked')}</div>
+                        <button type="button" className="btn-close ms-2 flex-shrink-0" onClick={() => setNegativeBalanceWarningDismissed(true)}></button>
                     </div>
                 )}
 

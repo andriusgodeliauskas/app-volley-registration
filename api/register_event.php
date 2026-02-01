@@ -71,6 +71,7 @@ function handleRegister(array $currentUser): void
         $stmt = $pdo->prepare("
             SELECT
                 e.*,
+                e.negative_balance_limit,
                 (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'registered') as registered_count
             FROM events e
             WHERE e.id = ?
@@ -108,7 +109,40 @@ function handleRegister(array $currentUser): void
                 sendError("Registration is closed {$cutoffHours} hours before the event", 400);
             }
         }
-        
+
+        // Check negative balance limits (skip for super admin)
+        if ($currentUser['role'] !== 'super_admin') {
+            // Fetch user's current balance and negative balance limit
+            $stmt = $pdo->prepare("
+                SELECT balance, negative_balance_limit
+                FROM users
+                WHERE id = ?
+            ");
+            $stmt->execute([$registerUserId]);
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                $pdo->rollBack();
+                sendError('User not found', 404);
+            }
+
+            $userBalance = (float)$user['balance'];
+            $userNegativeLimit = (float)$user['negative_balance_limit'];
+            $eventNegativeLimit = (float)$event['negative_balance_limit'];
+
+            // Check if user's balance is below their personal limit
+            if ($userBalance < $userNegativeLimit) {
+                $pdo->rollBack();
+                sendError('balance_exceeds_user_limit', 400);
+            }
+
+            // Check if user's balance is below event's limit
+            if ($userBalance < $eventNegativeLimit) {
+                $pdo->rollBack();
+                sendError('balance_exceeds_event_limit', 400);
+            }
+        }
+
         // Check if spots are available - REMOVED for waitlist feature
         // if ((int)$event['registered_count'] >= (int)$event['max_players']) {
         //     $pdo->rollBack();

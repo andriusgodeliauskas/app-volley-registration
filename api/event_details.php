@@ -48,6 +48,7 @@ try {
             e.status,
             e.icon,
             e.registration_cutoff_hours,
+            e.negative_balance_limit,
             g.name as group_name,
             (
                 SELECT COUNT(*)

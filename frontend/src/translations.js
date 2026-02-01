@@ -586,6 +586,15 @@ export const translations = {
         // Admin Event Edit
         'admin.event_finalize_confirm': 'Are you sure you want to finalize this event? This will charge all registered users and close the event.',
         'admin.event_finalized': 'Event finalized! Charged {count} users. Total: €{amount}',
+
+        // Negative Balance Limit
+        'admin.negative_balance_limit': 'Negative Balance Limit',
+        'admin.negative_balance_limit_help': 'User cannot register if balance is below this limit',
+        'admin.negative_balance_limit_user_help': 'User cannot register for events if their balance falls below this limit',
+        'admin.negative_balance_limit_event_help': 'Users cannot register for this event if their balance is below this limit',
+        'error.balance_exceeds_user_limit': 'Registration failed: Your balance would exceed your negative balance limit',
+        'error.balance_exceeds_event_limit': 'Registration failed: Your balance would exceed this event\'s negative balance limit',
+        'error.negative_balance_registration_blocked': 'Sorry, but you cannot register for events because your account balance is negative. Please top up your account.',
     },
     lt: {
         // Navigation
@@ -1177,5 +1186,14 @@ export const translations = {
         // Admin Event Edit
         'admin.event_finalize_confirm': 'Ar tikrai norite užbaigti šį renginį? Tai nuskaičiuos lėšas visiems užsiregistravusiems vartotojams ir uždarys renginį.',
         'admin.event_finalized': 'Renginys užbaigtas! Nuskaičiuota {count} vartotojams. Viso: €{amount}',
+
+        // Negative Balance Limit
+        'admin.negative_balance_limit': 'Neigiamo balanso limitas',
+        'admin.negative_balance_limit_help': 'Vartotojas negali registruotis jei balansas žemiau šio limito',
+        'admin.negative_balance_limit_user_help': 'Vartotojas negali registruotis į renginius, jei jo balansas nukrenta žemiau šio limito',
+        'admin.negative_balance_limit_event_help': 'Vartotojai negali registruotis į šį renginį, jei jų balansas žemiau šio limito',
+        'error.balance_exceeds_user_limit': 'Registracija nepavyko: Jūsų balansas viršytų jūsų neigiamo balanso limitą',
+        'error.balance_exceeds_event_limit': 'Registracija nepavyko: Jūsų balansas viršytų šio renginio neigiamo balanso limitą',
+        'error.negative_balance_registration_blocked': 'Atsiprašome, bet jūs negalite registruotis į renginius, nes jūsų sąskaitos likutis yra minusinis. Prašome, papildyti sąskaitą.',
     }
 };

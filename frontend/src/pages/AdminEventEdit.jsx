@@ -28,6 +28,7 @@ function AdminEventEdit() {
         price_per_person: 0,
         rent_price: 0,
         registration_cutoff_hours: '',
+        negative_balance_limit: -12.00,
         status: 'open',
         icon: '🏐'
     });
@@ -120,7 +121,8 @@ function AdminEventEdit() {
                 court_count: parseInt(formData.court_count),
                 price_per_person: parseFloat(formData.price_per_person),
                 rent_price: parseFloat(formData.rent_price),
-                registration_cutoff_hours: formData.registration_cutoff_hours ? parseInt(formData.registration_cutoff_hours) : null
+                registration_cutoff_hours: formData.registration_cutoff_hours ? parseInt(formData.registration_cutoff_hours) : null,
+                negative_balance_limit: parseFloat(formData.negative_balance_limit)
             };
 
             const response = await post(API_ENDPOINTS.ADMIN_EVENT_UPDATE, payload);
@@ -323,6 +325,25 @@ function AdminEventEdit() {
                                         />
                                         <small className="form-text text-muted">
                                             {t('registration_cutoff_hours_helper')}
+                                        </small>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">
+                                            {t('admin.negative_balance_limit')} (€)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            className="form-control"
+                                            name="negative_balance_limit"
+                                            value={formData.negative_balance_limit}
+                                            onChange={handleChange}
+                                            placeholder="-12.00"
+                                        />
+                                        <small className="form-text text-muted">
+                                            <i className="bi bi-info-circle me-1"></i>
+                                            {t('admin.negative_balance_limit_event_help')}
                                         </small>
                                     </div>
 

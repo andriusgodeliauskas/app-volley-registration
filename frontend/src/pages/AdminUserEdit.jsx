@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { API_ENDPOINTS, get, post } from '../api/config';
 import AdminNavbar from '../components/AdminNavbar';
 
 function AdminUserEdit() {
     const { id } = useParams();
     const { user, logout } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
@@ -22,7 +24,8 @@ function AdminUserEdit() {
         balance: 0,
         is_active: true,
         group_ids: [],
-        preferred_language: 'lt'
+        preferred_language: 'lt',
+        negative_balance_limit: -12.00
     });
 
     const [topUpData, setTopUpData] = useState({ amount: '', description: '', created_at: '' });
@@ -66,7 +69,8 @@ function AdminUserEdit() {
                     balance: response.data.user.balance,
                     is_active: response.data.user.is_active,
                     group_ids: response.data.user.group_ids || [],
-                    preferred_language: response.data.user.preferred_language || 'lt'
+                    preferred_language: response.data.user.preferred_language || 'lt',
+                    negative_balance_limit: response.data.user.negative_balance_limit || -12.00
                 });
             } else {
                 setError(response.message || 'Failed to load user details');
@@ -97,7 +101,8 @@ function AdminUserEdit() {
             const payload = {
                 user_id: id,
                 ...formData,
-                balance: parseFloat(formData.balance)
+                balance: parseFloat(formData.balance),
+                negative_balance_limit: parseFloat(formData.negative_balance_limit)
             };
 
             const response = await post(API_ENDPOINTS.ADMIN_USER_UPDATE, payload);
@@ -330,6 +335,25 @@ function AdminUserEdit() {
                                                 value={formData.balance}
                                                 onChange={handleChange}
                                             />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label className="form-label text-muted small fw-bold text-uppercase">
+                                            {t('admin.negative_balance_limit')} (€)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            className="form-control"
+                                            name="negative_balance_limit"
+                                            value={formData.negative_balance_limit}
+                                            onChange={handleChange}
+                                            placeholder="-12.00"
+                                        />
+                                        <div className="form-text text-muted small">
+                                            <i className="bi bi-info-circle me-1"></i>
+                                            {t('admin.negative_balance_limit_user_help')}
                                         </div>
                                     </div>
 

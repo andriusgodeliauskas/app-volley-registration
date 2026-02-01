@@ -79,6 +79,7 @@ function handleGetEvents(array $currentUser): void
             e.status,
             e.icon,
             e.registration_cutoff_hours,
+            e.negative_balance_limit,
             e.created_at,
             g.name as group_name,
             (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'registered') as registered_count,
@@ -155,6 +156,7 @@ function handleGetEvents(array $currentUser): void
             $event['price_per_person'] = (float)$event['price_per_person'];
             $event['rent_price'] = (float)($event['rent_price'] ?? 0);
             $event['registration_cutoff_hours'] = $event['registration_cutoff_hours'] !== null ? (int)$event['registration_cutoff_hours'] : null;
+            $event['negative_balance_limit'] = (float)($event['negative_balance_limit'] ?? -12.00);
             $event['registered_count'] = (int)$event['registered_count'];
             $event['user_registered'] = (int)$event['user_registered'] > 0;
             $event['spots_available'] = $event['max_players'] - $event['registered_count'];
@@ -209,8 +211,8 @@ function handleCreateEvent(array $currentUser): void
         $stmt = $pdo->prepare("
             INSERT INTO events (
                 group_id, title, description, date_time, location,
-                max_players, court_count, price_per_person, rent_price, status, icon, registration_cutoff_hours
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                max_players, court_count, price_per_person, rent_price, status, icon, registration_cutoff_hours, negative_balance_limit
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $rentPrice = ($currentUser['role'] === 'super_admin') ? ($input['rent_price'] ?? 0.00) : 0.00;
@@ -221,6 +223,15 @@ function handleCreateEvent(array $currentUser): void
             $cutoffHours = filter_var($input['registration_cutoff_hours'], FILTER_VALIDATE_INT);
             if ($cutoffHours === false || $cutoffHours < 0) {
                 sendError('registration_cutoff_hours must be a positive integer or null', 400);
+            }
+        }
+
+        // Validate and set negative_balance_limit
+        $negativeBalanceLimit = -12.00; // Default value
+        if (isset($input['negative_balance_limit'])) {
+            $negativeBalanceLimit = filter_var($input['negative_balance_limit'], FILTER_VALIDATE_FLOAT);
+            if ($negativeBalanceLimit === false) {
+                sendError('negative_balance_limit must be a valid number', 400);
             }
         }
 
@@ -236,7 +247,8 @@ function handleCreateEvent(array $currentUser): void
             $rentPrice,
             $input['status'] ?? 'open',
             $input['icon'] ?? 'volleyball',
-            $cutoffHours
+            $cutoffHours,
+            $negativeBalanceLimit
         ]);
 
         $eventId = $pdo->lastInsertId();

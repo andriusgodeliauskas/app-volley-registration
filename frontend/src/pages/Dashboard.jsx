@@ -27,6 +27,7 @@ function Dashboard() {
     const [registering, setRegistering] = useState({}); // Track loading state per event
     const [successMessage, setSuccessMessage] = useState('');
     const [userHasGroups, setUserHasGroups] = useState(true);
+    const [negativeBalanceWarningDismissed, setNegativeBalanceWarningDismissed] = useState(false);
 
     /**
      * Fetch user's current balance from API
@@ -226,6 +227,14 @@ function Dashboard() {
     const translateError = (errorMessage) => {
         if (!errorMessage) return t('common.error');
 
+        // Check for balance limit errors
+        if (errorMessage === 'balance_exceeds_user_limit') {
+            return t('error.balance_exceeds_user_limit');
+        }
+        if (errorMessage === 'balance_exceeds_event_limit') {
+            return t('error.balance_exceeds_event_limit');
+        }
+
         // Check for registration cutoff error
         const cutoffMatch = errorMessage.match(/Registration is closed (\d+) hours? before the event/i);
         if (cutoffMatch) {
@@ -288,6 +297,22 @@ function Dashboard() {
                         <div>{successMessage}</div>
                     </div>
                 )}
+
+                {/* Negative Balance Warning */}
+                {(() => {
+                    const isSuperAdmin = user?.role === 'super_admin';
+                    const userLimit = parseFloat(user?.negative_balance_limit || 0);
+                    const userBalance = parseFloat(user?.balance || 0);
+                    const isNegativeBalanceBlocked = !isSuperAdmin && userBalance < userLimit;
+
+                    return isNegativeBalanceBlocked && !negativeBalanceWarningDismissed && (
+                        <div className="alert-custom mb-4 bg-warning bg-opacity-10 border-warning text-dark d-flex align-items-center">
+                            <i className="bi bi-exclamation-triangle-fill me-3 flex-shrink-0"></i>
+                            <div className="flex-grow-1">{t('error.negative_balance_registration_blocked')}</div>
+                            <button type="button" className="btn-close ms-2 flex-shrink-0" onClick={() => setNegativeBalanceWarningDismissed(true)}></button>
+                        </div>
+                    );
+                })()}
 
                 {/* Welcome Section */}
                 <div className="welcome">
@@ -356,7 +381,15 @@ function Dashboard() {
                             const now = new Date();
                             const isCutoffPassed = now >= cutoffTime;
                             const isSuperAdmin = user?.role === 'super_admin';
-                            const isActionBlocked = isCutoffPassed && !isSuperAdmin;
+
+                            // Check negative balance limit (use most restrictive limit)
+                            const userLimit = parseFloat(user?.negative_balance_limit || 0);
+                            const eventLimit = parseFloat(event.negative_balance_limit || 0);
+                            const effectiveLimit = Math.max(userLimit, eventLimit); // Most restrictive (least negative)
+                            const userBalance = parseFloat(user?.balance || 0);
+                            const isNegativeBalanceBlocked = !isSuperAdmin && userBalance < effectiveLimit;
+
+                            const isActionBlocked = (isCutoffPassed || isNegativeBalanceBlocked) && !isSuperAdmin;
 
                             return (
                                 <div key={event.id} className="event-card">
@@ -380,7 +413,7 @@ function Dashboard() {
                                     </div>
                                     <div className="event-actions">
                                         <Link to={`/event/${event.id}`} className="btn-custom">{t('dash.more_info')}</Link>
-                                        {isActionBlocked && (
+                                        {isCutoffPassed && !isSuperAdmin && (
                                             <div className="text-warning small text-center mb-1">
                                                 <i className="bi bi-clock me-1"></i>
                                                 {t('event.registration_closed').replace('{hours}', cutoffHours)}
