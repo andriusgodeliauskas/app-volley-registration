@@ -58,6 +58,7 @@ npm run build            # Build for production
 - **Event System**: Create events, manage registrations, waitlists
 - **Wallet System**: Balance top-up, payment tracking, deposits
 - **Group Management**: Create/join groups, group-specific events
+- **Family Management**: Request permissions to register/pay for other users (one-way permissions)
 - **Admin Panel**: User management, event finalization, statistics
 - **Remember Me**: 30-day persistent login with secure tokens
 - **Session Timeout**: 30-minute inactivity logout for security
@@ -121,6 +122,61 @@ Run `google_oauth_migration.sql` to add:
 3. Google redirects back to `/auth/google/callback`
 4. If new user: Show password setup modal → create account
 5. If existing user: Login directly
+
+## Family Management System
+
+Allows users to request permissions to register and pay for other users (e.g., family members, children).
+
+### Key Concepts
+- **One-way permissions**: Requester can register target user, NOT vice versa
+- **Permission request flow**: User A sends request to User B → User B accepts → User A can now register User B for events
+- **Payment responsibility**: When event is finalized, money is deducted from whoever registered (registered_by field)
+
+### Backend Files
+- `api/family_permissions.php` - CRUD for permission requests (GET, POST, PUT, DELETE)
+- `api/family_members.php` - Returns users that current user can register
+- `api/admin_family_permissions.php` - Admin management of family relationships
+
+### Frontend Files
+- `frontend/src/pages/Family.jsx` - Family management page (send requests, view received/sent requests)
+- `frontend/src/pages/EventDetails.jsx` - Modal popup for selecting who to register
+- `frontend/src/pages/Dashboard.jsx` - Modal popup for quick registration
+
+### Database Tables
+```sql
+-- Family permissions table
+CREATE TABLE family_permissions (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    requester_id INT UNSIGNED NOT NULL,
+    target_id INT UNSIGNED NOT NULL,
+    status ENUM('pending','accepted','rejected','canceled') DEFAULT 'pending',
+    can_pay TINYINT(1) DEFAULT 1,
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    responded_at TIMESTAMP NULL,
+    UNIQUE KEY (requester_id, target_id)
+);
+
+-- Audit log for family actions
+CREATE TABLE family_audit_log (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    family_permission_id INT UNSIGNED NULL,
+    action ENUM('request_sent','accepted','rejected','canceled','removed','admin_added','admin_removed'),
+    performed_by INT UNSIGNED NOT NULL,
+    target_user_id INT UNSIGNED NULL,
+    details TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### Migration
+Run `migrations/012_family_management.sql` to set up family management tables.
+
+### UI Flow
+1. User navigates to "Šeima" (Family) page from navbar
+2. Sends permission request by entering target user's email
+3. Target user sees request in "Gauti prašymai" section
+4. Target user accepts/rejects the request
+5. If accepted, requester can now register target for events via modal popup
 
 ## Development Guidelines
 

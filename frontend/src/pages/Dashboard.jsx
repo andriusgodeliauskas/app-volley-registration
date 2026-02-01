@@ -28,6 +28,23 @@ function Dashboard() {
     const [successMessage, setSuccessMessage] = useState('');
     const [userHasGroups, setUserHasGroups] = useState(true);
     const [negativeBalanceWarningDismissed, setNegativeBalanceWarningDismissed] = useState(false);
+    const [familyMembers, setFamilyMembers] = useState([]);
+    const [familySelectModal, setFamilySelectModal] = useState({ show: false, event: null });
+
+    /**
+     * Fetch family members for registration dropdown
+     */
+    const fetchFamilyMembers = async () => {
+        try {
+            const response = await get(API_ENDPOINTS.FAMILY_MEMBERS);
+            if (response.success && response.data) {
+                setFamilyMembers(response.data.members || []);
+            }
+        } catch (err) {
+            console.error('Failed to fetch family members:', err);
+            // Silent fail - family feature is optional
+        }
+    };
 
     /**
      * Fetch user's current balance from API
@@ -80,7 +97,7 @@ function Dashboard() {
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
-            await Promise.all([fetchUserData(), fetchEvents()]);
+            await Promise.all([fetchUserData(), fetchEvents(), fetchFamilyMembers()]);
             setLoading(false);
         };
         loadData();
@@ -106,6 +123,64 @@ function Dashboard() {
             eventTitle: event.title,
             price: event.price_per_person
         });
+    };
+
+    /**
+     * Direct registration without confirmation popup (for family dropdown)
+     */
+    const handleDirectRegister = async (event, userId = null) => {
+        setRegistering(prev => ({ ...prev, [event.id]: true }));
+        setError(null);
+        setSuccessMessage('');
+
+        try {
+            const payload = { event_id: event.id };
+            if (userId) {
+                payload.user_id = userId; // Register family member
+            }
+            const response = await post(API_ENDPOINTS.REGISTER_EVENT, payload);
+
+            if (response.success) {
+                // Update balance if returned
+                if (response.data?.new_balance !== undefined) {
+                    setBalance(parseFloat(response.data.new_balance));
+                    updateUser({ ...user, balance: parseFloat(response.data.new_balance) });
+                }
+
+                setSuccessMessage(t('dash.registration_success'));
+                fetchEvents(); // Reload events
+            } else {
+                // Map error codes to translated messages
+                let errorMessage = response.message || t('dash.error_register');
+                if (response.message === 'balance_exceeds_user_limit') {
+                    errorMessage = t('error.balance_exceeds_user_limit');
+                } else if (response.message === 'balance_exceeds_event_limit') {
+                    errorMessage = t('error.balance_exceeds_event_limit');
+                }
+                setError(errorMessage);
+            }
+        } catch (err) {
+            console.error('Registration failed:', err);
+            setError(err.message || t('dash.error_register'));
+        } finally {
+            setRegistering(prev => ({ ...prev, [event.id]: false }));
+        }
+    };
+
+    /**
+     * Open family selection modal
+     */
+    const openFamilySelectModal = (event) => {
+        setFamilySelectModal({ show: true, event: event });
+    };
+
+    /**
+     * Handle family member selection from modal
+     */
+    const handleFamilySelect = (userId = null) => {
+        const event = familySelectModal.event;
+        setFamilySelectModal({ show: false, event: null });
+        handleDirectRegister(event, userId);
     };
 
     /**
@@ -278,6 +353,42 @@ function Dashboard() {
                 </div>
             )}
 
+            {/* Family Member Selection Modal */}
+            {familySelectModal.show && (
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content shadow border-0 rounded-4">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title">{t('family.register_for')}</h5>
+                                <button type="button" className="btn-close" onClick={() => setFamilySelectModal({ show: false, event: null })}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="d-grid gap-2">
+                                    <button
+                                        className="btn-custom bg-primary text-white border-primary fw-bold"
+                                        onClick={() => handleFamilySelect(null)}
+                                    >
+                                        {t('family.register_self')} - {user?.name}
+                                    </button>
+                                    {familyMembers.map((member) => (
+                                        <button
+                                            key={member.id}
+                                            className="btn-custom"
+                                            onClick={() => handleFamilySelect(member.id)}
+                                        >
+                                            {member.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="modal-footer border-0 pt-0">
+                                <button type="button" className="btn-custom" onClick={() => setFamilySelectModal({ show: false, event: null })}>{t('common.cancel')}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Main Content */}
             <div className="main-container">
                 <Breadcrumb items={[
@@ -428,14 +539,27 @@ function Dashboard() {
                                                 {isProcessing ? t('common.loading') : t('event.cancel_btn')}
                                             </button>
                                         ) : (
-                                            <button
-                                                className={`btn-custom ${isActionBlocked ? '' : (isFull ? '' : 'text-primary border-primary')}`}
-                                                style={!isActionBlocked && !isFull ? { background: '#eff6ff' } : {}}
-                                                onClick={() => handleRegister(event)}
-                                                disabled={isProcessing || isActionBlocked}
-                                            >
-                                                {isProcessing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
-                                            </button>
+                                            <>
+                                                {familyMembers.length > 0 ? (
+                                                    <button
+                                                        className={`btn-custom ${isActionBlocked ? '' : (isFull ? '' : 'text-primary border-primary')}`}
+                                                        style={!isActionBlocked && !isFull ? { background: '#eff6ff' } : {}}
+                                                        onClick={() => openFamilySelectModal(event)}
+                                                        disabled={isProcessing || isActionBlocked}
+                                                    >
+                                                        {isProcessing ? t('common.loading') : t('family.register_for')}
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className={`btn-custom ${isActionBlocked ? '' : (isFull ? '' : 'text-primary border-primary')}`}
+                                                        style={!isActionBlocked && !isFull ? { background: '#eff6ff' } : {}}
+                                                        onClick={() => handleRegister(event)}
+                                                        disabled={isProcessing || isActionBlocked}
+                                                    >
+                                                        {isProcessing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
+                                                    </button>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </div>

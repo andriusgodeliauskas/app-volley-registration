@@ -33,6 +33,7 @@ function Navbar() {
                 <Link to="/events" className={`nav-link-custom ${isActive('/events')}`}>{t('nav.all_events')}</Link>
                 <Link to="/wallet" className={`nav-link-custom ${isActive('/wallet')}`}>{t('nav.wallet')}</Link>
                 <Link to="/deposit" className={`nav-link-custom ${isActive('/deposit')}`}>{t('nav.deposit')}</Link>
+                <Link to="/family" className={`nav-link-custom ${isActive('/family')}`}>{t('nav.family')}</Link>
                 <Link to="/support" className={`nav-link-custom ${isActive('/support')}`}>{t('nav.support')}</Link>
             </div>
 
@@ -137,6 +138,13 @@ function Navbar() {
                                 onClick={closeMobileMenu}
                             >
                                 {t('nav.deposit')}
+                            </Link>
+                            <Link
+                                to="/family"
+                                className={`mobile-menu-link ${isActive('/family')}`}
+                                onClick={closeMobileMenu}
+                            >
+                                {t('nav.family')}
                             </Link>
                             <Link
                                 to="/support"

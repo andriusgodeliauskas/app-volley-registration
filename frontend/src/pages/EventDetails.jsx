@@ -22,6 +22,9 @@ function EventDetails() {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [adminCancelModal, setAdminCancelModal] = useState({ show: false, userId: null, userName: null });
     const [negativeBalanceWarningDismissed, setNegativeBalanceWarningDismissed] = useState(false);
+    const [familyMembers, setFamilyMembers] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(null); // null = self
+    const [familySelectModal, setFamilySelectModal] = useState({ show: false });
 
     const fetchDetails = async () => {
         setLoading(true);
@@ -45,8 +48,21 @@ function EventDetails() {
     useEffect(() => {
         if (id && user) {
             fetchDetails();
+            fetchFamilyMembers();
         }
     }, [id, user]);
+
+    const fetchFamilyMembers = async () => {
+        try {
+            const response = await get(API_ENDPOINTS.FAMILY_MEMBERS);
+            if (response.success && response.data) {
+                setFamilyMembers(response.data.members || []);
+            }
+        } catch (err) {
+            console.error('Failed to fetch family members:', err);
+            // Silent fail - family feature is optional
+        }
+    };
 
     // Auto-dismiss success message after 5 seconds
     useEffect(() => {
@@ -60,14 +76,63 @@ function EventDetails() {
 
     const [confirmModal, setConfirmModal] = useState({ show: false, type: null, eventId: null, eventTitle: null, price: null });
 
-    const openRegisterModal = () => {
+    const openRegisterModal = (userId = null) => {
         setConfirmModal({
             show: true,
             type: 'register',
             eventId: id,
             eventTitle: data.event.title,
-            price: data.event.price_per_person
+            price: data.event.price_per_person,
+            userId: userId // null means self
         });
+    };
+
+    const openFamilySelectModal = () => {
+        setFamilySelectModal({ show: true });
+    };
+
+    const handleFamilySelect = (userId = null) => {
+        setFamilySelectModal({ show: false });
+        handleDirectRegister(userId);
+    };
+
+    // Direct registration without confirmation popup (for family dropdown)
+    const handleDirectRegister = async (userId = null) => {
+        setProcessing(true);
+        setError(null);
+        setSuccessMessage('');
+
+        try {
+            const payload = { event_id: id };
+            if (userId) {
+                payload.user_id = userId; // Register family member
+            }
+            const response = await post(API_ENDPOINTS.REGISTER_EVENT, payload);
+
+            if (response.success) {
+                // Update balance if returned
+                if (response.data?.new_balance !== undefined) {
+                    updateUser({ ...user, balance: parseFloat(response.data.new_balance) });
+                }
+
+                setSuccessMessage(t('dash.registration_success'));
+                fetchDetails(); // Reload data
+            } else {
+                // Map error codes to translated messages
+                let errorMessage = response.message || t('event.failed_register');
+                if (response.message === 'balance_exceeds_user_limit') {
+                    errorMessage = t('error.balance_exceeds_user_limit');
+                } else if (response.message === 'balance_exceeds_event_limit') {
+                    errorMessage = t('error.balance_exceeds_event_limit');
+                }
+                setError(errorMessage);
+            }
+        } catch (err) {
+            console.error('Registration failed:', err);
+            setError(err.message || t('event.failed_register'));
+        } finally {
+            setProcessing(false);
+        }
     };
 
     const openCancelModal = () => {
@@ -81,8 +146,8 @@ function EventDetails() {
     };
 
     const handleConfirmAction = async () => {
-        const { type } = confirmModal;
-        setConfirmModal({ show: false, type: null, eventId: null, eventTitle: null, price: null });
+        const { type, userId } = confirmModal;
+        setConfirmModal({ show: false, type: null, eventId: null, eventTitle: null, price: null, userId: null });
 
         setProcessing(true);
         setError(null);
@@ -90,7 +155,11 @@ function EventDetails() {
 
         try {
             if (type === 'register') {
-                const response = await post(API_ENDPOINTS.REGISTER_EVENT, { event_id: id });
+                const payload = { event_id: id };
+                if (userId) {
+                    payload.user_id = userId; // Register family member
+                }
+                const response = await post(API_ENDPOINTS.REGISTER_EVENT, payload);
 
                 if (response.success) {
                     // Update balance if returned
@@ -243,6 +312,42 @@ function EventDetails() {
                             <div className="modal-footer border-0 pt-0">
                                 <button type="button" className="btn-custom" onClick={() => setConfirmModal({ show: false })}>{t('common.no')}</button>
                                 <button type="button" className={`btn-custom ${confirmModal.type === 'register' ? 'bg-primary text-white border-primary' : 'btn-danger-custom text-white bg-danger border-danger'} px-4`} onClick={handleConfirmAction}>{t('common.yes')}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Family Member Selection Modal */}
+            {familySelectModal.show && (
+                <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content shadow border-0 rounded-4">
+                            <div className="modal-header border-0 pb-0">
+                                <h5 className="modal-title">{t('family.register_for')}</h5>
+                                <button type="button" className="btn-close" onClick={() => setFamilySelectModal({ show: false })}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="d-grid gap-2">
+                                    <button
+                                        className="btn-custom bg-primary text-white border-primary fw-bold"
+                                        onClick={() => handleFamilySelect(null)}
+                                    >
+                                        {t('family.register_self')} - {user?.name}
+                                    </button>
+                                    {familyMembers.map((member) => (
+                                        <button
+                                            key={member.id}
+                                            className="btn-custom"
+                                            onClick={() => handleFamilySelect(member.id)}
+                                        >
+                                            {member.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="modal-footer border-0 pt-0">
+                                <button type="button" className="btn-custom" onClick={() => setFamilySelectModal({ show: false })}>{t('common.cancel')}</button>
                             </div>
                         </div>
                     </div>
@@ -412,13 +517,26 @@ function EventDetails() {
                                                     {processing ? t('common.loading') : t('event.cancel_btn')}
                                                 </button>
                                             ) : (
-                                                <button
-                                                    className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
-                                                    onClick={openRegisterModal}
-                                                    disabled={processing || isActionBlocked}
-                                                >
-                                                    {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
-                                                </button>
+                                                <>
+                                                    {familyMembers.length > 0 ? (
+                                                        <button
+                                                            className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
+                                                            onClick={openFamilySelectModal}
+                                                            disabled={processing || isActionBlocked}
+                                                        >
+                                                            <i className="bi bi-person-plus me-2"></i>
+                                                            {processing ? t('common.loading') : t('family.register_for')}
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
+                                                            onClick={() => openRegisterModal(null)}
+                                                            disabled={processing || isActionBlocked}
+                                                        >
+                                                            {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
+                                                        </button>
+                                                    )}
+                                                </>
                                             )}
                                         </>
                                     )}
@@ -450,13 +568,26 @@ function EventDetails() {
                                             {processing ? t('common.loading') : t('event.cancel_btn')}
                                         </button>
                                     ) : (
-                                        <button
-                                            className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
-                                            onClick={openRegisterModal}
-                                            disabled={processing || isActionBlocked}
-                                        >
-                                            {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
-                                        </button>
+                                        <>
+                                            {familyMembers.length > 0 ? (
+                                                <button
+                                                    className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
+                                                    onClick={openFamilySelectModal}
+                                                    disabled={processing || isActionBlocked}
+                                                >
+                                                    <i className="bi bi-person-plus me-2"></i>
+                                                    {processing ? t('common.loading') : t('family.register_for')}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    className={`btn-custom w-100 ${isActionBlocked ? '' : (isFull ? 'bg-warning text-dark border-warning' : 'bg-primary text-white border-primary')}`}
+                                                    onClick={() => openRegisterModal(null)}
+                                                    disabled={processing || isActionBlocked}
+                                                >
+                                                    {processing ? t('common.loading') : (isFull ? t('event.waitlist') : t('event.register_btn'))}
+                                                </button>
+                                            )}
+                                        </>
                                     )}
                                 </>
                             )}

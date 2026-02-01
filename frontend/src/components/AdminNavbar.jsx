@@ -39,6 +39,7 @@ function AdminNavbar() {
                     <>
                         <Link to="/admin/deposits" className={`nav-link-custom ${isActive('/admin/deposits')}`}>{t('admin.nav_deposits')}</Link>
                         <Link to="/admin/donations" className={`nav-link-custom ${isActive('/admin/donations')}`}>{t('admin.nav_donations')}</Link>
+                        <Link to="/admin/family" className={`nav-link-custom ${isActive('/admin/family')}`}>{t('admin.nav_family')}</Link>
                     </>
                 )}
                 <Link to="/admin/wallet" className={`nav-link-custom ${isActive('/admin/wallet')}`}>{t('admin.nav_wallet')}</Link>
@@ -157,6 +158,13 @@ function AdminNavbar() {
                                         onClick={closeMobileMenu}
                                     >
                                         {t('admin.nav_donations')}
+                                    </Link>
+                                    <Link
+                                        to="/admin/family"
+                                        className={`mobile-menu-link ${isActive('/admin/family')}`}
+                                        onClick={closeMobileMenu}
+                                    >
+                                        {t('admin.nav_family')}
                                     </Link>
                                 </>
                             )}

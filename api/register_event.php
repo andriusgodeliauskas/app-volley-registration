@@ -45,17 +45,24 @@ function handleRegister(array $currentUser): void
     // Determine who is being registered (self or child)
     $registerUserId = isset($input['user_id']) ? (int)$input['user_id'] : $currentUser['id'];
 
-    // If registering someone else, verify it's their child OR current user is super_admin
+    // If registering someone else, verify permission via family_permissions OR current user is super_admin
     if ($registerUserId !== $currentUser['id']) {
         $pdo = getDbConnection();
 
         if ($currentUser['role'] !== 'super_admin') {
-            // Regular users can only register their children
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND parent_id = ?");
-            $stmt->execute([$registerUserId, $currentUser['id']]);
+            // Regular users can only register users they have permission for
+            // ONE-WAY permission: only requester can register target (not vice versa)
+            $stmt = $pdo->prepare("
+                SELECT fp.id
+                FROM family_permissions fp
+                WHERE fp.requester_id = ?
+                AND fp.target_id = ?
+                AND fp.status = 'accepted'
+            ");
+            $stmt->execute([$currentUser['id'], $registerUserId]);
 
             if (!$stmt->fetch()) {
-                sendError('You can only register yourself or your children', 403);
+                sendError('You do not have permission to register this user', 403);
             }
         }
         // Super admin can register anyone - no check needed
@@ -329,17 +336,24 @@ function handleCancelRegistration(array $currentUser): void
     // Determine who to unregister
     $unregisterUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $currentUser['id'];
 
-    // If unregistering someone else, verify it's their child OR current user is super_admin
+    // If unregistering someone else, verify permission via family_permissions OR current user is super_admin
     if ($unregisterUserId !== $currentUser['id']) {
         $pdo = getDbConnection();
 
         if ($currentUser['role'] !== 'super_admin') {
-            // Regular users can only cancel registrations for their children
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ? AND parent_id = ?");
-            $stmt->execute([$unregisterUserId, $currentUser['id']]);
+            // Regular users can only cancel registrations for users they have permission for
+            // ONE-WAY permission: only requester can cancel target's registration (not vice versa)
+            $stmt = $pdo->prepare("
+                SELECT fp.id
+                FROM family_permissions fp
+                WHERE fp.requester_id = ?
+                AND fp.target_id = ?
+                AND fp.status = 'accepted'
+            ");
+            $stmt->execute([$currentUser['id'], $unregisterUserId]);
 
             if (!$stmt->fetch()) {
-                sendError('You can only cancel registrations for yourself or your children', 403);
+                sendError('You do not have permission to cancel this user\'s registration', 403);
             }
         }
         // Super admin can cancel anyone's registration - no check needed

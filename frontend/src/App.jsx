@@ -18,6 +18,7 @@ import Profile from './pages/Profile';
 import Children from './pages/Children';
 import Support from './pages/Support';
 import Deposit from './pages/Deposit';
+import Family from './pages/Family';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminGroups from './pages/AdminGroups';
 import AdminEvents from './pages/AdminEvents';
@@ -30,6 +31,7 @@ import AdminRent from './pages/AdminRent';
 import AdminDonations from './pages/AdminDonations';
 import AdminDeposits from './pages/AdminDeposits';
 import AdminMessages from './pages/admin/Messages';
+import AdminFamilyRelationships from './pages/AdminFamilyRelationships';
 import TopUpTerms from './pages/TopUpTerms';
 
 function App() {
@@ -109,6 +111,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Deposit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/family"
+              element={
+                <ProtectedRoute>
+                  <Family />
                 </ProtectedRoute>
               }
             />
@@ -207,6 +217,14 @@ function App() {
               element={
                 <ProtectedRoute roles={['super_admin', 'group_admin']}>
                   <AdminMessages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/family"
+              element={
+                <ProtectedRoute roles={['super_admin']}>
+                  <AdminFamilyRelationships />
                 </ProtectedRoute>
               }
             />

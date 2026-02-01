@@ -63,6 +63,11 @@ export const API_ENDPOINTS = {
   ADMIN_DEPOSIT_REFUND: `${API_BASE_URL}/admin_deposit_refund.php`,
   ADMIN_DEPOSIT_CREATE: `${API_BASE_URL}/admin_deposit_create.php`,
 
+  // Family Management
+  FAMILY_PERMISSIONS: `${API_BASE_URL}/family_permissions.php`,
+  FAMILY_MEMBERS: `${API_BASE_URL}/family_members.php`,
+  ADMIN_FAMILY_PERMISSIONS: `${API_BASE_URL}/admin_family_permissions.php`,
+
   // Paysera Payment
   PAYSERA_CHECKOUT: `${API_BASE_URL}/paysera_checkout.php`,
   PAYSERA_ACCEPT: `${API_BASE_URL}/paysera_accept.php`,

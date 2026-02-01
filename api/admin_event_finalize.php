@@ -77,35 +77,61 @@ function handleFinalizeEvent(array $adminUser): void
         // Waitlist users beyond the capacity are ignored
         
         $stmt = $pdo->prepare("
-            SELECT r.id as registration_id, r.user_id 
-            FROM registrations r 
-            WHERE r.event_id = ? AND r.status = 'registered' 
-            ORDER BY r.id ASC 
+            SELECT r.id as registration_id, r.user_id, r.registered_by
+            FROM registrations r
+            WHERE r.event_id = ? AND r.status = 'registered'
+            ORDER BY r.id ASC
             LIMIT ?
         ");
         $stmt->execute([$eventId, $event['max_players']]);
         $registrationsToCharge = $stmt->fetchAll();
         
         $chargedCount = 0;
-        
+
         foreach ($registrationsToCharge as $reg) {
-            // Deduct balance (can go negative)
+            // Nustatyti kas moka (kas registravo arba pats dalyvis)
+            $payerId = !empty($reg['registered_by']) ? $reg['registered_by'] : $reg['user_id'];
+
+            // Nuskaičiuoti pinigus nuo mokėtojo
             $stmt = $pdo->prepare("UPDATE users SET balance = balance - ? WHERE id = ?");
-            $stmt->execute([$eventPrice, $reg['user_id']]);
-            
-            // Record transaction
+            $stmt->execute([$eventPrice, $payerId]);
+
+            // Įrašyti transakciją mokėtojui
             $stmt = $pdo->prepare("
                 INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
                 VALUES (?, ?, 'payment', ?, ?, ?)
             ");
             $stmt->execute([
-                $reg['user_id'], 
-                -$eventPrice, 
-                "Payment for: {$event['title']}", 
+                $payerId,
+                -$eventPrice,
+                "Payment for: {$event['title']}",
                 $reg['registration_id'],
                 $adminUser['id']
             ]);
-            
+
+            // Jei mokėtojas skiriasi nuo dalyvio - sukurti family_transfer įrašą dokumentacijai
+            if ($payerId != $reg['user_id']) {
+                // Gauti dalyvio vardą aprašymui
+                $stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+                $stmt->execute([$reg['user_id']]);
+                $participant = $stmt->fetch();
+                $participantName = $participant ? $participant['name'] : 'Unknown';
+
+                // Įrašyti family_transfer transakciją mokėtojo paskyroje (dokumentacijai)
+                $stmt = $pdo->prepare("
+                    INSERT INTO transactions (user_id, amount, type, description, reference_id, created_by)
+                    VALUES (?, ?, 'family_transfer', ?, ?, ?)
+                ");
+                $description = "Family payment for {$participantName} - {$event['title']}";
+                $stmt->execute([
+                    $payerId,
+                    0, // Amount is 0 because payment was already deducted above
+                    $description,
+                    $reg['registration_id'],
+                    $adminUser['id']
+                ]);
+            }
+
             $chargedCount++;
         }
         
