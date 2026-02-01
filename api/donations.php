@@ -15,7 +15,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-        handleGetDonations();
+        handleGetDonations($currentUser);
         break;
     default:
         sendError('Method not allowed', 405);
@@ -24,13 +24,13 @@ switch ($method) {
 /**
  * GET - Fetch current user's donations
  */
-function handleGetDonations(): void
+function handleGetDonations(array $currentUser): void
 {
     try {
         $pdo = getDbConnection();
 
         // Get current user ID from authentication
-        $userId = getUserIdFromToken();
+        $userId = $currentUser['id'];
 
         // Fetch only current user's donations
         $stmt = $pdo->prepare("
