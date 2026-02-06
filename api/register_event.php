@@ -364,12 +364,12 @@ function handleCancelRegistration(array $currentUser): void
     try {
         $pdo->beginTransaction();
         
-        // Fetch registration with event details
+        // Fetch registration with event details (both registered and waitlist can be cancelled)
         $stmt = $pdo->prepare("
-            SELECT r.id as registration_id, r.registered_by, e.title, e.date_time, e.registration_cutoff_hours
+            SELECT r.id as registration_id, r.registered_by, r.status as registration_status, e.title, e.date_time, e.registration_cutoff_hours
             FROM registrations r
             JOIN events e ON r.event_id = e.id
-            WHERE r.user_id = ? AND r.event_id = ? AND r.status = 'registered'
+            WHERE r.user_id = ? AND r.event_id = ? AND r.status IN ('registered', 'waitlist')
             FOR UPDATE
         ");
         $stmt->execute([$unregisterUserId, $eventId]);
@@ -406,40 +406,46 @@ function handleCancelRegistration(array $currentUser): void
 
         // No refund logic needed as no payment was taken upfront
 
-        // AUTOMATIC WAITLIST PROMOTION: Check if anyone is waiting and promote them
-        // This opens up 1 spot, so check if there are people on waitlist
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) as waiting_count
-            FROM registrations
-            WHERE event_id = ? AND status = 'waitlist'
-        ");
-        $stmt->execute([$eventId]);
-        $waitingCount = (int)$stmt->fetch()['waiting_count'];
+        // AUTOMATIC WAITLIST PROMOTION: Only when a registered user cancels (not waitlist)
+        // Waitlist cancellation doesn't open a spot, so no promotion needed
+        $wasRegistered = $registration['registration_status'] === 'registered';
 
-        if ($waitingCount > 0) {
-            // PRIORITY 1: Try to promote someone WITH deposit first
+        if ($wasRegistered) {
+            // Check if anyone is waiting and promote them
+            // This opens up 1 spot, so check if there are people on waitlist
             $stmt = $pdo->prepare("
-                UPDATE registrations r
-                INNER JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
-                SET r.status = 'registered'
-                WHERE r.event_id = ? AND r.status = 'waitlist'
-                ORDER BY r.created_at ASC
-                LIMIT 1
+                SELECT COUNT(*) as waiting_count
+                FROM registrations
+                WHERE event_id = ? AND status = 'waitlist'
             ");
             $stmt->execute([$eventId]);
-            $promotedWithDeposit = $stmt->rowCount();
+            $waitingCount = (int)$stmt->fetch()['waiting_count'];
 
-            // PRIORITY 2: If no depositor waiting, promote oldest non-depositor
-            if ($promotedWithDeposit === 0) {
+            if ($waitingCount > 0) {
+                // PRIORITY 1: Try to promote someone WITH deposit first
                 $stmt = $pdo->prepare("
                     UPDATE registrations r
-                    LEFT JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
+                    INNER JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
                     SET r.status = 'registered'
-                    WHERE r.event_id = ? AND r.status = 'waitlist' AND d.id IS NULL
+                    WHERE r.event_id = ? AND r.status = 'waitlist'
                     ORDER BY r.created_at ASC
                     LIMIT 1
                 ");
                 $stmt->execute([$eventId]);
+                $promotedWithDeposit = $stmt->rowCount();
+
+                // PRIORITY 2: If no depositor waiting, promote oldest non-depositor
+                if ($promotedWithDeposit === 0) {
+                    $stmt = $pdo->prepare("
+                        UPDATE registrations r
+                        LEFT JOIN deposits d ON r.user_id = d.user_id AND d.status = 'active'
+                        SET r.status = 'registered'
+                        WHERE r.event_id = ? AND r.status = 'waitlist' AND d.id IS NULL
+                        ORDER BY r.created_at ASC
+                        LIMIT 1
+                    ");
+                    $stmt->execute([$eventId]);
+                }
             }
         }
 
